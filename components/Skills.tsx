@@ -5,7 +5,7 @@ import ScrollReveal from './ScrollReveal';
 
 const Skills: React.FC = () => {
   return (
-    <section className="py-12 px-4 border-y border-border-dark bg-[#161b15]">
+    <section className="py-12 px-4 border-y border-border-dark" style={{ backgroundColor: 'var(--skills-bg)' }}>
       <div className="mx-auto max-w-5xl">
         <ScrollReveal>
           <p className="text-center text-xs font-mono uppercase tracking-widest text-gray-500 mb-8">Core Technologies</p>
