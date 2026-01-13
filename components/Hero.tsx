@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import ParticleField from './ParticleField';
 
 const Hero: React.FC = () => {
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.8 }); // Normalized coordinates (0 to 1) for background
@@ -66,6 +67,9 @@ const Hero: React.FC = () => {
       ref={sectionRef}
       className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden group select-none"
     >
+      {/* Starry Night Background - Milky Way Galaxy */}
+      <ParticleField starCount={250} color="#ffffff" />
+
       {/* Interactive Background Glow */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
