@@ -177,9 +177,84 @@ const ParticleField: React.FC<ParticleFieldProps> = ({
             }
         }, 4000 + Math.random() * 3000);
 
+        // Create Voyager-like satellite
+        const createSatellite = () => {
+            const satellite = document.createElement('div');
+            const startX = width * 0.3 + Math.random() * width * 0.4; // Random horizontal start near center
+            const startY = height * 0.35; // Start from heading area
+
+            satellite.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Main body -->
+                    <rect x="10" y="8" width="4" height="8" fill="#888" stroke="#aaa" stroke-width="0.5"/>
+                    <!-- Solar panel left -->
+                    <rect x="2" y="10" width="8" height="4" fill="#4a90d9" stroke="#6ab0ff" stroke-width="0.5"/>
+                    <!-- Solar panel right -->
+                    <rect x="14" y="10" width="8" height="4" fill="#4a90d9" stroke="#6ab0ff" stroke-width="0.5"/>
+                    <!-- Antenna -->
+                    <line x1="12" y1="8" x2="12" y2="4" stroke="#ccc" stroke-width="1"/>
+                    <circle cx="12" cy="3" r="2" fill="none" stroke="#ccc" stroke-width="0.5"/>
+                    <!-- Thruster glow -->
+                    <ellipse cx="12" cy="17" rx="1.5" ry="1" fill="#ff6b35" opacity="0.6"/>
+                </svg>
+            `;
+
+            satellite.style.cssText = `
+                position: absolute;
+                left: ${startX}px;
+                top: ${startY}px;
+                opacity: 0;
+                pointer-events: none;
+                filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+                transform: rotate(180deg);
+                z-index: 2;
+            `;
+
+            container.appendChild(satellite);
+
+            // Animate satellite moving slowly downward (south)
+            const tl = gsap.timeline({
+                onComplete: () => {
+                    satellite.remove();
+                    // Create next satellite after a delay
+                    setTimeout(createSatellite, 20000 + Math.random() * 30000);
+                }
+            });
+
+            // Fade in
+            tl.to(satellite, {
+                opacity: 0.8,
+                duration: 3,
+                ease: 'power2.out'
+            })
+                // Slow drift downward (90 degrees south) with slight horizontal movement
+                .to(satellite, {
+                    y: height * 0.8,
+                    x: (Math.random() - 0.5) * 100, // Slight horizontal drift
+                    duration: 60 + Math.random() * 30, // 60-90 seconds journey
+                    ease: 'none'
+                }, 0)
+                // Subtle rotation during flight
+                .to(satellite, {
+                    rotation: 185 + Math.random() * 10,
+                    duration: 60,
+                    ease: 'sine.inOut'
+                }, 0)
+                // Fade out as it exits
+                .to(satellite, {
+                    opacity: 0,
+                    duration: 5,
+                    ease: 'power2.in'
+                }, '-=8');
+        };
+
+        // Start first satellite after a short delay
+        const satelliteTimeout = setTimeout(createSatellite, 5000);
+
         // Cleanup
         return () => {
             clearInterval(randomShootingStarInterval);
+            clearTimeout(satelliteTimeout);
             stars.forEach(star => {
                 gsap.killTweensOf(star);
                 star.remove();
