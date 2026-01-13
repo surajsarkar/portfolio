@@ -222,6 +222,103 @@
   }
 }
 
+/* Expression: Scrolling - Elevator-style arrows */
+/* When scrolling, eyes become larger blocks with arrows moving through */
+.dobby-face .expression-scrollUp .eye,
+.dobby-face .expression-scrollDown .eye {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background-color: var(--cyan-glow);
+  box-shadow:
+    0 0 10px var(--cyan-glow),
+    0 0 20px var(--cyan-glow);
+  overflow: hidden;
+  transform: none;
+}
+
+/* Hide other SVGs when scrolling */
+.dobby-face .expression-scrollUp .heart-svg,
+.dobby-face .expression-scrollDown .heart-svg,
+.dobby-face .expression-scrollUp .star-svg,
+.dobby-face .expression-scrollDown .star-svg,
+.dobby-face .expression-scrollUp .irritated-svg,
+.dobby-face .expression-scrollDown .irritated-svg {
+  display: none !important;
+}
+
+/* Arrow styles */
+.dobby-face .arrow-up-svg,
+.dobby-face .arrow-down-svg {
+  transform: scale(0.7);
+}
+
+/* Scroll Up - Arrow moving upward */
+.dobby-face .expression-scrollUp .arrow-up-svg {
+  opacity: 1;
+  fill: rgba(0, 0, 0, 0.85);
+  filter: none;
+  animation: dobby-elevatorUp 0.5s infinite linear;
+  display: block !important;
+}
+
+.dobby-face .expression-scrollUp .arrow-down-svg {
+  display: none !important;
+}
+
+/* Scroll Down - Arrow moving downward */
+.dobby-face .expression-scrollDown .arrow-down-svg {
+  opacity: 1;
+  fill: rgba(0, 0, 0, 0.85);
+  filter: none;
+  animation: dobby-elevatorDown 0.5s infinite linear;
+  display: block !important;
+}
+
+.dobby-face .expression-scrollDown .arrow-up-svg {
+  display: none !important;
+}
+
+@keyframes dobby-elevatorUp {
+  0% {
+    transform: translateY(20px) scale(0.7);
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-20px) scale(0.7);
+    opacity: 0;
+  }
+}
+
+@keyframes dobby-elevatorDown {
+  0% {
+    transform: translateY(-20px) scale(0.7);
+    opacity: 0;
+  }
+
+  25% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(20px) scale(0.7);
+    opacity: 0;
+  }
+}
+
 /* SVG Icons in Eyes */
 .dobby-face .eye-svg {
   width: 100%;
