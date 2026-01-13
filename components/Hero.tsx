@@ -68,7 +68,7 @@ const Hero: React.FC = () => {
       className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden group select-none"
     >
       {/* Starry Night Background - Milky Way Galaxy */}
-      <ParticleField starCount={1200} color="#ffffff" />
+      <ParticleField starCount={2000} color="#ffffff" />
 
       {/* Interactive Background Glow */}
       <div
