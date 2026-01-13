@@ -38,7 +38,15 @@ const ParticleField: React.FC<ParticleFieldProps> = ({
             }
 
             const x = Math.random() * width;
-            const y = Math.random() * height;
+            // Concentrate more stars in the vertical center (behind heading)
+            const centerBias = Math.random();
+            let y: number;
+            if (centerBias < 0.8) {
+                // 80% of stars clustered in middle 35% of screen (behind heading)
+                y = height * 0.32 + Math.random() * height * 0.35;
+            } else {
+                y = Math.random() * height;
+            }
 
             // Opacity based on size - larger stars brighter
             const baseOpacity = size < 1 ? 0.3 + Math.random() * 0.3 : 0.5 + Math.random() * 0.5;
