@@ -1,0 +1,1412 @@
+< !DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI Robot Face UI</title>
+        <style>
+            :root {
+                --bg - color: #111;
+                --screen-black: #050505;
+                --cyan-glow: #00ffff;
+                --cyan-dim: #00cccc;
+                --terminal-green: #33ff33;
+                --glass-reflection: rgba(255, 255, 255, 0.08);
+                --bezel-color: #333;
+            }
+
+            body {
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                background-color: var(--bg-color);
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: white;
+                overflow: hidden;
+            }
+
+            /* --- The Hardware (Bezel & Screen) --- */
+            .robot-head {
+                position: relative;
+                width: 320px;
+                height: 240px;
+                background: var(--bezel-color);
+                border-radius: 40px;
+                padding: 12px;
+                box-shadow:
+                    0 20px 50px rgba(0, 0, 0, 0.5),
+                    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                margin-bottom: 20px;
+            }
+
+            .screen {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                background-color: var(--screen-black);
+                border-radius: 30px;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 40px;
+                box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+            }
+
+            /* Glossy Reflection Overlay */
+            .screen::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 55%;
+                height: 100%;
+                background: linear-gradient(135deg,
+                        transparent 0%,
+                        transparent 40%,
+                        var(--glass-reflection) 50%,
+                        transparent 60%);
+                pointer-events: none;
+                border-radius: 0 30px 30px 0;
+                opacity: 0.6;
+                z-index: 10;
+            }
+
+            /* Scanline/Pixel Texture */
+            .screen::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: repeating-linear-gradient(0deg,
+                        rgba(0, 0, 0, 0.15),
+                        rgba(0, 0, 0, 0.15) 2px,
+                        transparent 2px,
+                        transparent 4px);
+                pointer-events: none;
+                z-index: 5;
+                background-size: 100% 4px;
+            }
+
+            /* --- The Eyes --- */
+            .eyes-container {
+                position: relative;
+                /* Needed for bridge positioning */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 50px;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+                /* Behind reflection */
+            }
+
+            .eye {
+                position: relative;
+                background-color: var(--cyan-glow);
+                box-shadow:
+                    0 0 20px var(--cyan-glow),
+                    0 0 40px var(--cyan-glow),
+                    0 0 80px var(--cyan-dim);
+                transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                /* Ensure children are centered */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                /* For clipping internal content like logs */
+            }
+
+            /* --- Expressions (State Classes) --- */
+
+            /* 1. Neutral */
+            .expression-neutral .eye {
+                width: 80px;
+                height: 80px;
+                border-radius: 20px;
+            }
+
+            /* 2. Focused (Squint) */
+            .expression-focused .eye {
+                width: 90px;
+                height: 25px;
+                border-radius: 4px;
+                margin-top: 10px;
+                /* Slight look down feel */
+            }
+
+            /* 3. Love (Hearts) - Base overrides */
+            .expression-love .eye {
+                width: 80px;
+                height: 80px;
+                border-radius: 20px;
+                background-color: var(--cyan-glow);
+                /* Restore solid background */
+                box-shadow:
+                    0 0 20px var(--cyan-glow),
+                    0 0 40px var(--cyan-glow),
+                    0 0 80px var(--cyan-dim);
+                /* Restore glow */
+            }
+
+            /* 4. Excited (Stars) */
+            .expression-excited .eye {
+                width: 80px;
+                height: 80px;
+                border-radius: 20px;
+                background-color: var(--cyan-glow);
+                /* Restore solid background */
+                box-shadow:
+                    0 0 20px var(--cyan-glow),
+                    0 0 40px var(--cyan-glow),
+                    0 0 80px var(--cyan-dim);
+                /* Restore glow */
+            }
+
+            /* 5. Serious (Spectacles) */
+            .expression-serious .eye {
+                width: 90px;
+                height: 55px;
+                border-radius: 10px;
+                background-color: rgba(0, 255, 255, 0.15);
+                /* Tinted lens */
+                border: 3px solid var(--cyan-glow);
+                /* Frame */
+                box-shadow: 0 0 15px var(--cyan-glow), inset 0 0 10px rgba(0, 255, 255, 0.3);
+            }
+
+            /* The Spectacles Bridge */
+            .eyes-container.expression-serious::after {
+                content: '';
+                position: absolute;
+                width: 50px;
+                /* Spans the gap */
+                height: 4px;
+                background-color: var(--cyan-glow);
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -10px);
+                /* Move up slightly to bridge the frames */
+                box-shadow: 0 0 10px var(--cyan-glow);
+                animation: fadeInBridge 0.4s ease-out;
+            }
+
+            @keyframes fadeInBridge {
+                from {
+                    opacity: 0;
+                    transform: translate(-50%, -10px) scaleX(0);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translate(-50%, -10px) scaleX(1);
+                }
+            }
+
+            /* 6. Playful (Wink) */
+            .expression-playful .eye.left {
+                width: 80px;
+                height: 80px;
+                border-radius: 20px;
+            }
+
+            .expression-playful .eye.right {
+                height: 15px;
+                width: 70px;
+                border-radius: 50%;
+                background-color: transparent;
+                box-shadow: 0 5px 15px var(--cyan-glow);
+                /* Glowing line */
+                border-top: 8px solid var(--cyan-glow);
+                transform: rotate(-5deg);
+                margin-top: 15px;
+            }
+
+            /* 7. Debug (Terminal) */
+            .expression-debug .eye {
+                width: 80px;
+                height: 80px;
+                border-radius: 20px;
+                background-color: #d1ffff;
+                border: 2px solid var(--cyan-glow);
+                box-shadow: 0 0 20px var(--cyan-glow), inset 0 0 15px rgba(0, 255, 255, 0.4);
+                padding: 6px;
+                align-items: flex-start;
+                justify-content: flex-start;
+            }
+
+            /* 8. Inference (Text Stream) */
+            .expression-inference .eye {
+                width: 80px;
+                height: 80px;
+                border-radius: 20px;
+                background-color: #e0ffff;
+                /* Light background */
+                border: 2px solid var(--cyan-glow);
+                box-shadow: 0 0 20px var(--cyan-glow), inset 0 0 15px rgba(0, 255, 255, 0.4);
+                padding: 8px;
+                align-items: flex-start;
+                justify-content: flex-start;
+                overflow: hidden;
+            }
+
+            /* 9. Irritated */
+            .expression-irritated .eye {
+                width: 90px;
+                height: 40px;
+                border-radius: 4px;
+                background-color: var(--cyan-glow);
+                box-shadow:
+                    0 0 15px var(--cyan-glow),
+                    0 0 30px var(--cyan-glow);
+            }
+
+            .expression-irritated .eye.left {
+                transform: rotate(15deg) translateY(10px);
+            }
+
+            .expression-irritated .eye.right {
+                transform: rotate(-15deg) translateY(10px);
+            }
+
+            /* 10. Popper (Celebration) */
+            .expression-popper .eye {
+                width: 80px;
+                height: 80px;
+                background-color: transparent;
+                /* Remove background container */
+                box-shadow: none;
+                /* Remove container glow */
+                border-radius: 0;
+                overflow: visible;
+                /* Allow particles to fly "out" of the eye area */
+            }
+
+            /* --- SVG Handling --- */
+            .eye-svg {
+                width: 100%;
+                height: 100%;
+                fill: var(--cyan-glow);
+                filter: drop-shadow(0 0 10px var(--cyan-glow)) drop-shadow(0 0 30px var(--cyan-glow));
+                opacity: 0;
+                position: absolute;
+                transition: opacity 0.2s ease, transform 0.4s ease;
+                pointer-events: none;
+            }
+
+            /* Heart Specifics */
+            .heart-svg {
+                transform: scale(0.5);
+            }
+
+            .expression-love .heart-svg {
+                opacity: 1;
+                transform: scale(0.6);
+                fill: rgba(0, 0, 0, 0.85);
+                filter: none;
+            }
+
+            /* Star Specifics */
+            .star-svg {
+                transform: scale(0.5) rotate(0deg);
+            }
+
+            .expression-excited .star-svg {
+                opacity: 1;
+                fill: rgba(0, 0, 0, 0.85);
+                filter: none;
+                animation: starSpin 3s linear infinite;
+            }
+
+            /* Irritated Scribble */
+            .irritated-svg {
+                transform: scale(0.8);
+            }
+
+            .expression-irritated .irritated-svg {
+                opacity: 1;
+                fill: rgba(0, 0, 0, 0.85);
+                filter: none;
+                animation: jitter 0.2s steps(3) infinite;
+            }
+
+            /* Popper Logic */
+            .popper-wrap {
+                width: 100%;
+                height: 100%;
+                position: relative;
+                display: none;
+                /* Hidden by default */
+                align-items: center;
+                justify-content: center;
+            }
+
+            .expression-popper .popper-wrap {
+                display: flex;
+            }
+
+            /* The Cone */
+            .popper-cone-svg {
+                width: 120%;
+                /* Increased size */
+                height: 120%;
+                fill: var(--cyan-glow);
+                /* Glowing Cyan */
+                filter: drop-shadow(0 0 15px var(--cyan-glow));
+                /* Neon effect */
+                position: absolute;
+                bottom: -10%;
+                left: -10%;
+                transform-origin: center bottom;
+            }
+
+            .expression-popper .popper-cone-svg {
+                animation: popRecoil 0.6s ease-in-out infinite;
+            }
+
+            /* Confetti Particles */
+            .confetti {
+                position: absolute;
+                width: 10px;
+                /* Increased size */
+                height: 10px;
+                border-radius: 50%;
+                background-color: var(--cyan-glow);
+                /* Glowing Cyan */
+                box-shadow: 0 0 10px var(--cyan-glow);
+                /* Neon glow */
+                opacity: 0;
+                top: 40%;
+                /* Start near cone opening */
+                left: 50%;
+            }
+
+            /* Animation trajectories for particles */
+            .expression-popper .c1 {
+                animation: explode1 0.6s ease-out infinite;
+            }
+
+            .expression-popper .c2 {
+                animation: explode2 0.6s ease-out infinite;
+            }
+
+            .expression-popper .c3 {
+                animation: explode3 0.6s ease-out infinite;
+            }
+
+            .expression-popper .c4 {
+                animation: explode4 0.6s ease-out infinite;
+            }
+
+            .expression-popper .c5 {
+                animation: explode5 0.6s ease-out infinite;
+            }
+
+            .expression-popper .c6 {
+                animation: explode6 0.6s ease-out infinite;
+            }
+
+            @keyframes popRecoil {
+
+                0 %,
+                100 % {
+                    transform: scale(1) rotate(0deg);
+                }
+
+                10% {
+                    transform: scale(0.9) rotate(-5deg);
+                }
+
+                /* Recoil */
+                20% {
+                    transform: scale(1.1) rotate(5deg);
+                }
+
+                /* Bounce back */
+                40% {
+                    transform: scale(1) rotate(0deg);
+                }
+            }
+
+            /* Particle Trajectories */
+            @keyframes explode1 {
+                0 % {
+                    transform: translate(0, 0) scale(0.5);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translate(-25px, -35px) scale(0);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes explode2 {
+                0 % {
+                    transform: translate(0, 0) scale(0.5);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translate(0px, -45px) scale(0);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes explode3 {
+                0 % {
+                    transform: translate(0, 0) scale(0.5);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translate(25px, -35px) scale(0);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes explode4 {
+                0 % {
+                    transform: translate(0, 0) scale(0.5);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translate(-15px, -20px) scale(0);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes explode5 {
+                0 % {
+                    transform: translate(0, 0) scale(0.5);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translate(15px, -20px) scale(0);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes explode6 {
+                0 % {
+                    transform: translate(0, 0) scale(0.5);
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translate(0px, -25px) scale(0);
+                    opacity: 0;
+                }
+            }
+
+
+            /* Hide SVGs in special modes */
+            .expression-debug .eye-svg,
+            .expression-inference .eye-svg,
+            .expression-irritated .eye-svg:not(.irritated-svg),
+            .expression-love .irritated-svg,
+            .expression-excited .irritated-svg,
+            .expression-neutral .irritated-svg,
+            .expression-playful .irritated-svg,
+            .expression-serious .irritated-svg,
+            .expression-focused .irritated-svg,
+            .expression-popper .eye-svg
+
+            /* Hide normal eye-svgs in popper mode since we use custom structure */
+                {
+                display: none;
+            }
+
+            @keyframes starSpin {
+                0 % {
+                    transform: scale(0.6) rotate(0deg);
+                }
+
+                50% {
+                    transform: scale(0.75) rotate(180deg);
+                }
+
+                100% {
+                    transform: scale(0.6) rotate(360deg);
+                }
+            }
+
+            @keyframes jitter {
+                0 % {
+                    transform: scale(0.8) translate(1px, 1px);
+                }
+
+                33% {
+                    transform: scale(0.8) translate(-1px, -2px);
+                }
+
+                66% {
+                    transform: scale(0.8) translate(-2px, 1px);
+                }
+
+                100% {
+                    transform: scale(0.8) translate(1px, -1px);
+                }
+            }
+
+            /* --- Terminal Content --- */
+            .term-container {
+                display: none;
+                width: 100%;
+                height: 100%;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 8px;
+                color: var(--cyan-glow);
+                line-height: 1.2;
+                overflow: hidden;
+                text-transform: uppercase;
+                text-shadow: 0 0 5px var(--cyan-dim);
+            }
+
+            .expression-debug .term-container {
+                display: flex;
+                flex-direction: column;
+                color: #003333;
+                /* Dark text for light background */
+                text-shadow: none;
+                /* Clean text on light background */
+                font-weight: bold;
+            }
+
+            /* Logs animation */
+            .logs-wrapper {
+                animation: scrollLogs 2s steps(8) infinite;
+            }
+
+            @keyframes scrollLogs {
+                0 % {
+                    transform: translateY(0);
+                }
+
+                100% {
+                    transform: translateY(-50%);
+                }
+            }
+
+            /* Htop Bars */
+            .htop-container {
+                display: flex;
+                flex-direction: row;
+                align-items: flex-end;
+                justify-content: space-between;
+                height: 100%;
+                width: 100%;
+                gap: 2px;
+            }
+
+            .bar {
+                background - color: var(--cyan-glow);
+                width: 20%;
+                box-shadow: 0 0 5px var(--cyan-dim);
+                animation: barBounce 0.5s infinite alternate ease-in-out;
+            }
+
+            .expression-debug .bar {
+                background - color: #003333;
+                /* Dark bars */
+                box-shadow: none;
+            }
+
+            .bar:nth-child(1) {
+                height: 80%;
+                animation-duration: 0.4s;
+            }
+
+            .bar:nth-child(2) {
+                height: 40%;
+                animation-duration: 0.6s;
+            }
+
+            .bar:nth-child(3) {
+                height: 90%;
+                animation-duration: 0.3s;
+            }
+
+            .bar:nth-child(4) {
+                height: 60%;
+                animation-duration: 0.5s;
+            }
+
+            @keyframes barBounce {
+                from {
+                    transform: scaleY(0.8);
+                }
+
+                to {
+                    transform: scaleY(1.2);
+                }
+            }
+
+            /* --- Inference Text Container --- */
+            .inference-container {
+                display: none;
+                width: 100%;
+                height: 100%;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 9px;
+                color: #003333;
+                /* Dark teal text */
+                line-height: 1.2;
+                overflow: hidden;
+                font-weight: bold;
+                word-break: break-all;
+            }
+
+            .expression-inference .inference-container {
+                display: block;
+            }
+
+            /* --- Elevator Scroll Arrows --- */
+
+            /* When scrolling, keep the eye block visible and glowing, but clip the arrows inside */
+            .scrolling-up .eye,
+            .scrolling-down .eye {
+                background - color: var(--cyan-glow) !important;
+                box-shadow:
+                    0 0 20px var(--cyan-glow),
+                    0 0 40px var(--cyan-glow),
+                    0 0 80px var(--cyan-dim) !important;
+                border: none !important;
+                width: 80px !important;
+                height: 80px !important;
+                border-radius: 20px !important;
+                overflow: hidden;
+                /* Clip the arrow as it moves through the block */
+            }
+
+            /* Hide hearts/stars/term/inference/irritated/popper if we are scrolling */
+            .scrolling-up .heart-svg,
+            .scrolling-down .heart-svg,
+            .scrolling-up .star-svg,
+            .scrolling-down .star-svg,
+            .scrolling-up .irritated-svg,
+            .scrolling-down .irritated-svg,
+            .scrolling-up .popper-wrap,
+            .scrolling-down .popper-wrap,
+            /* Updated to hide new wrapper */
+            .scrolling-up .term-container,
+            .scrolling-down .term-container,
+            .scrolling-up .inference-container,
+            .scrolling-down .inference-container {
+                display: none !important;
+            }
+
+            /* Force remove border from special modes if scrolling happens */
+            .scrolling-up.expression-debug .eye,
+            .scrolling-down.expression-debug .eye,
+            .scrolling-up.expression-inference .eye,
+            .scrolling-down.expression-inference .eye,
+            .scrolling-up.expression-irritated .eye,
+            .scrolling-down.expression-irritated .eye,
+            .scrolling-up.expression-popper .eye,
+            .scrolling-down.expression-popper .eye {
+                border: none !important;
+                background-color: var(--cyan-glow) !important;
+                align-items: center !important;
+                /* Recenter for arrow */
+                justify-content: center !important;
+                transform: none !important;
+                /* Reset rotation for irritated */
+            }
+
+            /* Show Arrows */
+            .arrow-up,
+            .arrow-down {
+                transform: scale(0.8);
+            }
+
+            .scrolling-up .arrow-up {
+                opacity: 1;
+                fill: rgba(0, 0, 0, 0.85) !important;
+                /* Dark arrow */
+                filter: none !important;
+                /* Remove glow from the arrow so it's crisp */
+                animation: elevatorUp 0.6s infinite linear;
+                display: block !important;
+            }
+
+            .scrolling-down .arrow-down {
+                opacity: 1;
+                fill: rgba(0, 0, 0, 0.85) !important;
+                /* Dark arrow */
+                filter: none !important;
+                animation: elevatorDown 0.6s infinite linear;
+                display: block !important;
+            }
+
+            @keyframes elevatorUp {
+                0 % {
+                    transform: translateY(50px) scale(0.8);
+                    opacity: 0;
+                }
+
+                25% {
+                    opacity: 1;
+                }
+
+                75% {
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translateY(-50px) scale(0.8);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes elevatorDown {
+                0 % {
+                    transform: translateY(-50px) scale(0.8);
+                    opacity: 0;
+                }
+
+                25% {
+                    opacity: 1;
+                }
+
+                75% {
+                    opacity: 1;
+                }
+
+                100% {
+                    transform: translateY(50px) scale(0.8);
+                    opacity: 0;
+                }
+            }
+
+            /* Blink Animation Class */
+            .blink {
+                animation: blinkAnim 0.15s ease-in-out forwards;
+            }
+
+            @keyframes blinkAnim {
+                0 % {
+                    transform: scaleY(1);
+                }
+
+                50% {
+                    transform: scaleY(0.1);
+                }
+
+                100% {
+                    transform: scaleY(1);
+                }
+            }
+
+            /* --- Controls --- */
+            .controls-container {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .controls {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                /* Adaptive grid */
+                gap: 10px;
+                background: rgba(255, 255, 255, 0.05);
+                padding: 20px;
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+                width: 100%;
+                max-width: 480px;
+                box-sizing: border-box;
+            }
+
+            /* Mobile adjustment for grid */
+            @media (min-width: 500px) {
+                .controls {
+                    grid - template - columns: repeat(5, 1fr);
+                    /* Fits better */
+                }
+
+                .controls button:last-child {
+                    grid - column: span 1;
+                }
+            }
+
+            .scroll-controls {
+                display: flex;
+                gap: 15px;
+                align-items: center;
+            }
+
+            button {
+                padding: 10px 14px;
+                background: transparent;
+                border: 2px solid rgba(255, 255, 255, 0.2);
+                color: rgba(255, 255, 255, 0.7);
+                border-radius: 12px;
+                cursor: pointer;
+                font-size: 0.8rem;
+                font-weight: 600;
+                transition: all 0.2s ease;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                white-space: nowrap;
+            }
+
+            button:hover {
+                border - color: var(--cyan-glow);
+                color: var(--cyan-glow);
+                box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+            }
+
+            button.active {
+                background: var(--cyan-glow);
+                border-color: var(--cyan-glow);
+                color: black;
+                box-shadow: 0 0 20px var(--cyan-glow);
+            }
+
+            button.scroll-btn {
+                border - color: rgba(0, 255, 255, 0.4);
+            }
+
+            button.scroll-btn:active {
+                transform: scale(0.95);
+            }
+
+            /* Sound Button Special Style */
+            #btn-sound {
+                width: auto;
+                border-color: #ff5555;
+                color: #ff5555;
+            }
+
+            #btn-sound.on {
+                border - color: #55ff55;
+                color: #55ff55;
+                box-shadow: 0 0 15px rgba(85, 255, 85, 0.3);
+            }
+
+            /* Floating Animation for the Head */
+            @keyframes float {
+                0 % {
+                    transform: translateY(0px);
+                }
+
+                50% {
+                    transform: translateY(-10px);
+                }
+
+                100% {
+                    transform: translateY(0px);
+                }
+            }
+
+            .floating {
+                animation: float 6s ease-in-out infinite;
+            }
+
+            .instruction {
+                margin - top: 20px;
+                font-size: 0.8rem;
+                color: rgba(255, 255, 255, 0.4);
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="robot-head floating">
+            <div class="screen">
+                <div class="eyes-container expression-neutral" id="face">
+                    <!-- Left Eye -->
+                    <div class="eye left">
+
+                        <!-- Term Logs (Debug Mode) -->
+                        <div class="term-container logs-container">
+                            <div class="logs-wrapper">
+                                <div>> SYS.INIT</div>
+                                <div>> CPU 98%</div>
+                                <div>> MEM OK</div>
+                                <div>> NET ON</div>
+                                <div>> 127.0.0.1</div>
+                                <div>> KERNEL</div>
+                                <div>> SYS.INIT</div>
+                                <div>> CPU 99%</div>
+                            </div>
+                        </div>
+
+                        <!-- Inference Text (Inference Mode) -->
+                        <div class="inference-container" id="inf-text-left"></div>
+
+                        <!-- Arrow Up -->
+                        <svg class="eye-svg arrow-up" viewBox="0 0 24 24">
+                            <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
+                        </svg>
+
+                        <!-- Arrow Down -->
+                        <svg class="eye-svg arrow-down" viewBox="0 0 24 24">
+                            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z" />
+                        </svg>
+
+                        <!-- Heart SVG -->
+                        <svg class="eye-svg heart-svg" viewBox="0 0 24 24">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+
+                        <!-- Star SVG -->
+                        <svg class="eye-svg star-svg" viewBox="0 0 24 24">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg>
+
+                        <!-- Irritated SVG -->
+                        <svg class="eye-svg irritated-svg" viewBox="0 0 24 24">
+                            <path d="M3.5,13.5L7.5,9.5L11.5,13.5L15.5,9.5L19.5,13.5" fill="none" stroke="black"
+                                stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+
+                        <!-- Popper Wrapper -->
+                        <div class="popper-wrap">
+                            <svg class="popper-cone-svg" viewBox="0 0 24 24">
+                                <path d="M12 22 L7 12 L17 12 Z" />
+                            </svg>
+                            <!-- Particles -->
+                            <div class="confetti c1"></div>
+                            <div class="confetti c2"></div>
+                            <div class="confetti c3"></div>
+                            <div class="confetti c4"></div>
+                            <div class="confetti c5"></div>
+                            <div class="confetti c6"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Eye -->
+                    <div class="eye right">
+                        <!-- Htop Bars (Debug Mode) -->
+                        <div class="term-container">
+                            <div class="htop-container">
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                                <div class="bar"></div>
+                            </div>
+                        </div>
+
+                        <!-- Inference Text (Inference Mode) -->
+                        <div class="inference-container" id="inf-text-right"></div>
+
+                        <!-- Arrow Up -->
+                        <svg class="eye-svg arrow-up" viewBox="0 0 24 24">
+                            <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
+                        </svg>
+
+                        <!-- Arrow Down -->
+                        <svg class="eye-svg arrow-down" viewBox="0 0 24 24">
+                            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z" />
+                        </svg>
+
+                        <!-- Heart SVG -->
+                        <svg class="eye-svg heart-svg" viewBox="0 0 24 24">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+
+                        <!-- Star SVG -->
+                        <svg class="eye-svg star-svg" viewBox="0 0 24 24">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg>
+
+                        <!-- Irritated SVG -->
+                        <svg class="eye-svg irritated-svg" viewBox="0 0 24 24">
+                            <path d="M3.5,13.5L7.5,9.5L11.5,13.5L15.5,9.5L19.5,13.5" fill="none" stroke="black"
+                                stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+
+                        <!-- Popper Wrapper -->
+                        <div class="popper-wrap">
+                            <svg class="popper-cone-svg" viewBox="0 0 24 24">
+                                <path d="M12 22 L7 12 L17 12 Z" />
+                            </svg>
+                            <!-- Particles -->
+                            <div class="confetti c1"></div>
+                            <div class="confetti c2"></div>
+                            <div class="confetti c3"></div>
+                            <div class="confetti c4"></div>
+                            <div class="confetti c5"></div>
+                            <div class="confetti c6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-container">
+            <div class="controls">
+                <button onclick="setExpression('neutral')" class="active" id="btn-neutral">Neutral</button>
+                <button onclick="setExpression('playful')" id="btn-playful">Playful</button>
+                <button onclick="setExpression('focused')" id="btn-focused">Focused</button>
+                <button onclick="setExpression('love')" id="btn-love">Love</button>
+                <button onclick="setExpression('excited')" id="btn-excited">Excited</button>
+                <button onclick="setExpression('serious')" id="btn-serious">Serious</button>
+                <button onclick="setExpression('debug')" id="btn-debug">Debug</button>
+                <button onclick="setExpression('inference')" id="btn-inference">Inference</button>
+                <button onclick="setExpression('irritated')" id="btn-irritated">Irritated</button>
+                <button onclick="setExpression('popper')" id="btn-popper">Popper</button>
+            </div>
+
+            <div class="scroll-controls">
+                <button class="scroll-btn" onclick="simulateScroll('up')">▲ Scroll</button>
+                <button id="btn-sound" onclick="toggleSound()">🔇 Sound</button>
+                <button class="scroll-btn" onclick="simulateScroll('down')">▼ Scroll</button>
+            </div>
+        </div>
+
+        <div class="instruction">Interact with buttons, scroll wheel, or move mouse</div>
+
+        <script>
+            const face = document.getElementById('face');
+            let currentExpression = 'neutral';
+            let blinkInterval;
+            let scrollTimeout;
+
+            // Physics/Animation Variables
+            let mouseX = 0;
+            let mouseY = 0;
+            let scrollY_offset = 0;
+
+            const MOUSE_SENSITIVITY = 50;
+            const SCROLL_SENSITIVITY = 60;
+            const SCROLL_DECAY = 0.92;
+
+            // --- AUDIO ENGINE ---
+            let audioCtx;
+            let isSoundEnabled = false;
+
+            function initAudio() {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            }
+
+            function toggleSound() {
+                const btn = document.getElementById('btn-sound');
+                if (!isSoundEnabled) {
+                    initAudio();
+                    isSoundEnabled = true;
+                    btn.innerText = "🔊 Sound";
+                    btn.classList.add('on');
+                    playTone(600, 'sine', 0.1); // Activation chirp
+                } else {
+                    isSoundEnabled = false;
+                    btn.innerText = "🔇 Sound";
+                    btn.classList.remove('on');
+                }
+            }
+
+            function playTone(freq, type = 'sine', duration = 0.1, startTime = 0) {
+                if (!isSoundEnabled || !audioCtx) return;
+
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + startTime);
+
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime + startTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + startTime + duration);
+
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                osc.start(audioCtx.currentTime + startTime);
+                osc.stop(audioCtx.currentTime + startTime + duration);
+            }
+
+            // Complex Sound Effects
+            function playSoundForExpression(type) {
+                if (!isSoundEnabled) return;
+
+                switch (type) {
+                    case 'neutral':
+                        // Quick friendly reset chirp
+                        playTone(500, 'sine', 0.1);
+                        playTone(800, 'sine', 0.1, 0.05);
+                        break;
+                    case 'playful':
+                        // Excited rising "Whoo!"
+                        playTone(600, 'square', 0.1);
+                        playTone(1200, 'square', 0.2, 0.08);
+                        break;
+                    case 'focused':
+                        // Computery mechanical sound
+                        playTone(300, 'sawtooth', 0.15);
+                        playTone(300, 'sawtooth', 0.15, 0.1);
+                        break;
+                    case 'love':
+                        // Major Chord Arpeggio (Magic/Happy)
+                        playTone(523.25, 'sine', 0.3, 0);   // C5
+                        playTone(659.25, 'sine', 0.3, 0.1); // E5
+                        playTone(783.99, 'sine', 0.4, 0.2); // G5
+                        break;
+                    case 'excited':
+                        // Rapid High "Power Up" sequence
+                        playTone(880, 'triangle', 0.1, 0);    // A5
+                        playTone(1108, 'triangle', 0.1, 0.1); // C#6
+                        playTone(1318, 'triangle', 0.1, 0.2); // E6
+                        playTone(1760, 'triangle', 0.2, 0.3); // A6
+                        break;
+                    case 'serious':
+                        // Admin/Access Granted Low Double Beep
+                        playTone(200, 'square', 0.1);
+                        playTone(250, 'square', 0.1, 0.15);
+                        break;
+                    case 'debug':
+                        // Rapid Computing Data Noise
+                        for (let i = 0; i < 8; i++) {
+                            let f = 400 + Math.random() * 400;
+                            playTone(f, 'square', 0.05, i * 0.06);
+                        }
+                        break;
+                    case 'inference':
+                        // Initial thinking chirp
+                        playTone(800, 'sine', 0.05);
+                        break;
+                    case 'irritated':
+                        // Grumpy buzz
+                        playTone(150, 'sawtooth', 0.1);
+                        playTone(120, 'sawtooth', 0.15, 0.1);
+                        break;
+                    case 'popper':
+                        // Pop sound and cheer
+                        playTone(150, 'square', 0.05); // Pop
+                        setTimeout(() => {
+                            playTone(880, 'sine', 0.1);
+                            playTone(1100, 'sine', 0.1, 0.05);
+                            playTone(1320, 'sine', 0.2, 0.1);
+                        }, 100);
+                        break;
+                }
+            }
+
+            function playScrollSound(direction) {
+                if (!isSoundEnabled || !audioCtx) return;
+
+                // Synthesize a "Servo" motor sound
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                // Sawtooth sounds mechanical
+                osc.type = 'sawtooth';
+
+                const now = audioCtx.currentTime;
+
+                if (direction === 'up') {
+                    // Pitch slide UP
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.linearRampToValueAtTime(600, now + 0.4);
+                } else {
+                    // Pitch slide DOWN
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.linearRampToValueAtTime(200, now + 0.4);
+                }
+
+                // Low volume for motor hum
+                gainNode.gain.setValueAtTime(0.05, now);
+                gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
+
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+
+            // --- MAIN LOGIC ---
+
+            function setExpression(type) {
+                if (currentExpression !== type) {
+                    playSoundForExpression(type);
+                }
+
+                currentExpression = type;
+
+                // Remove all specific classes to reset
+                face.className = 'eyes-container';
+                void face.offsetWidth;
+
+                face.classList.add(`expression-${type}`);
+
+                document.querySelectorAll('.controls button').forEach(btn => btn.classList.remove('active'));
+                const activeBtn = document.getElementById(`btn-${type}`);
+                if (activeBtn) activeBtn.classList.add('active');
+
+                clearInterval(blinkInterval);
+                // Only blink in Neutral mode.
+                if (type === 'neutral') {
+                    startBlinking();
+                } else if (type === 'inference') {
+                    startInference();
+                }
+            }
+
+            // Inference Animation Logic
+            function startInference() {
+                const leftText = document.getElementById('inf-text-left');
+                const rightText = document.getElementById('inf-text-right');
+
+                const messages = [
+                    "Thinking...",
+                    "Processing",
+                    "Inference",
+                    "Tokenize",
+                    "Context",
+                    "Loading...",
+                    "Analysing"
+                ];
+
+                function animate(element) {
+                    if (currentExpression !== 'inference') return;
+
+                    element.innerText = "";
+                    const msg = messages[Math.floor(Math.random() * messages.length)];
+                    let i = 0;
+
+                    const typeInterval = setInterval(() => {
+                        if (currentExpression !== 'inference') {
+                            clearInterval(typeInterval);
+                            return;
+                        }
+
+                        element.innerText += msg[i];
+                        i++;
+
+                        // Sound: Tiny clicking for token generation
+                        if (isSoundEnabled && Math.random() > 0.5) {
+                            playTone(800 + Math.random() * 400, 'square', 0.02);
+                        }
+
+                        if (i >= msg.length) {
+                            clearInterval(typeInterval);
+                            setTimeout(() => animate(element), 1000); // Pause before next word
+                        }
+                    }, 100); // Speed of typing
+                }
+
+                // Start animations slightly offset
+                animate(leftText);
+                setTimeout(() => animate(rightText), 400);
+            }
+
+
+            function triggerBlink() {
+                if (currentExpression !== 'neutral' || face.classList.contains('scrolling-up') || face.classList.contains('scrolling-down')) return;
+
+                const eyes = document.querySelectorAll('.eye');
+                eyes.forEach(eye => {
+                    eye.classList.remove('blink');
+                    void eye.offsetWidth;
+                    eye.classList.add('blink');
+                });
+            }
+
+            function startBlinking() {
+                function loop() {
+                    if (currentExpression !== 'neutral') return;
+                    triggerBlink();
+                    const randomDelay = Math.random() * 4000 + 2000;
+                    blinkInterval = setTimeout(loop, randomDelay);
+                }
+                blinkInterval = setTimeout(loop, 2000);
+            }
+
+            startBlinking();
+
+            // 1. Mouse Tracking
+            document.addEventListener('mousemove', (e) => {
+                const xRel = (e.clientX / window.innerWidth) - 0.5;
+                const yRel = (e.clientY / window.innerHeight) - 0.5;
+
+                mouseX = xRel * MOUSE_SENSITIVITY;
+                mouseY = yRel * MOUSE_SENSITIVITY;
+            });
+
+            // 2. Wheel Event
+            document.addEventListener('wheel', (e) => {
+                // Prevent spamming sound on continuous scroll
+                // Only play if a new "scroll event" starts after a short cooldown
+                if (!face.classList.contains('scrolling-up') && !face.classList.contains('scrolling-down')) {
+                    const dirString = e.deltaY > 0 ? 'down' : 'up';
+                    playScrollSound(dirString);
+                }
+
+                const direction = e.deltaY > 0 ? 1 : -1;
+                const dirString = e.deltaY > 0 ? 'down' : 'up';
+
+                applyScrollForce(direction * 10);
+                showDirectionalArrow(dirString);
+            });
+
+            // 3. Button Simulation
+            function simulateScroll(direction) {
+                playScrollSound(direction);
+                const force = direction === 'down' ? 40 : -40;
+                scrollY_offset = force;
+                showDirectionalArrow(direction);
+            }
+
+            function applyScrollForce(amount) {
+                scrollY_offset += amount;
+                scrollY_offset = Math.max(Math.min(scrollY_offset, SCROLL_SENSITIVITY), -SCROLL_SENSITIVITY);
+            }
+
+            // Show arrow effect
+            function showDirectionalArrow(direction) {
+                face.classList.remove('scrolling-up', 'scrolling-down');
+                void face.offsetWidth;
+
+                face.classList.add(`scrolling-${direction}`);
+
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    face.classList.remove('scrolling-up', 'scrolling-down');
+                }, 800);
+            }
+
+            // 4. Animation Loop
+            function animate() {
+                scrollY_offset *= SCROLL_DECAY;
+                if (Math.abs(scrollY_offset) < 0.1) scrollY_offset = 0;
+
+                const totalX = mouseX;
+                const totalY = mouseY + scrollY_offset;
+
+                face.style.transform = `translate(${totalX}px, ${totalY}px)`;
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+        </script>
+    </body>
+
+    </html>

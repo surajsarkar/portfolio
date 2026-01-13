@@ -1,0 +1,311 @@
+/* DobbyFace - Mini Robot Face Component for Navbar */
+.dobby-face {
+  --screen-black: #050505;
+  --cyan-glow: #00ffff;
+  --cyan-dim: #00cccc;
+  --bezel-color: #333;
+  --glass-reflection: rgba(255, 255, 255, 0.08);
+}
+
+/* Robot Head Container - Navbar Size */
+.dobby-face .robot-head {
+  position: relative;
+  width: 80px;
+  height: 56px;
+  background: var(--bezel-color);
+  border-radius: 14px;
+  padding: 4px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+
+.dobby-face .robot-head:hover {
+  transform: scale(1.08);
+}
+
+/* Screen */
+.dobby-face .screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--screen-black);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
+}
+
+/* Glossy Reflection */
+.dobby-face .screen::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(135deg,
+      transparent 0%,
+      transparent 40%,
+      var(--glass-reflection) 50%,
+      transparent 60%);
+  pointer-events: none;
+  border-radius: 0 9px 9px 0;
+  opacity: 0.6;
+  z-index: 10;
+}
+
+/* Scanlines */
+.dobby-face .screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 2px);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Eyes Container */
+.dobby-face .eyes-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  transition: transform 0.1s ease-out;
+}
+
+/* Individual Eye */
+.dobby-face .eye {
+  position: relative;
+  background-color: var(--cyan-glow);
+  box-shadow:
+    0 0 6px var(--cyan-glow),
+    0 0 12px var(--cyan-glow),
+    0 0 20px var(--cyan-dim);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Expression: Neutral */
+.dobby-face .expression-neutral .eye {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+/* Expression: Focused (Squint) */
+.dobby-face .expression-focused .eye {
+  width: 22px;
+  height: 7px;
+  border-radius: 3px;
+}
+
+/* Expression: Love (Hearts) */
+.dobby-face .expression-love .eye {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+/* Expression: Excited (Stars) */
+.dobby-face .expression-excited .eye {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+/* Expression: Playful (Wink) */
+.dobby-face .expression-playful .eye.left {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+.dobby-face .expression-playful .eye.right {
+  height: 5px;
+  width: 16px;
+  border-radius: 50%;
+  background-color: transparent;
+  box-shadow: 0 3px 6px var(--cyan-glow);
+  border-top: 3px solid var(--cyan-glow);
+  transform: rotate(-5deg);
+}
+
+/* Expression: Serious (Spectacles) */
+.dobby-face .expression-serious .eye {
+  width: 22px;
+  height: 14px;
+  border-radius: 4px;
+  background-color: rgba(0, 255, 255, 0.15);
+  border: 2px solid var(--cyan-glow);
+  box-shadow: 0 0 6px var(--cyan-glow), inset 0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+/* Spectacles Bridge */
+.dobby-face .eyes-container.expression-serious::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 2px;
+  background-color: var(--cyan-glow);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  box-shadow: 0 0 5px var(--cyan-glow);
+}
+
+/* Expression: Irritated */
+.dobby-face .expression-irritated .eye {
+  width: 22px;
+  height: 10px;
+  border-radius: 3px;
+  background-color: var(--cyan-glow);
+  box-shadow:
+    0 0 8px var(--cyan-glow),
+    0 0 16px var(--cyan-glow);
+}
+
+.dobby-face .expression-irritated .eye.left {
+  transform: rotate(15deg) translateY(3px);
+}
+
+.dobby-face .expression-irritated .eye.right {
+  transform: rotate(-15deg) translateY(3px);
+}
+
+/* Irritated SVG Scribble */
+.dobby-face .irritated-svg {
+  transform: scale(0.8);
+}
+
+.dobby-face .expression-irritated .irritated-svg {
+  opacity: 1;
+  fill: rgba(0, 0, 0, 0.85);
+  filter: none;
+  animation: dobby-jitter 0.2s steps(3) infinite;
+}
+
+@keyframes dobby-jitter {
+  0% {
+    transform: scale(0.8) translate(1px, 1px);
+  }
+
+  33% {
+    transform: scale(0.8) translate(-1px, -1px);
+  }
+
+  66% {
+    transform: scale(0.8) translate(-1px, 1px);
+  }
+
+  100% {
+    transform: scale(0.8) translate(1px, -1px);
+  }
+}
+
+/* SVG Icons in Eyes */
+.dobby-face .eye-svg {
+  width: 100%;
+  height: 100%;
+  fill: var(--cyan-glow);
+  filter: drop-shadow(0 0 3px var(--cyan-glow));
+  opacity: 0;
+  position: absolute;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+/* Heart */
+.dobby-face .heart-svg {
+  transform: scale(0.5);
+}
+
+.dobby-face .expression-love .heart-svg {
+  opacity: 1;
+  transform: scale(0.6);
+  fill: rgba(0, 0, 0, 0.85);
+  filter: none;
+}
+
+/* Star */
+.dobby-face .star-svg {
+  transform: scale(0.5);
+}
+
+.dobby-face .expression-excited .star-svg {
+  opacity: 1;
+  fill: rgba(0, 0, 0, 0.85);
+  filter: none;
+  animation: dobby-star-spin 3s linear infinite;
+}
+
+@keyframes dobby-star-spin {
+  0% {
+    transform: scale(0.6) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(0.7) rotate(180deg);
+  }
+
+  100% {
+    transform: scale(0.6) rotate(360deg);
+  }
+}
+
+/* Blink Animation */
+.dobby-face .blink {
+  animation: dobby-blink 0.15s ease-in-out forwards;
+}
+
+@keyframes dobby-blink {
+  0% {
+    transform: scaleY(1);
+  }
+
+  50% {
+    transform: scaleY(0.1);
+  }
+
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/* Floating Animation */
+.dobby-face .floating {
+  animation: dobby-float 6s ease-in-out infinite;
+}
+
+@keyframes dobby-float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
