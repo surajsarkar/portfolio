@@ -125,7 +125,7 @@ const Hero: React.FC = () => {
         <p
           className={`max-w-2xl text-lg md:text-xl text-gray-400 font-medium leading-relaxed transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
         >
-          Specializing in scalable backend architechture, API development and LLM integration.
+          I like building systems that make AI work.
         </p>
       </div>
     </section>
