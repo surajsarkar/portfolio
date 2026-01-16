@@ -13,8 +13,8 @@ const App: React.FC = () => {
       <Header />
       <main className="flex-grow">
         <Hero />
-        <Skills />
         <Projects />
+        <Skills />
         <Contact />
       </main>
       <Footer />
