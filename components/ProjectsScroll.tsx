@@ -263,7 +263,7 @@ const ProjectsScroll: React.FC = () => {
                 >
                     <div className="text-center">
                         <h2
-                            className="text-7xl md:text-8xl lg:text-[12rem] font-black text-white uppercase tracking-tighter"
+                            className="text-[8vw] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black text-white uppercase tracking-tighter"
                             style={{
                                 textShadow: '0 0 80px rgba(255, 255, 255, 0.3), 0 4px 30px rgba(0, 0, 0, 0.9)',
                                 lineHeight: '0.85',
