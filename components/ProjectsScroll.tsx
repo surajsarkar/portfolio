@@ -240,6 +240,15 @@ const ProjectsScroll: React.FC = () => {
                 ref={stickyRef}
                 className="relative w-full h-screen overflow-hidden bg-background-dark"
             >
+                {/* Top ambient glow - matches hero section for continuity */}
+                <div
+                    className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[120vw] h-[50vh] pointer-events-none"
+                    style={{
+                        background: 'radial-gradient(ellipse at center, rgba(83, 210, 45, 0.08) 0%, transparent 70%)',
+                        filter: 'blur(80px)'
+                    }}
+                />
+
                 {/* Simple stars background */}
                 <ProjectsStars count={400} />
 
