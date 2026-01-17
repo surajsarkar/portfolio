@@ -3,7 +3,7 @@ import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Skills from './components/Skills';
-import Projects from './components/Projects';
+import ProjectsScroll from './components/ProjectsScroll';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
@@ -13,7 +13,7 @@ const App: React.FC = () => {
       <Header />
       <main className="flex-grow">
         <Hero />
-        <Projects />
+        <ProjectsScroll />
         <Skills />
         <Contact />
       </main>

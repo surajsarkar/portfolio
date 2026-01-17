@@ -1,0 +1,42 @@
+[
+    {
+        "id": "1",
+        "title": "vLLM Inference Engine",
+        "description": "High-throughput LLM serving system with PagedAttention for optimal memory management. Achieves 24x higher throughput than HuggingFace Transformers.",
+        "expression": "excited",
+        "image": "https://picsum.photos/seed/vllm/800/500",
+        "tags": [
+            "Python",
+            "CUDA",
+            "Transformers"
+        ],
+        "github": "https://github.com/vllm-project/vllm"
+    },
+    {
+        "id": "2",
+        "title": "Watch Tower",
+        "description": "Real-time infrastructure monitoring dashboard with anomaly detection. Visualizes cluster health across regions with sub-second latency.",
+        "expression": "love",
+        "image": "https://picsum.photos/seed/watchtower/800/500",
+        "tags": [
+            "TypeScript",
+            "Kubernetes",
+            "Prometheus"
+        ],
+        "article": "https://blog.example.com/watchtower"
+    },
+    {
+        "id": "3",
+        "title": "PSQL Query Engine",
+        "description": "Distributed SQL query engine with intelligent query planning and parallel execution. Handles petabyte-scale analytics.",
+        "expression": "excited",
+        "image": "https://picsum.photos/seed/psql/800/500",
+        "tags": [
+            "Rust",
+            "PostgreSQL",
+            "Arrow"
+        ],
+        "github": "https://github.com/example/psql-engine",
+        "article": "https://blog.example.com/psql-engine"
+    }
+]

@@ -182,16 +182,30 @@ const DobbyFace: React.FC = () => {
             setExpression('neutral');
         };
 
+        // Generic expression handler for project cards
+        const handleSetExpression = (e: Event) => {
+            const customEvent = e as CustomEvent<{ expression: Expression }>;
+            const newExpression = customEvent.detail?.expression;
+            if (newExpression && ['neutral', 'irritated', 'love', 'excited', 'scrollUp', 'scrollDown'].includes(newExpression)) {
+                setExpression(newExpression);
+                // Play corresponding sound
+                if (newExpression === 'love') playLoveSound();
+                else if (newExpression === 'excited') playExcitedSound();
+            }
+        };
+
         window.addEventListener('dobby-show-love', handleShowLove);
         window.addEventListener('dobby-hide-love', handleHideLove);
         window.addEventListener('dobby-show-excited', handleShowExcited);
         window.addEventListener('dobby-hide-excited', handleHideExcited);
+        window.addEventListener('dobby-set-expression', handleSetExpression);
 
         return () => {
             window.removeEventListener('dobby-show-love', handleShowLove);
             window.removeEventListener('dobby-hide-love', handleHideLove);
             window.removeEventListener('dobby-show-excited', handleShowExcited);
             window.removeEventListener('dobby-hide-excited', handleHideExcited);
+            window.removeEventListener('dobby-set-expression', handleSetExpression);
         };
     }, [playLoveSound, playExcitedSound]);
 

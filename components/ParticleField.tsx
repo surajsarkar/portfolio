@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { gsap } from 'gsap';
 
 interface ParticleFieldProps {
@@ -6,11 +6,32 @@ interface ParticleFieldProps {
     color?: string;
 }
 
-const ParticleField: React.FC<ParticleFieldProps> = ({
+export interface ParticleFieldRef {
+    setWarpSpeed: (speed: number) => void;
+}
+
+interface Star {
+    element: HTMLDivElement;
+    baseY: number;
+    baseOpacity: number;
+    size: number;
+}
+
+const ParticleField = forwardRef<ParticleFieldRef, ParticleFieldProps>(({
     starCount = 400,
     color = '#ffffff'
-}) => {
+}, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const starsRef = useRef<Star[]>([]);
+    const warpSpeedRef = useRef(0);
+    const animationFrameRef = useRef<number | null>(null);
+
+    // Expose warp control to parent
+    useImperativeHandle(ref, () => ({
+        setWarpSpeed: (speed: number) => {
+            warpSpeedRef.current = Math.max(0, Math.min(1, speed));
+        }
+    }));
 
     useEffect(() => {
         const container = containerRef.current;
@@ -19,26 +40,25 @@ const ParticleField: React.FC<ParticleFieldProps> = ({
         const width = container.offsetWidth;
         const height = container.offsetHeight;
 
-        // Create stars - most are static, only some twinkle
-        const stars: HTMLDivElement[] = [];
+        // Create stars
+        const stars: Star[] = [];
         const twinklingStars: HTMLDivElement[] = [];
 
         for (let i = 0; i < starCount; i++) {
             const star = document.createElement('div');
 
-            // Vary star sizes for depth - more small stars, fewer large ones
+            // Vary star sizes for depth
             const sizeRandom = Math.random();
             let size: number;
             if (sizeRandom < 0.75) {
-                size = Math.random() * 1 + 0.3; // 75% tiny stars
+                size = Math.random() * 1 + 0.3;
             } else if (sizeRandom < 0.92) {
-                size = Math.random() * 1.5 + 1; // 17% medium stars
+                size = Math.random() * 1.5 + 1;
             } else {
-                size = Math.random() * 2 + 2; // 8% bright stars
+                size = Math.random() * 2 + 2;
             }
 
             const x = Math.random() * width;
-            // Concentrate more stars in the vertical center (behind heading)
             const centerBias = Math.random();
             let y: number;
             if (centerBias < 0.8) {
@@ -47,10 +67,9 @@ const ParticleField: React.FC<ParticleFieldProps> = ({
                 y = Math.random() * height;
             }
 
-            // Opacity based on size
             const baseOpacity = size < 1 ? 0.25 + Math.random() * 0.25 : 0.4 + Math.random() * 0.4;
 
-            // Add slight color variation for realism
+            // Color variation
             const colorVariation = Math.random();
             let starColor = color;
             if (colorVariation > 0.92) {
@@ -70,24 +89,27 @@ const ParticleField: React.FC<ParticleFieldProps> = ({
                 left: ${x}px;
                 top: ${y}px;
                 box-shadow: 0 0 ${size}px ${starColor}60;
+                will-change: transform, opacity, height;
+                transition: none;
             `;
 
             container.appendChild(star);
-            stars.push(star);
+            stars.push({ element: star, baseY: y, baseOpacity, size });
 
-            // Only animate ~1% of stars (max 25) for performance - only bright ones
             if (sizeRandom > 0.92 && twinklingStars.length < 25) {
                 twinklingStars.push(star);
             }
         }
 
-        // Animate only the twinkling stars - slow but noticeable
+        starsRef.current = stars;
+
+        // Twinkling animation
         twinklingStars.forEach((star, index) => {
-            const delay = index * 0.3; // Stagger animations
+            const delay = index * 0.3;
             const baseOpacity = parseFloat(star.style.opacity);
             gsap.to(star, {
-                opacity: baseOpacity * 0.25, // More pronounced twinkle
-                duration: 2 + Math.random() * 2, // 2-4 seconds - slow but visible
+                opacity: baseOpacity * 0.25,
+                duration: 2 + Math.random() * 2,
                 repeat: -1,
                 yoyo: true,
                 ease: 'sine.inOut',
@@ -95,7 +117,7 @@ const ParticleField: React.FC<ParticleFieldProps> = ({
             });
         });
 
-        // Add a subtle "Milky Way band" gradient overlay
+        // Milky Way band
         const milkyWayBand = document.createElement('div');
         milkyWayBand.style.cssText = `
             position: absolute;
@@ -119,7 +141,53 @@ const ParticleField: React.FC<ParticleFieldProps> = ({
         `;
         container.appendChild(milkyWayBand);
 
-        // Create shooting star function (reduced frequency)
+        // Warp speed animation loop
+        let lastTime = 0;
+        const animate = (currentTime: number) => {
+            const deltaTime = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+
+            const warp = warpSpeedRef.current;
+
+            if (warp > 0.01) {
+                stars.forEach((star, index) => {
+                    const { element, baseY, baseOpacity, size } = star;
+
+                    // Calculate warp stretch (stars become streaks)
+                    const stretchFactor = 1 + warp * 30; // Max 31x height
+                    const blurFactor = warp * 3; // Max 3px blur
+
+                    // Move stars downward based on warp speed
+                    const speed = warp * 1500 * deltaTime * (1 + index % 5 * 0.2);
+                    star.baseY = (star.baseY + speed) % (container.offsetHeight + 100);
+
+                    // Apply transforms
+                    element.style.transform = `translateY(${star.baseY - baseY}px) scaleY(${stretchFactor})`;
+                    element.style.filter = `blur(${blurFactor}px)`;
+                    element.style.opacity = `${Math.min(1, baseOpacity + warp * 0.5)}`;
+
+                    // Make stars glow more intensely during warp
+                    if (warp > 0.5) {
+                        element.style.boxShadow = `0 0 ${size * 3}px #fff, 0 0 ${size * 6}px rgba(83, 210, 45, ${warp * 0.5})`;
+                    }
+                });
+            } else {
+                // Reset to normal
+                stars.forEach((star) => {
+                    const { element, baseOpacity, size } = star;
+                    element.style.transform = 'translateY(0) scaleY(1)';
+                    element.style.filter = 'blur(0px)';
+                    element.style.opacity = `${baseOpacity}`;
+                    element.style.boxShadow = `0 0 ${size}px ${color}60`;
+                });
+            }
+
+            animationFrameRef.current = requestAnimationFrame(animate);
+        };
+
+        animationFrameRef.current = requestAnimationFrame(animate);
+
+        // Shooting star function
         const createShootingStar = () => {
             const shootingStar = document.createElement('div');
             const length = 80 + Math.random() * 100;
@@ -171,14 +239,13 @@ const ParticleField: React.FC<ParticleFieldProps> = ({
                 }, '-=0.2');
         };
 
-        // Shooting stars less frequently (every 6-10 seconds)
         const randomShootingStarInterval = setInterval(() => {
-            if (Math.random() > 0.5) {
+            if (Math.random() > 0.5 && warpSpeedRef.current < 0.3) {
                 createShootingStar();
             }
         }, 6000 + Math.random() * 4000);
 
-        // Create Voyager-like satellite
+        // Satellite
         const createSatellite = () => {
             const satellite = document.createElement('div');
             const startX = width * 0.3 + Math.random() * width * 0.4;
@@ -244,8 +311,11 @@ const ParticleField: React.FC<ParticleFieldProps> = ({
         return () => {
             clearInterval(randomShootingStarInterval);
             clearTimeout(satelliteTimeout);
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
             twinklingStars.forEach(star => gsap.killTweensOf(star));
-            stars.forEach(star => star.remove());
+            stars.forEach(star => star.element.remove());
             milkyWayBand.remove();
         };
     }, [starCount, color]);
@@ -257,6 +327,8 @@ const ParticleField: React.FC<ParticleFieldProps> = ({
             style={{ zIndex: 0, background: 'transparent' }}
         />
     );
-};
+});
+
+ParticleField.displayName = 'ParticleField';
 
 export default ParticleField;

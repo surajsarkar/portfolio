@@ -3,11 +3,12 @@ export interface Project {
   id: string;
   title: string;
   description: string;
+  expression: 'neutral' | 'irritated' | 'love' | 'excited';
+  image: string;
+  gif?: string;
+  article?: string;
+  github?: string;
   tags: string[];
-  icon: string;
-  link: string;
-  imageUrl?: string;
-  caseStudyLink?: string;
 }
 
 export interface Technology {
