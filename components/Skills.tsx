@@ -89,6 +89,7 @@ const Skills: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const constellationRef = useRef<HTMLDivElement>(null);
   const centerRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLSpanElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -144,6 +145,24 @@ const Skills: React.FC = () => {
           },
         }
       );
+
+      // Heading - animate from large (like Projects) to smaller
+      if (headingRef.current) {
+        gsap.fromTo(
+          headingRef.current,
+          { fontSize: '8rem' },
+          {
+            fontSize: '1.5rem',
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top 80%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
 
       // Category nodes - fly in from outside
       const categoryNodes = containerRef.current?.querySelectorAll('.category-node');
@@ -363,9 +382,11 @@ const Skills: React.FC = () => {
               }}
             >
               <span
-                className="text-xl md:text-2xl font-black text-white tracking-wider"
+                ref={headingRef}
+                className="font-black text-white tracking-wider uppercase"
                 style={{
                   textShadow: '0 0 20px rgba(255, 255, 255, 0.3)',
+                  fontSize: '8rem', // Start large like Projects, animate to small
                 }}
               >
                 TOOLCHAIN
