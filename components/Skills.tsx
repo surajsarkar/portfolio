@@ -1,5 +1,9 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Skill categories with compass positions
 const SKILL_CATEGORIES = [
@@ -107,17 +111,100 @@ const Skills: React.FC = () => {
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  // Intersection observer
+  // Intersection observer + scroll animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) setIsVisible(true);
       },
-      { threshold: 0.2 }
+      { threshold: 0.1 }
     );
     if (containerRef.current) observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, []);
+
+  // GSAP Scroll Animation
+  useEffect(() => {
+    if (!containerRef.current || !centerRef.current || dimensions.width === 0) return;
+
+    const ctx = gsap.context(() => {
+      // Center - scale up from 0
+      gsap.fromTo(
+        centerRef.current,
+        { scale: 0, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.8,
+          ease: 'back.out(1.5)',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top 80%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+
+      // Category nodes - fly in from outside
+      const categoryNodes = containerRef.current?.querySelectorAll('.category-node');
+      if (categoryNodes) {
+        gsap.fromTo(
+          categoryNodes,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.1,
+            ease: 'back.out(1.2)',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top 70%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
+
+      // Skill nodes - fade in with stagger
+      const skillNodes = containerRef.current?.querySelectorAll('.skill-node');
+      if (skillNodes) {
+        gsap.fromTo(
+          skillNodes,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.4,
+            stagger: 0.05,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top 60%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
+
+      // SVG lines - draw in
+      gsap.fromTo(
+        svgRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 1,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top 75%',
+            toggleActions: 'play none none reverse',
+          },
+        }
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [dimensions.width]);
 
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
@@ -350,7 +437,7 @@ const Skills: React.FC = () => {
             return (
               <div
                 key={category.name}
-                className={`absolute z-20 transition-all duration-500 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
+                className="category-node absolute z-20"
                 style={{
                   left: catPos.x,
                   top: catPos.y,
@@ -373,7 +460,7 @@ const Skills: React.FC = () => {
               return (
                 <div
                   key={skill}
-                  className={`absolute z-10 transition-all duration-500 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
+                  className="skill-node absolute z-10"
                   style={{
                     left: skillPos.x,
                     top: skillPos.y,
