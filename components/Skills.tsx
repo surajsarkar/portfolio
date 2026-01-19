@@ -133,13 +133,12 @@ const Skills: React.FC = () => {
     };
   }, [centerX, centerY]);
 
-  // Skill position - relative to its category, not the center
+  // Skill position - semi-circle around category facing OUTWARD (away from center)
   const getSkillPosition = useCallback((categoryAngle: number, skillIndex: number, totalSkills: number) => {
     const catPos = getCategoryPosition(categoryAngle);
 
-    // Spread skills in an arc BEHIND the category (away from center)
-    // Dynamic spread: more skills = wider arc
-    const arcSpread = totalSkills * 25; // 25 degrees per skill
+    // Distribute skills in a 180° arc facing AWAY from center
+    const arcSpread = 180; // Semi-circle
     const startAngle = categoryAngle - arcSpread / 2;
     const angleStep = totalSkills > 1 ? arcSpread / (totalSkills - 1) : 0;
     const skillAngle = totalSkills === 1 ? categoryAngle : startAngle + skillIndex * angleStep;
