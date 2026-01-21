@@ -175,7 +175,7 @@ const NearContent: React.FC<{
             <div className="text-center mb-16 px-4">
                 {/* Line 1 - The Foundation */}
                 <p className="heading-line-1 text-xl md:text-2xl lg:text-3xl font-medium text-gray-500 mb-4 tracking-wide">
-                    I build the engine.
+                    The system is ready.
                 </p>
                 {/* Line 2 - The Impact */}
                 <h2
