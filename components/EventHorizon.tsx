@@ -174,12 +174,12 @@ const NearContent: React.FC<{
             {/* The Heading */}
             <div className="text-center mb-16 px-4">
                 {/* Line 1 - The Foundation */}
-                <p className="text-xl md:text-2xl lg:text-3xl font-medium text-gray-500 mb-4 tracking-wide">
+                <p className="heading-line-1 text-xl md:text-2xl lg:text-3xl font-medium text-gray-500 mb-4 tracking-wide">
                     I build the engine.
                 </p>
                 {/* Line 2 - The Impact */}
                 <h2
-                    className="text-[8vw] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black text-white tracking-tighter"
+                    className="heading-line-2 text-[8vw] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black text-white tracking-tighter"
                     style={{
                         textShadow: '0 0 80px rgba(255, 255, 255, 0.2)',
                         lineHeight: 1,
@@ -194,11 +194,13 @@ const NearContent: React.FC<{
             </div>
 
             {/* North Star */}
-            <CinematicStar
-                isHovered={isStarHovered}
-                onClick={onContact}
-                onHover={onStarHover}
-            />
+            <div className="north-star">
+                <CinematicStar
+                    isHovered={isStarHovered}
+                    onClick={onContact}
+                    onHover={onStarHover}
+                />
+            </div>
 
             {/* Name Reveal */}
             <div
@@ -221,7 +223,7 @@ const NearContent: React.FC<{
             </div>
 
             {/* Social Links */}
-            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-5">
+            <div className="social-links absolute bottom-4 left-0 right-0 flex justify-center gap-5">
                 <a
                     href="https://github.com/surajsarkar"
                     target="_blank"
@@ -458,17 +460,70 @@ const EventHorizon: React.FC = () => {
                 },
             });
 
-            // Near layer content fade in
+            // Heading entrance - Line 1 (smaller text)
             gsap.fromTo(
-                '.near-layer > p',
-                { opacity: 0, y: 40 },
+                '.near-layer .heading-line-1',
+                { opacity: 0, y: 60 },
                 {
                     opacity: 1,
                     y: 0,
                     duration: 1,
+                    ease: 'power3.out',
                     scrollTrigger: {
                         trigger: sectionRef.current,
-                        start: 'top 50%',
+                        start: 'top 60%',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+
+            // Heading entrance - Line 2 (big text)
+            gsap.fromTo(
+                '.near-layer .heading-line-2',
+                { opacity: 0, y: 80, scale: 0.9 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 1.2,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: 'top 55%',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+
+            // North Star entrance - scale up with bounce
+            gsap.fromTo(
+                '.near-layer .north-star',
+                { opacity: 0, scale: 0 },
+                {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 1,
+                    ease: 'back.out(1.7)',
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: 'top 45%',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+
+            // Social links entrance - slide up
+            gsap.fromTo(
+                '.near-layer .social-links',
+                { opacity: 0, y: 30 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: 'top 35%',
                         toggleActions: 'play none none reverse',
                     },
                 }
