@@ -202,26 +202,6 @@ const NearContent: React.FC<{
                 />
             </div>
 
-            {/* Name Reveal */}
-            <div
-                className="absolute bottom-20 left-0 right-0 flex justify-center overflow-hidden"
-                style={{ height: '100px' }}
-            >
-                <h1
-                    className="font-display font-black text-5xl md:text-7xl lg:text-8xl tracking-tighter uppercase transition-all duration-1000 ease-out"
-                    style={{
-                        transform: isStarHovered ? 'translateY(0)' : 'translateY(100%)',
-                        opacity: isStarHovered ? 1 : 0,
-                        color: 'rgba(255, 255, 255, 0.9)',
-                        textShadow: isStarHovered
-                            ? '0 0 40px rgba(255, 255, 255, 0.4), 0 0 80px rgba(83, 210, 45, 0.2)'
-                            : 'none',
-                    }}
-                >
-                    Suraj Sarkar
-                </h1>
-            </div>
-
             {/* Social Links */}
             <div className="social-links absolute bottom-4 left-0 right-0 flex justify-center gap-5">
                 <a
@@ -399,7 +379,7 @@ const CinematicStar: React.FC<{
             onMouseLeave={() => onHover(false)}
             aria-label="Contact me"
         >
-            <canvas ref={canvasRef} style={{ width: '180px', height: '180px' }} />
+            <canvas ref={canvasRef} style={{ width: '100px', height: '100px' }} />
             <span
                 className={`absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-mono uppercase tracking-widest transition-all duration-500 ${isHovered ? 'opacity-100 text-primary' : 'opacity-0 text-white/40'
                     }`}
