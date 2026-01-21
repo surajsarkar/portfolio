@@ -4,8 +4,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import Skills from './components/Skills';
 import ProjectsScroll from './components/ProjectsScroll';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import EventHorizon from './components/EventHorizon';
 
 const App: React.FC = () => {
   return (
@@ -15,9 +14,8 @@ const App: React.FC = () => {
         <Hero />
         <ProjectsScroll />
         <Skills />
-        <Contact />
+        <EventHorizon />
       </main>
-      <Footer />
     </div>
   );
 };
