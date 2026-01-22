@@ -120,6 +120,18 @@
             transition: background-position 0.1s ease-out;
         }
 
+        /* Gradient shift animation for highlighted text */
+        @keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+                filter: drop-shadow(0 0 20px rgba(83, 210, 45, 0.5));
+            }
+            50% {
+                background-position: 100% 50%;
+                filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.6));
+            }
+        }
+
         /* Custom thin scrollbar - matches dark theme */
         ::-webkit-scrollbar {
             width: 6px;

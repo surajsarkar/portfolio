@@ -117,7 +117,7 @@ const Hero: React.FC = () => {
               backgroundPosition: 'center',
             }}
           >
-            crafting intelligence <br className="hidden md:block" /> from backend to behaviour.
+            crafting intelligence <br className="hidden md:block" /> from <span style={{ color: '#53d22d', WebkitTextFillColor: '#53d22d' }}>backend to behaviour</span>.
           </span>
         </h1>
 
