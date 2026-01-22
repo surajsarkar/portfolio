@@ -120,7 +120,7 @@ const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
             </svg>
 
             {/* Name in the horizon curve */}
-            <div className="horizon-name absolute bottom-[5.2rem] left-1/2 -translate-x-1/2 text-center z-10">
+            <div className="horizon-name absolute bottom-[5.2rem] left-1/2 -translate-x-1/2 text-center z-10 w-full">
                 <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white tracking-tighter leading-none">
                     SURAJ
                 </span>
@@ -170,6 +170,8 @@ const NearContent: React.FC<{
     onContact: () => void;
     onReboot: () => void;
 }> = ({ isStarHovered, onStarHover, onContact, onReboot }) => {
+    const [isFormVisible, setIsFormVisible] = useState(false);
+
     return (
         <div
             className="near-layer relative z-10 flex flex-col items-center justify-start min-h-screen pt-[15vh]"
@@ -205,66 +207,80 @@ const NearContent: React.FC<{
                 />
             </div>
 
-            {/* Contact Form - Glassmorphism - positioned near bottom */}
-            <div
-                className="contact-form absolute bottom-[18rem] left-1/2 -translate-x-1/2 w-full max-w-lg px-4 z-20"
-            >
-                <div
-                    className="p-4 rounded-xl border border-white/10"
-                    style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        backdropFilter: 'blur(20px)',
-                        WebkitBackdropFilter: 'blur(20px)',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                    }}
-                >
-                    {/* To Field - Email in pill */}
-                    <div className="mb-4 flex items-center gap-2">
-                        <span className="px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-sm">
-                            hello@surajsarkar.dev
-                        </span>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                navigator.clipboard.writeText('hello@surajsarkar.dev');
-                            }}
-                            className="p-2 rounded-xl bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 hover:border-primary/50 transition-all"
-                            aria-label="Copy email"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            {/* Contact Interaction - Button or Form */}
+            <div className="absolute bottom-[18rem] left-1/2 -translate-x-1/2 w-full max-w-lg px-4 z-20 flex justify-center">
+                {!isFormVisible ? (
+                    <button
+                        onClick={() => setIsFormVisible(true)}
+                        className="group relative px-8 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-full border border-white/20 transition-all duration-500 overflow-hidden"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                        <span className="font-mono text-sm tracking-[0.3em] text-white uppercase flex items-center gap-3">
+                            Let's Connect
+                            <svg className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                             </svg>
-                        </button>
-                    </div>
+                        </span>
+                    </button>
+                ) : (
+                    <div
+                        className="w-full p-4 rounded-xl border border-white/10 animate-in fade-in zoom-in duration-500"
+                        style={{
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            backdropFilter: 'blur(20px)',
+                            WebkitBackdropFilter: 'blur(20px)',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                        }}
+                    >
+                        {/* To Field - Email in pill */}
+                        <div className="mb-4 flex items-center gap-2">
+                            <span className="px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-sm">
+                                hello@surajsarkar.dev
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    navigator.clipboard.writeText('hello@surajsarkar.dev');
+                                }}
+                                className="p-2 rounded-xl bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 hover:border-primary/50 transition-all"
+                                aria-label="Copy email"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                            </button>
+                        </div>
 
-                    {/* From Field */}
-                    <div className="mb-4">
-                        <input
-                            type="email"
-                            placeholder="your@email.com"
-                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all"
-                        />
-                    </div>
+                        {/* From Field */}
+                        <div className="mb-4">
+                            <input
+                                type="email"
+                                placeholder="your@email.com"
+                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all"
+                            />
+                        </div>
 
-                    {/* Message Field with embedded button */}
-                    <div className="relative">
-                        <textarea
-                            rows={4}
-                            placeholder="Your message..."
-                            className="w-full px-4 py-3 pb-14 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all resize-none"
-                        />
-                        {/* Send Button - inside message box */}
-                        <button
-                            type="button"
-                            onClick={() => {
-                                window.dispatchEvent(new CustomEvent('dobby-show-popper'));
-                            }}
-                            className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-xs uppercase tracking-wider hover:bg-primary/30 hover:border-primary/50 transition-all"
-                        >
-                            ▲ Transmit
-                        </button>
+                        {/* Message Field with embedded button */}
+                        <div className="relative">
+                            <textarea
+                                rows={4}
+                                placeholder="Your message..."
+                                className="w-full px-4 py-3 pb-14 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all resize-none"
+                            />
+                            {/* Send Button - inside message box */}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    window.dispatchEvent(new CustomEvent('dobby-show-popper'));
+                                    setIsFormVisible(false); // Optionally close form after sending
+                                }}
+                                className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-xs uppercase tracking-wider hover:bg-primary/30 hover:border-primary/50 transition-all"
+                            >
+                                ▲ Transmit
+                            </button>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );
