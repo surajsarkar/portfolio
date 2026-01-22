@@ -204,7 +204,7 @@ const NearContent: React.FC<{
             </div>
 
             {/* North Star - positioned closer to heading */}
-            <div className="north-star mt-4">
+            <div className="north-star mt-2">
                 <CinematicStar
                     isHovered={isStarHovered}
                     onClick={onContact}
@@ -214,7 +214,7 @@ const NearContent: React.FC<{
 
             {/* Contact Form - Glassmorphism - positioned near bottom */}
             <div
-                className="contact-form absolute bottom-[12rem] left-1/2 -translate-x-1/2 w-full max-w-lg px-4 z-20"
+                className="contact-form absolute bottom-[18rem] left-1/2 -translate-x-1/2 w-full max-w-lg px-4 z-20"
             >
                 <div
                     className="p-4 rounded-xl border border-white/10"
@@ -256,7 +256,7 @@ const NearContent: React.FC<{
                     {/* Message Field with embedded button */}
                     <div className="relative">
                         <textarea
-                            rows={5}
+                            rows={4}
                             placeholder="Your message..."
                             className="w-full px-4 py-3 pb-14 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all resize-none"
                         />
@@ -563,7 +563,7 @@ const EventHorizon: React.FC = () => {
     return (
         <section
             ref={sectionRef}
-            className="relative min-h-[115vh] overflow-hidden"
+            className="relative min-h-[110vh] overflow-hidden"
             style={{ backgroundColor: '#030306' }}
             id="contact"
         >
