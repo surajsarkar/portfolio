@@ -109,36 +109,29 @@ const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
 
             {/* Curved horizon */}
             <svg
-                className="absolute bottom-0 w-full h-40"
-                viewBox="0 0 1440 160"
+                className="absolute bottom-0 w-full h-96"
+                viewBox="0 0 1440 384"
                 preserveAspectRatio="none"
             >
-                <defs>
-                    <linearGradient id="horizonGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="rgba(0, 0, 0, 0)" />
-                        <stop offset="30%" stopColor="rgba(0, 0, 0, 0.6)" />
-                        <stop offset="100%" stopColor="rgba(0, 0, 0, 1)" />
-                    </linearGradient>
-                </defs>
                 <path
-                    d="M0,160 Q720,-20 1440,160 L1440,160 L0,160 Z"
-                    fill="url(#horizonGrad)"
+                    d="M0,384 Q720,-160 1440,384 L1440,384 L0,384 Z"
+                    fill="#030306"
                 />
             </svg>
 
             {/* Name in the horizon curve */}
-            <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center">
-                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white/90 tracking-tighter leading-none">
+            <div className="horizon-name absolute bottom-12 left-1/2 -translate-x-1/2 text-center z-10">
+                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-gray-400 tracking-tighter leading-none">
                     SURAJ
                 </span>
-                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white/90 tracking-tighter leading-none">
+                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-gray-400 tracking-tighter leading-none">
                     SARKAR
                 </span>
             </div>
 
             {/* Horizon heading */}
             <span
-                className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[13px] text-gray-400 tracking-[0.3em] uppercase"
+                className="absolute bottom-3 left-1/2 -translate-x-1/2 font-mono text-[13px] text-gray-400 tracking-[0.3em] uppercase z-10"
             >
                 THE EXPANDED UNIVERSE
             </span>
@@ -527,9 +520,29 @@ const EventHorizon: React.FC = () => {
                 }
             );
 
+            // Name reveal animation - surprise from bottom
+            gsap.fromTo(
+                '.horizon-name',
+                { y: 100, autoAlpha: 0, scale: 0.8 },
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    scale: 1,
+                    duration: 1.5,
+                    ease: 'power4.out',
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: 'top 60%', // Trigger earlier to ensure visibility
+                        end: 'bottom bottom',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+
+
             // Social links entrance - slide up
             gsap.fromTo(
-                '.near-layer .social-links',
+                '.social-links',
                 { opacity: 0, y: 30 },
                 {
                     opacity: 1,
