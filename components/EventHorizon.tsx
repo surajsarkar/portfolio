@@ -128,11 +128,11 @@ const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
 
             {/* Name in the horizon curve */}
             <div className="absolute bottom-20 left-1/2 -translate-x-1/2 text-center">
-                <span className="block text-[8vw] md:text-[5rem] lg:text-[6rem] font-black text-white/90 tracking-tighter leading-none">
-                    Suraj
+                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white/90 tracking-tighter leading-none">
+                    SURAJ
                 </span>
-                <span className="block text-[8vw] md:text-[5rem] lg:text-[6rem] font-black text-white/90 tracking-tighter leading-none">
-                    Sarkar
+                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white/90 tracking-tighter leading-none">
+                    SARKAR
                 </span>
             </div>
 
@@ -212,12 +212,12 @@ const NearContent: React.FC<{
                 />
             </div>
 
-            {/* Contact Form - Glassmorphism */}
+            {/* Contact Form - Glassmorphism - positioned near bottom */}
             <div
-                className="contact-form mt-8 w-full max-w-lg mx-auto px-4"
+                className="contact-form absolute bottom-[12rem] left-1/2 -translate-x-1/2 w-full max-w-lg px-4 z-20"
             >
                 <div
-                    className="p-4 rounded-2xl border border-white/10"
+                    className="p-4 rounded-xl border border-white/10"
                     style={{
                         background: 'rgba(255, 255, 255, 0.05)',
                         backdropFilter: 'blur(20px)',
@@ -227,7 +227,7 @@ const NearContent: React.FC<{
                 >
                     {/* To Field - Email in pill */}
                     <div className="mb-4 flex items-center gap-2">
-                        <span className="px-4 py-2 rounded-lg bg-primary/20 border border-primary/30 text-primary font-mono text-sm">
+                        <span className="px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-sm">
                             hello@surajsarkar.dev
                         </span>
                         <button
@@ -235,7 +235,7 @@ const NearContent: React.FC<{
                             onClick={() => {
                                 navigator.clipboard.writeText('hello@surajsarkar.dev');
                             }}
-                            className="p-2 rounded-lg bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 hover:border-primary/50 transition-all"
+                            className="p-2 rounded-xl bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 hover:border-primary/50 transition-all"
                             aria-label="Copy email"
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,7 +249,7 @@ const NearContent: React.FC<{
                         <input
                             type="email"
                             placeholder="your@email.com"
-                            className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all"
+                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all"
                         />
                     </div>
 
@@ -258,12 +258,12 @@ const NearContent: React.FC<{
                         <textarea
                             rows={5}
                             placeholder="Your message..."
-                            className="w-full px-4 py-3 pb-14 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all resize-none"
+                            className="w-full px-4 py-3 pb-14 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all resize-none"
                         />
                         {/* Send Button - inside message box */}
                         <button
                             type="button"
-                            className="absolute bottom-3 right-3 px-4 py-2 rounded-lg bg-primary/20 border border-primary/30 text-primary font-mono text-xs uppercase tracking-wider hover:bg-primary/30 hover:border-primary/50 transition-all"
+                            className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-xs uppercase tracking-wider hover:bg-primary/30 hover:border-primary/50 transition-all"
                         >
                             ▲ Transmit
                         </button>
