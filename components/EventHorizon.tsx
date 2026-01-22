@@ -109,22 +109,22 @@ const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
 
             {/* Curved horizon */}
             <svg
-                className="absolute bottom-0 w-full h-96"
-                viewBox="0 0 1440 384"
+                className="absolute bottom-0 w-full h-32"
+                viewBox="0 0 1440 256"
                 preserveAspectRatio="none"
             >
                 <path
-                    d="M0,384 Q720,-160 1440,384 L1440,384 L0,384 Z"
+                    d="M0,256 Q720,-80 1440,256 L1440,256 L0,256 Z"
                     fill="#030306"
                 />
             </svg>
 
             {/* Name in the horizon curve */}
-            <div className="horizon-name absolute bottom-12 left-1/2 -translate-x-1/2 text-center z-10">
-                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-gray-400 tracking-tighter leading-none">
+            <div className="horizon-name absolute bottom-[5.2rem] left-1/2 -translate-x-1/2 text-center z-10">
+                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white tracking-tighter leading-none">
                     SURAJ
                 </span>
-                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-gray-400 tracking-tighter leading-none">
+                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white tracking-tighter leading-none">
                     SARKAR
                 </span>
             </div>
