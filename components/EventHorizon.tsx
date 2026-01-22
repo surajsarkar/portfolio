@@ -212,10 +212,10 @@ const NearContent: React.FC<{
                 {!isFormVisible ? (
                     <button
                         onClick={() => setIsFormVisible(true)}
-                        className="group relative px-8 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-full border border-white/20 transition-all duration-500 overflow-hidden"
+                        className="group relative px-6 py-3 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-full border border-white/20 transition-all duration-500 overflow-hidden"
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                        <span className="font-mono text-sm tracking-[0.3em] text-white uppercase flex items-center gap-3">
+                        <span className="font-mono text-xs tracking-[0.3em] text-white uppercase flex items-center gap-3">
                             Let's Connect
                             <svg className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
