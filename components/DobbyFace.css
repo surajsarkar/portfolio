@@ -406,3 +406,112 @@
     transform: translateY(0px);
   }
 }
+
+/* Expression: Popper (Confetti Burst) */
+.dobby-face .expression-popper .eye {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff);
+  background-size: 400% 400%;
+  box-shadow:
+    0 0 15px #ff6b6b,
+    0 0 25px #feca57,
+    0 0 35px #48dbfb;
+  animation: dobby-popper-burst 0.6s ease-out forwards, dobby-popper-colors 0.3s linear infinite;
+  overflow: visible !important;
+}
+
+.dobby-face .expression-popper .heart-svg,
+.dobby-face .expression-popper .star-svg,
+.dobby-face .expression-popper .irritated-svg,
+.dobby-face .expression-popper .arrow-up-svg,
+.dobby-face .expression-popper .arrow-down-svg {
+  display: none !important;
+}
+
+/* Confetti particles */
+.dobby-face .expression-popper .eye::before,
+.dobby-face .expression-popper .eye::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.dobby-face .expression-popper .eye::before {
+  background: #ff6b6b;
+  animation: dobby-confetti-1 0.8s ease-out forwards;
+  box-shadow:
+    8px -5px 0 #feca57,
+    -8px -8px 0 #48dbfb,
+    12px 4px 0 #ff9ff3,
+    -12px 2px 0 #54a0ff;
+}
+
+.dobby-face .expression-popper .eye::after {
+  background: #1dd1a1;
+  animation: dobby-confetti-2 0.8s ease-out forwards;
+  box-shadow:
+    6px 8px 0 #ff6b6b,
+    -10px 6px 0 #feca57,
+    4px -10px 0 #48dbfb,
+    -6px -6px 0 #ff9ff3;
+}
+
+@keyframes dobby-popper-burst {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes dobby-popper-colors {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes dobby-confetti-1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-20px, -30px) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes dobby-confetti-2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(25px, -25px) scale(0);
+    opacity: 0;
+  }
+}

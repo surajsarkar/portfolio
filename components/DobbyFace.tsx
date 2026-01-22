@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import './DobbyFace.css';
 
-type Expression = 'neutral' | 'irritated' | 'love' | 'excited' | 'scrollUp' | 'scrollDown';
+type Expression = 'neutral' | 'irritated' | 'love' | 'excited' | 'scrollUp' | 'scrollDown' | 'popper';
 
 const DobbyFace: React.FC = () => {
     const [expression, setExpression] = useState<Expression>('neutral');
@@ -67,6 +67,18 @@ const DobbyFace: React.FC = () => {
         playTone(1108, 'triangle', 0.1, 0.1);
         playTone(1318, 'triangle', 0.1, 0.2);
         playTone(1760, 'triangle', 0.2, 0.3);
+    }, [audioEnabled, playTone]);
+
+    // Play popper sound (celebratory burst)
+    const playPopperSound = useCallback(() => {
+        if (!audioEnabled) return;
+        // Quick burst of ascending notes like a party popper
+        playTone(600, 'sine', 0.05, 0);
+        playTone(800, 'sine', 0.05, 0.03);
+        playTone(1000, 'sine', 0.05, 0.06);
+        playTone(1200, 'triangle', 0.08, 0.09);
+        playTone(1500, 'triangle', 0.1, 0.12);
+        playTone(1800, 'sine', 0.15, 0.15);
     }, [audioEnabled, playTone]);
 
     // Play scroll sound (servo motor style from original)
@@ -186,12 +198,23 @@ const DobbyFace: React.FC = () => {
         const handleSetExpression = (e: Event) => {
             const customEvent = e as CustomEvent<{ expression: Expression }>;
             const newExpression = customEvent.detail?.expression;
-            if (newExpression && ['neutral', 'irritated', 'love', 'excited', 'scrollUp', 'scrollDown'].includes(newExpression)) {
+            if (newExpression && ['neutral', 'irritated', 'love', 'excited', 'scrollUp', 'scrollDown', 'popper'].includes(newExpression)) {
                 setExpression(newExpression);
                 // Play corresponding sound
                 if (newExpression === 'love') playLoveSound();
                 else if (newExpression === 'excited') playExcitedSound();
+                else if (newExpression === 'popper') playPopperSound();
             }
+        };
+
+        // Popper effect handler
+        const handleShowPopper = () => {
+            setExpression('popper');
+            playPopperSound();
+            // Return to neutral after animation
+            setTimeout(() => {
+                setExpression('neutral');
+            }, 1500);
         };
 
         window.addEventListener('dobby-show-love', handleShowLove);
@@ -199,6 +222,7 @@ const DobbyFace: React.FC = () => {
         window.addEventListener('dobby-show-excited', handleShowExcited);
         window.addEventListener('dobby-hide-excited', handleHideExcited);
         window.addEventListener('dobby-set-expression', handleSetExpression);
+        window.addEventListener('dobby-show-popper', handleShowPopper);
 
         return () => {
             window.removeEventListener('dobby-show-love', handleShowLove);
@@ -206,8 +230,9 @@ const DobbyFace: React.FC = () => {
             window.removeEventListener('dobby-show-excited', handleShowExcited);
             window.removeEventListener('dobby-hide-excited', handleHideExcited);
             window.removeEventListener('dobby-set-expression', handleSetExpression);
+            window.removeEventListener('dobby-show-popper', handleShowPopper);
         };
-    }, [playLoveSound, playExcitedSound]);
+    }, [playLoveSound, playExcitedSound, playPopperSound]);
 
     // Blink effect for neutral expression
     const triggerBlink = useCallback(() => {

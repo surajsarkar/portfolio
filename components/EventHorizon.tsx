@@ -263,6 +263,9 @@ const NearContent: React.FC<{
                         {/* Send Button - inside message box */}
                         <button
                             type="button"
+                            onClick={() => {
+                                window.dispatchEvent(new CustomEvent('dobby-show-popper'));
+                            }}
                             className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-xs uppercase tracking-wider hover:bg-primary/30 hover:border-primary/50 transition-all"
                         >
                             ▲ Transmit
