@@ -121,12 +121,77 @@ const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
 
             {/* Name in the horizon curve */}
             <div className="horizon-name absolute bottom-[5.2rem] left-1/2 -translate-x-1/2 text-center z-10 w-full">
-                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white tracking-tighter leading-none">
-                    SURAJ
-                </span>
-                <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white tracking-tighter leading-none">
-                    SARKAR
-                </span>
+                <div className="relative inline-block">
+                    {/* Launch Pad - Rocket + Gantry Tower above name */}
+                    <div className="w-full flex justify-center -mb-4">
+                        <div className="w-6 h-10 md:w-8 md:h-14 flex items-end relative">
+                            {/* Gantry Tower - vertical line beside rocket */}
+                            <div
+                                className="absolute left-0 bottom-0 w-[1px] h-full"
+                                style={{
+                                    background: 'linear-gradient(180deg, transparent 0%, #1a1a1a 20%, #0a0a0a 100%)',
+                                }}
+                            />
+                            {/* Gantry arm */}
+                            <div
+                                className="absolute left-0 bottom-[40%] w-[50%] h-[1px] bg-[#0a0a0a]"
+                            />
+
+                            {/* Rocket SVG - Tiny, to show scale */}
+                            <svg
+                                className="w-[60%] h-[90%] z-10 ml-auto"
+                                viewBox="0 0 64 160"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                {/* Nose cone */}
+                                <path
+                                    d="M32 0 L40 30 L24 30 Z"
+                                    fill="#0a0a0a"
+                                />
+                                {/* Upper stage */}
+                                <rect x="24" y="30" width="16" height="35" fill="#0a0a0a" />
+                                {/* Interstage ring */}
+                                <rect x="22" y="65" width="20" height="4" fill="#0a0a0a" />
+                                {/* Lower stage (wider) */}
+                                <path
+                                    d="M22 69 L20 130 L44 130 L42 69 Z"
+                                    fill="#0a0a0a"
+                                />
+                                {/* Engine section */}
+                                <rect x="18" y="130" width="28" height="8" fill="#0a0a0a" />
+                                {/* Fins */}
+                                <path d="M18 138 L8 158 L18 150 Z" fill="#0a0a0a" />
+                                <path d="M46 138 L56 158 L46 150 Z" fill="#0a0a0a" />
+                                {/* Engine bells */}
+                                <ellipse cx="26" cy="145" rx="4" ry="6" fill="#0a0a0a" />
+                                <ellipse cx="32" cy="147" rx="5" ry="8" fill="#0a0a0a" />
+                                <ellipse cx="38" cy="145" rx="4" ry="6" fill="#0a0a0a" />
+                            </svg>
+
+                            {/* Cryogenic Venting - Horizontal drifting particles */}
+                            <div className="absolute bottom-0 right-0 w-8 h-3 overflow-visible">
+                                {/* Left-drifting particles */}
+                                <span className="cryo-particle cryo-left absolute bg-white/50 rounded-full w-[2px] h-[2px]" style={{ left: '50%', animationDelay: '0s' }} />
+                                <span className="cryo-particle cryo-left absolute bg-white/40 rounded-full w-[3px] h-[3px]" style={{ left: '40%', animationDelay: '1s' }} />
+                                {/* Right-drifting particles */}
+                                <span className="cryo-particle cryo-right absolute bg-white/50 rounded-full w-[2px] h-[2px]" style={{ left: '50%', animationDelay: '0.5s' }} />
+                                <span className="cryo-particle cryo-right absolute bg-white/40 rounded-full w-[3px] h-[3px]" style={{ left: '60%', animationDelay: '1.5s' }} />
+                                {/* Downward-drifting particles (engine venting) */}
+                                <span className="cryo-particle cryo-down absolute bg-white/50 rounded-full w-[2px] h-[2px]" style={{ left: '45%', animationDelay: '0.3s' }} />
+                                <span className="cryo-particle cryo-down absolute bg-white/40 rounded-full w-[3px] h-[3px]" style={{ left: '55%', animationDelay: '0.9s' }} />
+                                <span className="cryo-particle cryo-down absolute bg-white/30 rounded-full w-[2px] h-[2px]" style={{ left: '50%', animationDelay: '1.8s' }} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white tracking-tighter leading-none">
+                        SURAJ
+                    </span>
+                    <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white tracking-tighter leading-none">
+                        SARKAR
+                    </span>
+                </div>
             </div>
 
             {/* Horizon heading */}
@@ -136,8 +201,50 @@ const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
                 THE EXPANDED UNIVERSE
             </span>
 
-            {/* Wavy animation keyframes */}
+            {/* Animation keyframes */}
             <style>{`
+        @keyframes cryoVentLeft {
+          0% { 
+            transform: translate(0, 0) scale(1); 
+            opacity: 0.6; 
+          }
+          100% { 
+            transform: translate(-25px, 2px) scale(1.5); 
+            opacity: 0; 
+          }
+        }
+        @keyframes cryoVentRight {
+          0% { 
+            transform: translate(0, 0) scale(1); 
+            opacity: 0.6; 
+          }
+          100% { 
+            transform: translate(25px, 2px) scale(1.5); 
+            opacity: 0; 
+          }
+        }
+        .cryo-particle {
+          top: 0;
+        }
+        .cryo-left {
+          animation: cryoVentLeft 3.5s ease-out infinite;
+        }
+        .cryo-right {
+          animation: cryoVentRight 3.5s ease-out infinite;
+        }
+        @keyframes cryoVentDown {
+          0% { 
+            transform: translate(0, 0) scale(1); 
+            opacity: 0.5; 
+          }
+          100% { 
+            transform: translate(0, 20px) scale(1.3); 
+            opacity: 0; 
+          }
+        }
+        .cryo-down {
+          animation: cryoVentDown 3s ease-out infinite;
+        }
         @keyframes auroraWave {
           0%, 100% { 
             transform: translateX(0) skewX(0deg) scaleY(1); 
