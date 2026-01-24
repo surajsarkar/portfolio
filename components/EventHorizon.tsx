@@ -185,10 +185,10 @@ const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
                         </div>
                     </div>
 
-                    <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white tracking-tighter leading-none">
+                    <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white/20 tracking-tighter leading-none">
                         SURAJ
                     </span>
-                    <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white tracking-tighter leading-none">
+                    <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white/20 tracking-tighter leading-none">
                         SARKAR
                     </span>
                 </div>
