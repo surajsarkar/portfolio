@@ -5,8 +5,11 @@ import Hero from './components/Hero';
 import Skills from './components/Skills';
 import ProjectsScroll from './components/ProjectsScroll';
 import EventHorizon from './components/EventHorizon';
+import useConsoleEasterEgg from './components/useConsoleEasterEgg';
 
 const App: React.FC = () => {
+  useConsoleEasterEgg();
+
   return (
     <div className="relative flex min-h-screen flex-col selection:bg-primary selection:text-background-dark">
       <Header />
