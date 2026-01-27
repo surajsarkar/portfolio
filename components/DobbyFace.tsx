@@ -81,39 +81,7 @@ const DobbyFace: React.FC = () => {
         playTone(1800, 'sine', 0.15, 0.15);
     }, [audioEnabled, playTone]);
 
-    // Play scroll sound (servo motor style from original)
-    const playScrollSound = useCallback((direction: 'up' | 'down') => {
-        const ctx = audioCtxRef.current;
-        if (!ctx || !audioEnabled) return;
 
-        const osc = ctx.createOscillator();
-        const gainNode = ctx.createGain();
-
-        // Sawtooth sounds mechanical
-        osc.type = 'sawtooth';
-
-        const now = ctx.currentTime;
-
-        if (direction === 'up') {
-            // Pitch slide UP
-            osc.frequency.setValueAtTime(200, now);
-            osc.frequency.linearRampToValueAtTime(600, now + 0.4);
-        } else {
-            // Pitch slide DOWN
-            osc.frequency.setValueAtTime(600, now);
-            osc.frequency.linearRampToValueAtTime(200, now + 0.4);
-        }
-
-        // Low volume for motor hum
-        gainNode.gain.setValueAtTime(0.05, now);
-        gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
-
-        osc.connect(gainNode);
-        gainNode.connect(ctx.destination);
-
-        osc.start(now);
-        osc.stop(now + 0.4);
-    }, [audioEnabled]);
 
     // Handle hover on robot face - switch to irritated
     const handleMouseEnter = useCallback(() => {
@@ -143,11 +111,9 @@ const DobbyFace: React.FC = () => {
                 if (scrollDelta > 0) {
                     // Scrolling down
                     setExpression('scrollDown');
-                    playScrollSound('down');
                 } else {
                     // Scrolling up
                     setExpression('scrollUp');
-                    playScrollSound('up');
                 }
 
                 // Clear existing timeout
@@ -172,7 +138,7 @@ const DobbyFace: React.FC = () => {
                 clearTimeout(scrollTimeoutRef.current);
             }
         };
-    }, [playScrollSound]);
+    }, []);
 
     // Listen for custom events from other components (Contact and Projects links)
     useEffect(() => {
