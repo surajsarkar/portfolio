@@ -119,9 +119,164 @@ const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
                 />
             </svg>
 
+            {/* Animation keyframes */}
+            <style>{`
+        @keyframes cryoVentLeft {
+          0% { 
+            transform: translate(0, 0) scale(1); 
+            opacity: 0.6; 
+          }
+          100% { 
+            transform: translate(-25px, 2px) scale(1.5); 
+            opacity: 0; 
+          }
+        }
+        @keyframes cryoVentRight {
+          0% { 
+            transform: translate(0, 0) scale(1); 
+            opacity: 0.6; 
+          }
+          100% { 
+            transform: translate(25px, 2px) scale(1.5); 
+            opacity: 0; 
+          }
+        }
+        .cryo-particle {
+          top: 0;
+        }
+        .cryo-left {
+          animation: cryoVentLeft 3.5s ease-out infinite;
+        }
+        .cryo-right {
+          animation: cryoVentRight 3.5s ease-out infinite;
+        }
+        @keyframes cryoVentDown {
+          0% { 
+            transform: translate(0, 0) scale(1); 
+            opacity: 0.5; 
+          }
+          100% { 
+            transform: translate(0, 20px) scale(1.3); 
+            opacity: 0; 
+          }
+        }
+        .cryo-down {
+          animation: cryoVentDown 3s ease-out infinite;
+        }
+        @keyframes auroraWave {
+          0%, 100% { 
+            transform: translateX(0) skewX(0deg) scaleY(1); 
+          }
+          25% { 
+            transform: translateX(30px) skewX(3deg) scaleY(1.05); 
+          }
+          50% { 
+            transform: translateX(-10px) skewX(-2deg) scaleY(0.95); 
+          }
+          75% { 
+            transform: translateX(-25px) skewX(2deg) scaleY(1.03); 
+          }
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `}</style>
+        </div>
+    );
+};
+
+// ============================================
+// HORIZON LAYER - Shared Parallax for Name + Button
+// ============================================
+const HorizonLayer: React.FC<{
+    isFormVisible: boolean;
+    setIsFormVisible: (visible: boolean) => void;
+}> = ({ isFormVisible, setIsFormVisible }) => {
+    return (
+        <div
+            className="mid-layer absolute inset-0 pointer-events-none"
+            style={{ zIndex: 30 }}
+        >
             {/* Name in the horizon curve */}
-            <div className="horizon-name absolute bottom-[5.2rem] left-1/2 -translate-x-1/2 text-center z-10 w-full">
+            <div className="horizon-name absolute bottom-[5.2rem] left-1/2 -translate-x-1/2 text-center w-full">
                 <div className="relative inline-block">
+                    {/* Contact Interaction - Anchored above Rocket */}
+                    <div className="absolute bottom-full left-0 right-0 mb-6 flex justify-center pointer-events-auto">
+                        {!isFormVisible ? (
+                            <button
+                                onClick={() => setIsFormVisible(true)}
+                                className="group relative px-6 py-3 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-full border border-white/20 transition-all duration-500 overflow-hidden"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                <span className="font-mono text-xs tracking-[0.3em] text-white uppercase flex items-center gap-3">
+                                    Let's Connect
+                                    <svg className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </span>
+                            </button>
+                        ) : (
+                            <div
+                                className="w-full max-w-lg p-4 rounded-xl border border-white/10 animate-in fade-in zoom-in duration-500 mx-4"
+                                style={{
+                                    background: 'rgba(255, 255, 255, 0.05)',
+                                    backdropFilter: 'blur(20px)',
+                                    WebkitBackdropFilter: 'blur(20px)',
+                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                                }}
+                            >
+                                {/* To Field - Email in pill */}
+                                <div className="mb-4 flex items-center gap-2">
+                                    <span className="px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-sm">
+                                        hello@surajsarkar.dev
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            navigator.clipboard.writeText('hello@surajsarkar.dev');
+                                        }}
+                                        className="p-2 rounded-xl bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 hover:border-primary/50 transition-all"
+                                        aria-label="Copy email"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                {/* From Field */}
+                                <div className="mb-4">
+                                    <input
+                                        type="email"
+                                        placeholder="your@email.com"
+                                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all"
+                                    />
+                                </div>
+
+                                {/* Message Field with embedded button */}
+                                <div className="relative">
+                                    <textarea
+                                        rows={4}
+                                        placeholder="Your message..."
+                                        className="w-full px-4 py-3 pb-14 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all resize-none"
+                                    />
+                                    {/* Send Button - inside message box */}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            window.dispatchEvent(new CustomEvent('dobby-show-popper'));
+                                            setIsFormVisible(false); // Optionally close form after sending
+                                        }}
+                                        className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-xs uppercase tracking-wider hover:bg-primary/30 hover:border-primary/50 transition-all"
+                                    >
+                                        ▲ Transmit
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     {/* Launch Pad - Rocket + Gantry Tower above name */}
                     <div className="w-full flex justify-center -mb-4">
                         <div className="w-6 h-10 md:w-8 md:h-14 flex items-end relative">
@@ -196,74 +351,10 @@ const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
 
             {/* Horizon heading */}
             <span
-                className="absolute bottom-3 left-1/2 -translate-x-1/2 font-mono text-[13px] text-gray-400 tracking-[0.3em] uppercase z-10"
+                className="absolute bottom-3 left-1/2 -translate-x-1/2 font-mono text-[13px] text-gray-400 tracking-[0.3em] uppercase z-10 pointer-events-none"
             >
                 THE EXPANDED UNIVERSE
             </span>
-
-            {/* Animation keyframes */}
-            <style>{`
-        @keyframes cryoVentLeft {
-          0% { 
-            transform: translate(0, 0) scale(1); 
-            opacity: 0.6; 
-          }
-          100% { 
-            transform: translate(-25px, 2px) scale(1.5); 
-            opacity: 0; 
-          }
-        }
-        @keyframes cryoVentRight {
-          0% { 
-            transform: translate(0, 0) scale(1); 
-            opacity: 0.6; 
-          }
-          100% { 
-            transform: translate(25px, 2px) scale(1.5); 
-            opacity: 0; 
-          }
-        }
-        .cryo-particle {
-          top: 0;
-        }
-        .cryo-left {
-          animation: cryoVentLeft 3.5s ease-out infinite;
-        }
-        .cryo-right {
-          animation: cryoVentRight 3.5s ease-out infinite;
-        }
-        @keyframes cryoVentDown {
-          0% { 
-            transform: translate(0, 0) scale(1); 
-            opacity: 0.5; 
-          }
-          100% { 
-            transform: translate(0, 20px) scale(1.3); 
-            opacity: 0; 
-          }
-        }
-        .cryo-down {
-          animation: cryoVentDown 3s ease-out infinite;
-        }
-        @keyframes auroraWave {
-          0%, 100% { 
-            transform: translateX(0) skewX(0deg) scaleY(1); 
-          }
-          25% { 
-            transform: translateX(30px) skewX(3deg) scaleY(1.05); 
-          }
-          50% { 
-            transform: translateX(-10px) skewX(-2deg) scaleY(0.95); 
-          }
-          75% { 
-            transform: translateX(-25px) skewX(2deg) scaleY(1.03); 
-          }
-        }
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-      `}</style>
         </div>
     );
 };
@@ -277,8 +368,6 @@ const NearContent: React.FC<{
     onContact: () => void;
     onReboot: () => void;
 }> = ({ isStarHovered, onStarHover, onContact, onReboot }) => {
-    const [isFormVisible, setIsFormVisible] = useState(false);
-
     return (
         <div
             className="near-layer relative z-10 flex flex-col items-center justify-start min-h-screen pt-[15vh]"
@@ -312,82 +401,6 @@ const NearContent: React.FC<{
                     onClick={onContact}
                     onHover={onStarHover}
                 />
-            </div>
-
-            {/* Contact Interaction - Button or Form */}
-            <div className="absolute bottom-[22rem] md:bottom-[26rem] lg:bottom-[32rem] left-1/2 -translate-x-1/2 w-full max-w-lg px-4 z-20 flex justify-center">
-                {!isFormVisible ? (
-                    <button
-                        onClick={() => setIsFormVisible(true)}
-                        className="group relative px-6 py-3 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-full border border-white/20 transition-all duration-500 overflow-hidden"
-                    >
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                        <span className="font-mono text-xs tracking-[0.3em] text-white uppercase flex items-center gap-3">
-                            Let's Connect
-                            <svg className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                        </span>
-                    </button>
-                ) : (
-                    <div
-                        className="w-full p-4 rounded-xl border border-white/10 animate-in fade-in zoom-in duration-500"
-                        style={{
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            backdropFilter: 'blur(20px)',
-                            WebkitBackdropFilter: 'blur(20px)',
-                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                        }}
-                    >
-                        {/* To Field - Email in pill */}
-                        <div className="mb-4 flex items-center gap-2">
-                            <span className="px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-sm">
-                                hello@surajsarkar.dev
-                            </span>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    navigator.clipboard.writeText('hello@surajsarkar.dev');
-                                }}
-                                className="p-2 rounded-xl bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 hover:border-primary/50 transition-all"
-                                aria-label="Copy email"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        {/* From Field */}
-                        <div className="mb-4">
-                            <input
-                                type="email"
-                                placeholder="your@email.com"
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all"
-                            />
-                        </div>
-
-                        {/* Message Field with embedded button */}
-                        <div className="relative">
-                            <textarea
-                                rows={4}
-                                placeholder="Your message..."
-                                className="w-full px-4 py-3 pb-14 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all resize-none"
-                            />
-                            {/* Send Button - inside message box */}
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    window.dispatchEvent(new CustomEvent('dobby-show-popper'));
-                                    setIsFormVisible(false); // Optionally close form after sending
-                                }}
-                                className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-xs uppercase tracking-wider hover:bg-primary/30 hover:border-primary/50 transition-all"
-                            >
-                                ▲ Transmit
-                            </button>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );
@@ -550,6 +563,7 @@ const EventHorizon: React.FC = () => {
     const midLayerRef = useRef<HTMLDivElement>(null);
     const [isStarHovered, setIsStarHovered] = useState(false);
     const [auroraIntensity, setAuroraIntensity] = useState(1);
+    const [isFormVisible, setIsFormVisible] = useState(false);
 
     // Parallax scroll effect
     useEffect(() => {
@@ -711,6 +725,7 @@ const EventHorizon: React.FC = () => {
             {/* MID LAYER - Aurora ribbons */}
             <div ref={midLayerRef} className="absolute inset-0">
                 <MidAurora intensity={auroraIntensity} />
+                <HorizonLayer isFormVisible={isFormVisible} setIsFormVisible={setIsFormVisible} />
             </div>
 
             {/* NEAR LAYER - Content */}
