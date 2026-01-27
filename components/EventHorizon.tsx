@@ -315,7 +315,7 @@ const NearContent: React.FC<{
             </div>
 
             {/* Contact Interaction - Button or Form */}
-            <div className="absolute bottom-[18rem] left-1/2 -translate-x-1/2 w-full max-w-lg px-4 z-20 flex justify-center">
+            <div className="absolute bottom-[22rem] md:bottom-[26rem] lg:bottom-[32rem] left-1/2 -translate-x-1/2 w-full max-w-lg px-4 z-20 flex justify-center">
                 {!isFormVisible ? (
                     <button
                         onClick={() => setIsFormVisible(true)}
