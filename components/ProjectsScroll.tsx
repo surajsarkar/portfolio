@@ -270,7 +270,7 @@ const ProjectsScroll: React.FC = () => {
                                 letterSpacing: '-0.02em'
                             }}
                         >
-                            Core<br />Systems
+                            CORE<br />SYSTEMS
                         </h2>
                         <p
                             className="text-gray-400 text-base md:text-lg mt-6 font-mono tracking-widest uppercase"

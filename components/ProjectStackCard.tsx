@@ -86,7 +86,7 @@ const ProjectStackCard: React.FC<ProjectStackCardProps> = ({
             {/* Content - positioned at bottom */}
             <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10 z-10">
                 <h3
-                    className="text-5xl md:text-6xl lg:text-8xl font-extrabold text-white mb-4 tracking-tight"
+                    className="text-5xl md:text-6xl lg:text-8xl font-extrabold text-white mb-4 tracking-tight uppercase"
                     style={{ textShadow: '0 0 30px rgba(255, 255, 255, 0.4), 0 2px 10px rgba(0, 0, 0, 0.8)' }}
                 >
                     {project.title}

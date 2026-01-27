@@ -98,13 +98,13 @@ const Hero: React.FC = () => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
           </span>
-          <span className="font-mono text-[10px] md:text-xs font-bold text-primary tracking-[0.2em] uppercase">AVAILABLE FOR FREELANCE</span>
+          <span className="font-mono text-xs md:text-sm font-bold text-primary tracking-[0.2em] uppercase">AVAILABLE FOR FREELANCE</span>
         </div>
 
         {/* Massive Animated Heading */}
         <h1
           ref={headingRef}
-          className={`text-[8vw] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black tracking-[-0.05em] leading-[1] mb-6 transition-all duration-1000 ease-out delay-300 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+          className={`text-[8vw] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black tracking-[-0.05em] leading-[1] mb-6 transition-all duration-1000 ease-out delay-300 uppercase ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
         >
           <span
             className="inline-block transition-all duration-300 bg-clip-text"
@@ -123,7 +123,7 @@ const Hero: React.FC = () => {
 
         {/* Subheading */}
         <p
-          className={`max-w-2xl text-lg md:text-xl text-gray-400 font-medium leading-relaxed transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          className={`max-w-2xl text-lg md:text-xl text-gray-400 font-medium leading-relaxed transition-all duration-1000 delay-500 uppercase tracking-wider ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
         >
           I like building systems that make AI work.
         </p>

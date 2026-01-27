@@ -375,18 +375,18 @@ const NearContent: React.FC<{
             {/* The Heading */}
             <div className="text-center mb-8 px-4">
                 {/* Line 1 - The Foundation */}
-                <p className="heading-line-1 text-xl md:text-2xl lg:text-3xl font-medium text-gray-500 mb-4 tracking-wide">
-                    The system is ready.
+                <p className="heading-line-1 text-xl md:text-2xl lg:text-3xl font-medium text-gray-500 mb-4 tracking-wide uppercase">
+                    THE SYSTEM IS READY.
                 </p>
                 {/* Line 2 - The Impact */}
                 <h2
-                    className="heading-line-2 text-[8vw] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black text-white tracking-tighter"
+                    className="heading-line-2 text-[8vw] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black text-white tracking-tighter uppercase"
                     style={{
                         textShadow: '0 0 80px rgba(255, 255, 255, 0.2)',
                         lineHeight: 1,
                     }}
                 >
-                    Where are we going?
+                    WHERE ARE WE GOING?
                     <span
                         className="inline-block w-[3px] md:w-[4px] h-[0.8em] bg-white ml-2 align-middle"
                         style={{ animation: 'blink 1s step-end infinite' }}

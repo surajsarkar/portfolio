@@ -467,7 +467,7 @@ const Skills: React.FC = () => {
                 }}
               >
                 <div className="px-4 py-2 rounded-full bg-surface-dark/80 border border-primary/30 backdrop-blur-sm shadow-[0_0_15px_rgba(83,210,45,0.1)]">
-                  <span className="text-xs font-semibold text-primary/90 whitespace-nowrap">{category.name}</span>
+                  <span className="text-sm font-semibold text-primary/90 whitespace-nowrap uppercase">{category.name}</span>
                 </div>
               </div>
             );
@@ -490,7 +490,7 @@ const Skills: React.FC = () => {
                   }}
                 >
                   <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-                    <span className="text-xs font-medium text-gray-300 whitespace-nowrap">{skill}</span>
+                    <span className="text-sm font-medium text-gray-300 whitespace-nowrap">{skill}</span>
                   </div>
                 </div>
               );
