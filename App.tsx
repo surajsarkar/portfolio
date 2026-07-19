@@ -22,11 +22,12 @@ const App: React.FC = () => {
       <Suspense fallback={null}>
         <CosmicBackground
           fixed
-          density={1}
-          mouseParallax={0.32}
-          drift={0.85}
+          density={1.5}
+          mouseParallax={0.28}
+          drift={0.7}
           nebula
           opacity={1}
+          scrollDepth={200}
           className="!z-0"
         />
       </Suspense>
