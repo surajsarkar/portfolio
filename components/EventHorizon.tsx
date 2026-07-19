@@ -5,105 +5,58 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 // ============================================
-// FAR LAYER - Very dim, tiny stars (slowest parallax)
-// ============================================
-const FarStars: React.FC = () => {
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        const stars: HTMLDivElement[] = [];
-        const width = container.offsetWidth;
-        const height = container.offsetHeight;
-
-        // Create many tiny, dim stars
-        for (let i = 0; i < 150; i++) {
-            const star = document.createElement('div');
-            const size = Math.random() * 1.2 + 0.3; // Very small
-            const x = Math.random() * width;
-            const y = Math.random() * height;
-            const opacity = 0.1 + Math.random() * 0.2; // Very dim
-
-            star.style.cssText = `
-        position: absolute;
-        width: ${size}px;
-        height: ${size}px;
-        background: #ffffff;
-        border-radius: 50%;
-        opacity: ${opacity};
-        pointer-events: none;
-        left: ${x}px;
-        top: ${y}px;
-      `;
-
-            container.appendChild(star);
-            stars.push(star);
-        }
-
-        return () => stars.forEach(star => star.remove());
-    }, []);
-
-    return (
-        <div
-            ref={containerRef}
-            className="far-layer absolute inset-0 overflow-hidden pointer-events-none"
-            style={{ zIndex: 1 }}
-        />
-    );
-};
-
-// ============================================
 // MID LAYER - Aurora ribbons (medium parallax)
 // ============================================
-const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
+const MidAurora: React.FC = () => {
     return (
         <div
             className="mid-layer absolute inset-0 pointer-events-none overflow-hidden"
-            style={{ zIndex: 2 }}
+            style={{ zIndex: 2, ['--aurora' as string]: 1 }}
         >
             {/* Primary green aurora ribbon 1 */}
             <div
-                className="absolute bottom-0 left-[5%] w-[40%] h-[75%]"
+                className="aurora-ribbon absolute bottom-0 left-[5%] w-[40%] h-[75%]"
                 style={{
                     background: `linear-gradient(180deg, 
             transparent 0%, 
-            rgba(83, 210, 45, ${0.03 * intensity}) 30%,
-            rgba(83, 210, 45, ${0.12 * intensity}) 60%,
-            rgba(83, 210, 45, ${0.3 * intensity}) 100%)`,
+            rgba(83, 210, 45, calc(0.03 * var(--aurora))) 30%,
+            rgba(83, 210, 45, calc(0.12 * var(--aurora))) 60%,
+            rgba(83, 210, 45, calc(0.3 * var(--aurora))) 100%)`,
                     filter: 'blur(60px)',
-                    animation: 'auroraWave 8s ease-in-out infinite',
+                    animation: 'auroraWave 10s ease-in-out infinite',
+                    willChange: 'transform',
                 }}
             />
 
             {/* Primary green aurora ribbon 2 */}
             <div
-                className="absolute bottom-0 left-[25%] w-[45%] h-[85%]"
+                className="aurora-ribbon absolute bottom-0 left-[25%] w-[45%] h-[85%]"
                 style={{
                     background: `linear-gradient(180deg, 
             transparent 0%, 
-            rgba(83, 210, 45, ${0.02 * intensity}) 30%,
-            rgba(83, 210, 45, ${0.1 * intensity}) 60%,
-            rgba(83, 210, 45, ${0.25 * intensity}) 100%)`,
+            rgba(83, 210, 45, calc(0.02 * var(--aurora))) 30%,
+            rgba(83, 210, 45, calc(0.1 * var(--aurora))) 60%,
+            rgba(83, 210, 45, calc(0.25 * var(--aurora))) 100%)`,
                     filter: 'blur(70px)',
-                    animation: 'auroraWave 10s ease-in-out infinite reverse',
+                    animation: 'auroraWave 12s ease-in-out infinite reverse',
                     animationDelay: '-2s',
+                    willChange: 'transform',
                 }}
             />
 
             {/* Primary green aurora ribbon 3 */}
             <div
-                className="absolute bottom-0 right-[5%] w-[35%] h-[65%]"
+                className="aurora-ribbon absolute bottom-0 right-[5%] w-[35%] h-[65%]"
                 style={{
                     background: `linear-gradient(180deg, 
             transparent 0%, 
-            rgba(83, 210, 45, ${0.04 * intensity}) 30%,
-            rgba(83, 210, 45, ${0.15 * intensity}) 60%,
-            rgba(83, 210, 45, ${0.35 * intensity}) 100%)`,
+            rgba(83, 210, 45, calc(0.04 * var(--aurora))) 30%,
+            rgba(83, 210, 45, calc(0.15 * var(--aurora))) 60%,
+            rgba(83, 210, 45, calc(0.35 * var(--aurora))) 100%)`,
                     filter: 'blur(55px)',
-                    animation: 'auroraWave 12s ease-in-out infinite',
+                    animation: 'auroraWave 14s ease-in-out infinite',
                     animationDelay: '-4s',
+                    willChange: 'transform',
                 }}
             />
 
@@ -165,21 +118,29 @@ const MidAurora: React.FC<{ intensity: number }> = ({ intensity }) => {
         }
         @keyframes auroraWave {
           0%, 100% { 
-            transform: translateX(0) skewX(0deg) scaleY(1); 
+            transform: translate3d(0, 0, 0) skewX(0deg) scaleY(1); 
           }
           25% { 
-            transform: translateX(30px) skewX(3deg) scaleY(1.05); 
+            transform: translate3d(24px, 0, 0) skewX(2deg) scaleY(1.04); 
           }
           50% { 
-            transform: translateX(-10px) skewX(-2deg) scaleY(0.95); 
+            transform: translate3d(-8px, 0, 0) skewX(-1.5deg) scaleY(0.97); 
           }
           75% { 
-            transform: translateX(-25px) skewX(2deg) scaleY(1.03); 
+            transform: translate3d(-18px, 0, 0) skewX(1.5deg) scaleY(1.02); 
           }
         }
         @keyframes blink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
+        }
+        @keyframes formIn {
+          from { opacity: 0; transform: translateY(12px) scale(0.97); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .aurora-ribbon { animation: none !important; }
+          .cryo-left, .cryo-right, .cryo-down { animation: none !important; opacity: 0.35; }
         }
       `}</style>
         </div>
@@ -206,24 +167,39 @@ const HorizonLayer: React.FC<{
                         {!isFormVisible ? (
                             <button
                                 onClick={() => setIsFormVisible(true)}
-                                className="group relative px-6 py-3 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-full border border-white/20 transition-all duration-500 overflow-hidden"
+                                className="pressable group relative overflow-hidden rounded-full border border-white/20 bg-white/5 px-6 py-3 backdrop-blur-md hover:bg-white/10"
+                                style={{
+                                    transition:
+                                        'background-color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)',
+                                }}
                             >
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                <span className="font-mono text-xs tracking-[0.3em] text-white uppercase flex items-center gap-3">
-                                    Let's Connect
-                                    <svg className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div
+                                    className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[100%]"
+                                    aria-hidden="true"
+                                />
+                                <span className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.28em] text-white">
+                                    Let&apos;s connect
+                                    <svg
+                                        className="h-4 w-4 opacity-70 transition-transform duration-200 ease-out group-hover:translate-x-1"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                     </svg>
                                 </span>
                             </button>
                         ) : (
                             <div
-                                className="w-full max-w-lg p-4 rounded-xl border border-white/10 animate-in fade-in zoom-in duration-500 mx-4"
+                                className="mx-4 w-full max-w-lg rounded-2xl border border-white/10 p-4"
                                 style={{
                                     background: 'rgba(255, 255, 255, 0.05)',
                                     backdropFilter: 'blur(20px)',
                                     WebkitBackdropFilter: 'blur(20px)',
-                                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                                    boxShadow:
+                                        '0 8px 32px rgba(5, 5, 8, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                                    animation: 'formIn 420ms cubic-bezier(0.23, 1, 0.32, 1) both',
                                 }}
                             >
                                 {/* To Field - Email in pill */}
@@ -340,10 +316,10 @@ const HorizonLayer: React.FC<{
                         </div>
                     </div>
 
-                    <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white/20 tracking-tighter leading-none">
+                    <span className="block text-[clamp(2.5rem,10vw,7rem)] font-black leading-none tracking-tighter text-white/20">
                         SURAJ
                     </span>
-                    <span className="block text-[10vw] md:text-[6rem] lg:text-[7rem] font-black text-white/20 tracking-tighter leading-none">
+                    <span className="block text-[clamp(2.5rem,10vw,7rem)] font-black leading-none tracking-tighter text-white/20">
                         SARKAR
                     </span>
                 </div>
@@ -370,26 +346,24 @@ const NearContent: React.FC<{
 }> = ({ isStarHovered, onStarHover, onContact, onReboot }) => {
     return (
         <div
-            className="near-layer relative z-10 flex flex-col items-center justify-start min-h-screen pt-[15vh]"
+            className="near-layer relative z-10 flex min-h-[100dvh] flex-col items-center justify-start pt-[14vh]"
         >
-            {/* The Heading */}
-            <div className="text-center mb-8 px-4">
-                {/* Line 1 - The Foundation */}
-                <p className="heading-line-1 text-xl md:text-2xl lg:text-3xl font-medium text-gray-500 mb-4 tracking-wide uppercase">
-                    THE SYSTEM IS READY.
+            <div className="mb-8 px-4 text-center">
+                <p className="heading-line-1 mb-4 text-lg font-medium uppercase tracking-wide text-zinc-500 md:text-2xl lg:text-3xl">
+                    The system is ready.
                 </p>
-                {/* Line 2 - The Impact */}
                 <h2
-                    className="heading-line-2 text-[8vw] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black text-white tracking-tighter uppercase"
+                    className="heading-line-2 text-[clamp(2.2rem,7.5vw,7.5rem)] font-black uppercase tracking-tighter text-white"
                     style={{
-                        textShadow: '0 0 80px rgba(255, 255, 255, 0.2)',
+                        textShadow: '0 0 80px rgba(255, 255, 255, 0.18)',
                         lineHeight: 1,
                     }}
                 >
-                    WHERE ARE WE GOING?
+                    Where are we going?
                     <span
-                        className="inline-block w-[3px] md:w-[4px] h-[0.8em] bg-white ml-2 align-middle"
+                        className="ml-2 inline-block h-[0.8em] w-[3px] align-middle bg-white md:w-[4px]"
                         style={{ animation: 'blink 1s step-end infinite' }}
+                        aria-hidden="true"
                     />
                 </h2>
             </div>
@@ -416,6 +390,7 @@ const CinematicStar: React.FC<{
 }> = ({ isHovered, onClick, onHover }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const animationRef = useRef<number>(0);
+    const hoverIntensity = useRef(0);
     const particlesRef = useRef<Array<{ angle: number; radius: number; speed: number; size: number; opacity: number }>>([]);
 
     useEffect(() => {
@@ -433,6 +408,10 @@ const CinematicStar: React.FC<{
     }, []);
 
     useEffect(() => {
+        hoverIntensity.current = isHovered ? 1 : 0;
+    }, [isHovered]);
+
+    useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -444,12 +423,15 @@ const CinematicStar: React.FC<{
         canvas.height = size;
         const cx = size / 2;
         const cy = size / 2;
+        let smoothHover = 0;
 
         const animate = () => {
             ctx.clearRect(0, 0, size, size);
-            const intensity = isHovered ? 1.8 : 1;
-            const coreSize = isHovered ? 10 : 6;
-            const rayLength = isHovered ? 90 : 60;
+            // Smooth hover blend — no hard cut when isHovered flips
+            smoothHover += (hoverIntensity.current - smoothHover) * 0.08;
+            const intensity = 1 + smoothHover * 0.8;
+            const coreSize = 6 + smoothHover * 4;
+            const rayLength = 60 + smoothHover * 30;
 
             // Outer halo
             const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, 70 * intensity);
@@ -478,12 +460,12 @@ const CinematicStar: React.FC<{
             }
             ctx.restore();
 
-            // Lens flares on hover
-            if (isHovered) {
+            // Lens flares — fade with smoothHover
+            if (smoothHover > 0.02) {
                 ctx.save();
+                ctx.globalAlpha = smoothHover;
                 ctx.translate(cx, cy);
 
-                // Horizontal
                 const hFlare = ctx.createLinearGradient(-130, 0, 130, 0);
                 hFlare.addColorStop(0, 'rgba(255, 255, 255, 0)');
                 hFlare.addColorStop(0.45, 'rgba(200, 220, 255, 0.6)');
@@ -493,7 +475,6 @@ const CinematicStar: React.FC<{
                 ctx.fillStyle = hFlare;
                 ctx.fillRect(-130, -2.5, 260, 5);
 
-                // Vertical
                 const vFlare = ctx.createLinearGradient(0, -130, 0, 130);
                 vFlare.addColorStop(0, 'rgba(255, 255, 255, 0)');
                 vFlare.addColorStop(0.45, 'rgba(200, 220, 255, 0.6)');
@@ -508,11 +489,11 @@ const CinematicStar: React.FC<{
 
             // Orbiting particles
             particlesRef.current.forEach(p => {
-                p.angle += p.speed * (isHovered ? 2.5 : 1);
+                p.angle += p.speed * (1 + smoothHover * 1.5);
                 const x = cx + Math.cos(p.angle) * p.radius;
                 const y = cy + Math.sin(p.angle) * p.radius;
                 ctx.beginPath();
-                ctx.arc(x, y, p.size * (isHovered ? 1.3 : 1), 0, Math.PI * 2);
+                ctx.arc(x, y, p.size * (1 + smoothHover * 0.3), 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity * intensity})`;
                 ctx.fill();
             });
@@ -532,23 +513,27 @@ const CinematicStar: React.FC<{
 
         animate();
         return () => cancelAnimationFrame(animationRef.current);
-    }, [isHovered]);
+    }, []);
 
     return (
         <button
-            className="relative cursor-pointer border-none bg-transparent p-0 transition-transform duration-300"
-            style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
+            className="relative cursor-pointer border-none bg-transparent p-0"
+            style={{
+                transform: isHovered ? 'scale(1.04)' : 'scale(1)',
+                transition: 'transform 280ms cubic-bezier(0.23, 1, 0.32, 1)',
+            }}
             onClick={onClick}
             onMouseEnter={() => onHover(true)}
             onMouseLeave={() => onHover(false)}
-            aria-label="Contact me"
+            aria-label="Send email"
         >
             <canvas ref={canvasRef} style={{ width: '100px', height: '100px' }} />
             <span
-                className={`absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-mono uppercase tracking-widest transition-all duration-500 ${isHovered ? 'opacity-100 text-primary' : 'opacity-0 text-white/40'
-                    }`}
+                className={`absolute -bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-widest transition-[opacity,color] duration-300 ease-out ${
+                    isHovered ? 'text-primary opacity-100' : 'text-white/40 opacity-0'
+                }`}
             >
-                ▲ transmit
+                Transmit
             </span>
         </button>
     );
@@ -559,60 +544,120 @@ const CinematicStar: React.FC<{
 // ============================================
 const EventHorizon: React.FC = () => {
     const sectionRef = useRef<HTMLElement>(null);
-    const farLayerRef = useRef<HTMLDivElement>(null);
     const midLayerRef = useRef<HTMLDivElement>(null);
     const [isStarHovered, setIsStarHovered] = useState(false);
-    const [auroraIntensity, setAuroraIntensity] = useState(1);
     const [isFormVisible, setIsFormVisible] = useState(false);
 
-    // Parallax scroll effect
+    // Parallax + entrances — transform/opacity only, no per-frame React state
     useEffect(() => {
         if (!sectionRef.current) return;
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         const ctx = gsap.context(() => {
-            // Far layer - moves slowest (barely moves)
+            if (reduceMotion) {
+                gsap.set(
+                    ['.near-layer .heading-line-1', '.near-layer .heading-line-2', '.near-layer .north-star', '.horizon-name', '.social-links'],
+                    { opacity: 1, y: 0, scale: 1, autoAlpha: 1 }
+                );
+                return;
+            }
+
+            // Far layer - slowest parallax
             gsap.to('.far-layer', {
-                y: -50,
+                y: -40,
                 ease: 'none',
                 scrollTrigger: {
                     trigger: sectionRef.current,
                     start: 'top bottom',
                     end: 'bottom top',
-                    scrub: 1,
+                    scrub: 1.1,
                 },
             });
 
-            // Mid layer - moves at medium speed
+            // Mid layer - medium parallax
             gsap.to('.mid-layer', {
-                y: -120,
+                y: -100,
                 ease: 'none',
                 scrollTrigger: {
                     trigger: sectionRef.current,
                     start: 'top bottom',
                     end: 'bottom top',
-                    scrub: 0.8,
+                    scrub: 0.75,
                 },
             });
 
-            // Aurora intensity based on scroll progress
+            // Aurora intensity via CSS var (no React re-render)
             ScrollTrigger.create({
                 trigger: sectionRef.current,
                 start: 'top 80%',
                 end: 'top 20%',
-                scrub: true,
+                scrub: 0.8,
                 onUpdate: (self) => {
-                    setAuroraIntensity(0.5 + self.progress * 1.5);
+                    const el = sectionRef.current?.querySelector('.mid-layer') as HTMLElement | null;
+                    if (el) {
+                        el.style.setProperty('--aurora', String(0.55 + self.progress * 1.35));
+                    }
                 },
             });
 
-            // Heading entrance - Line 1 (smaller text)
             gsap.fromTo(
                 '.near-layer .heading-line-1',
-                { opacity: 0, y: 60 },
+                { opacity: 0, y: 40 },
                 {
                     opacity: 1,
                     y: 0,
-                    duration: 1,
+                    duration: 0.9,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: 'top 62%',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+
+            gsap.fromTo(
+                '.near-layer .heading-line-2',
+                { opacity: 0, y: 56, scale: 0.96 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 1.05,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: 'top 56%',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+
+            // Never scale(0) — start near-visible
+            gsap.fromTo(
+                '.near-layer .north-star',
+                { opacity: 0, scale: 0.92 },
+                {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.85,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: sectionRef.current,
+                        start: 'top 48%',
+                        toggleActions: 'play none none reverse',
+                    },
+                }
+            );
+
+            gsap.fromTo(
+                '.horizon-name',
+                { y: 64, autoAlpha: 0, scale: 0.96 },
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    scale: 1,
+                    duration: 1.15,
                     ease: 'power3.out',
                     scrollTrigger: {
                         trigger: sectionRef.current,
@@ -622,73 +667,17 @@ const EventHorizon: React.FC = () => {
                 }
             );
 
-            // Heading entrance - Line 2 (big text)
             gsap.fromTo(
-                '.near-layer .heading-line-2',
-                { opacity: 0, y: 80, scale: 0.9 },
+                '.social-links',
+                { opacity: 0, y: 20 },
                 {
                     opacity: 1,
                     y: 0,
-                    scale: 1,
-                    duration: 1.2,
+                    duration: 0.7,
                     ease: 'power3.out',
                     scrollTrigger: {
                         trigger: sectionRef.current,
-                        start: 'top 55%',
-                        toggleActions: 'play none none reverse',
-                    },
-                }
-            );
-
-            // North Star entrance - scale up with bounce
-            gsap.fromTo(
-                '.near-layer .north-star',
-                { opacity: 0, scale: 0 },
-                {
-                    opacity: 1,
-                    scale: 1,
-                    duration: 1,
-                    ease: 'back.out(1.7)',
-                    scrollTrigger: {
-                        trigger: sectionRef.current,
-                        start: 'top 45%',
-                        toggleActions: 'play none none reverse',
-                    },
-                }
-            );
-
-            // Name reveal animation - surprise from bottom
-            gsap.fromTo(
-                '.horizon-name',
-                { y: 100, autoAlpha: 0, scale: 0.8 },
-                {
-                    y: 0,
-                    autoAlpha: 1,
-                    scale: 1,
-                    duration: 1.5,
-                    ease: 'power4.out',
-                    scrollTrigger: {
-                        trigger: sectionRef.current,
-                        start: 'top 60%', // Trigger earlier to ensure visibility
-                        end: 'bottom bottom',
-                        toggleActions: 'play none none reverse',
-                    },
-                }
-            );
-
-
-            // Social links entrance - slide up
-            gsap.fromTo(
-                '.social-links',
-                { opacity: 0, y: 30 },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.8,
-                    ease: 'power2.out',
-                    scrollTrigger: {
-                        trigger: sectionRef.current,
-                        start: 'top 35%',
+                        start: 'top 38%',
                         toggleActions: 'play none none reverse',
                     },
                 }
@@ -713,18 +702,17 @@ const EventHorizon: React.FC = () => {
     return (
         <section
             ref={sectionRef}
-            className="relative min-h-[110vh] overflow-hidden"
-            style={{ backgroundColor: '#030306' }}
+            className="relative min-h-[110dvh] overflow-hidden"
+            style={{ backgroundColor: 'transparent' }}
             id="contact"
+            aria-label="Contact"
         >
-            {/* FAR LAYER - Dim stars */}
-            <div ref={farLayerRef} className="absolute inset-0">
-                <FarStars />
-            </div>
+            {/* FAR LAYER — parallax shell (shared WebGL cosmos lives on App) */}
+            <div className="far-layer pointer-events-none absolute inset-0" aria-hidden="true" />
 
             {/* MID LAYER - Aurora ribbons */}
             <div ref={midLayerRef} className="absolute inset-0">
-                <MidAurora intensity={auroraIntensity} />
+                <MidAurora />
                 <HorizonLayer isFormVisible={isFormVisible} setIsFormVisible={setIsFormVisible} />
             </div>
 
@@ -737,12 +725,13 @@ const EventHorizon: React.FC = () => {
             />
 
             {/* Social Links - positioned at section bottom */}
-            <div className="social-links absolute bottom-4 left-0 right-0 z-20 flex justify-center gap-5">
+            <div className="social-links absolute bottom-5 left-0 right-0 z-20 flex justify-center gap-4">
                 <a
                     href="https://github.com/surajsarkar"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white/40 hover:text-white/90 hover:border-white/50 transition-all"
+                    className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/40 hover:border-white/50 hover:text-white/90"
+                    style={{ transition: 'color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)' }}
                     aria-label="GitHub"
                 >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -753,7 +742,8 @@ const EventHorizon: React.FC = () => {
                     href="https://linkedin.com/in/surajsarkar"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white/40 hover:text-white/90 hover:border-white/50 transition-all"
+                    className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/40 hover:border-white/50 hover:text-white/90"
+                    style={{ transition: 'color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)' }}
                     aria-label="LinkedIn"
                 >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -764,7 +754,8 @@ const EventHorizon: React.FC = () => {
                     href="https://medium.com/@surajsarkar"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white/40 hover:text-white/90 hover:border-white/50 transition-all"
+                    className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/40 hover:border-white/50 hover:text-white/90"
+                    style={{ transition: 'color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)' }}
                     aria-label="Medium"
                 >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

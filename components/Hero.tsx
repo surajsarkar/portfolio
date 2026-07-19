@@ -1,131 +1,201 @@
-
-import React, { useState, useEffect, useRef } from 'react';
-import ParticleField from './ParticleField';
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 
 const Hero: React.FC = () => {
-  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.8 }); // Normalized coordinates (0 to 1) for background
-  const [textMousePos, setTextMousePos] = useState({ x: 50, y: 50 }); // Percentage for text spotlight
-  const [isHovering, setIsHovering] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const subRef = useRef<HTMLParagraphElement>(null);
 
+  // Mouse-driven glow + text spotlight via CSS vars (no React re-render)
   useEffect(() => {
-    // Trigger entrance animations
-    setIsVisible(true);
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        // Background glow tracking
-        const x = (e.clientX - rect.left) / rect.width;
-        const y = (e.clientY - rect.top) / rect.height;
-        setMousePos({ x, y });
-        setIsHovering(true);
-      }
-
-      if (headingRef.current) {
-        // Text spotlight tracking
-        const hRect = headingRef.current.getBoundingClientRect();
-        const hX = ((e.clientX - hRect.left) / hRect.width) * 100;
-        const hY = ((e.clientY - hRect.top) / hRect.height) * 100;
-        setTextMousePos({ x: hX, y: hY });
-      }
-    };
-
-    const handleMouseLeave = () => {
-      setIsHovering(false);
-      setMousePos({ x: 0.5, y: 0.8 });
-      setTextMousePos({ x: 50, y: 50 });
-    };
-
     const section = sectionRef.current;
-    if (section) {
-      section.addEventListener('mousemove', handleMouseMove);
-      section.addEventListener('mouseleave', handleMouseLeave);
-      section.addEventListener('mouseenter', () => setIsHovering(true));
+    const heading = headingRef.current;
+    const glow = glowRef.current;
+    if (!section || !heading || !glow) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let targetX = 0.5;
+    let targetY = 0.8;
+    let currentX = 0.5;
+    let currentY = 0.8;
+    let textX = 50;
+    let textY = 50;
+    let targetTextX = 50;
+    let targetTextY = 50;
+    let hovering = false;
+    let raf = 0;
+
+    const tick = () => {
+      const lerp = 0.08;
+      currentX += (targetX - currentX) * lerp;
+      currentY += (targetY - currentY) * lerp;
+      textX += (targetTextX - textX) * lerp;
+      textY += (targetTextY - textY) * lerp;
+
+      const pull = hovering ? 0.28 : 0.06;
+      const glowX = 0.5 + (currentX - 0.5) * pull;
+      const glowY = 0.8 + (currentY - 0.8) * pull;
+      const intensity = hovering ? 0.14 : 0.07;
+
+      glow.style.background = `
+        radial-gradient(
+          1100px circle at ${glowX * 100}% ${glowY * 100}%,
+          rgba(83, 210, 45, ${intensity}),
+          transparent 68%
+        )
+      `;
+
+      heading.style.backgroundImage = `radial-gradient(circle at ${textX}% ${textY}%, #53d22d 0%, #f4f4f5 28%, #1a1a22 100%)`;
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    if (!reduceMotion) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      glow.style.background = `radial-gradient(1100px circle at 50% 80%, rgba(83, 210, 45, 0.07), transparent 68%)`;
+      heading.style.backgroundImage = `radial-gradient(circle at 50% 50%, #53d22d 0%, #f4f4f5 28%, #1a1a22 100%)`;
     }
 
+    const onMove = (e: MouseEvent) => {
+      if (reduceMotion) return;
+      const rect = section.getBoundingClientRect();
+      targetX = (e.clientX - rect.left) / rect.width;
+      targetY = (e.clientY - rect.top) / rect.height;
+      hovering = true;
+
+      const hRect = heading.getBoundingClientRect();
+      targetTextX = ((e.clientX - hRect.left) / Math.max(hRect.width, 1)) * 100;
+      targetTextY = ((e.clientY - hRect.top) / Math.max(hRect.height, 1)) * 100;
+    };
+
+    const onLeave = () => {
+      hovering = false;
+      targetX = 0.5;
+      targetY = 0.8;
+      targetTextX = 50;
+      targetTextY = 50;
+    };
+
+    section.addEventListener('mousemove', onMove, { passive: true });
+    section.addEventListener('mouseleave', onLeave);
+
     return () => {
-      if (section) {
-        section.removeEventListener('mousemove', handleMouseMove);
-        section.removeEventListener('mouseleave', handleMouseLeave);
-      }
+      cancelAnimationFrame(raf);
+      section.removeEventListener('mousemove', onMove);
+      section.removeEventListener('mouseleave', onLeave);
     };
   }, []);
 
-  // Leashed background glow logic
-  const anchorX = 0.5;
-  const anchorY = 0.8;
-  const pull = isHovering ? 0.25 : 0.05;
-  const glowX = anchorX + (mousePos.x - anchorX) * pull;
-  const glowY = anchorY + (mousePos.y - anchorY) * pull;
+  // Staggered entrance — transform/opacity only
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const els = [badgeRef.current, headingRef.current, subRef.current].filter(Boolean) as HTMLElement[];
+
+    if (reduceMotion) {
+      els.forEach((el) => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.set(els, { opacity: 0, y: 28 });
+      gsap.to(badgeRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.85,
+        ease: 'power3.out',
+        delay: 0.08,
+      });
+      gsap.to(headingRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 1.05,
+        ease: 'power3.out',
+        delay: 0.2,
+      });
+      gsap.to(subRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.9,
+        ease: 'power3.out',
+        delay: 0.38,
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden group select-none"
+      className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-4 select-none cosmos-vignette"
+      aria-label="Introduction"
     >
-      {/* Starry Night Background - Milky Way Galaxy */}
-      <ParticleField starCount={1001} color="#ffffff" />
-
-      {/* Interactive Background Glow */}
+      {/* Interactive cursor glow */}
       <div
-        className="pointer-events-none absolute inset-0 z-0"
+        ref={glowRef}
+        className="pointer-events-none absolute inset-0 z-[1]"
         style={{
-          background: `
-            radial-gradient(
-              1200px circle at ${glowX * 100}% ${glowY * 100}%, 
-              rgba(83, 210, 45, ${isHovering ? '0.12' : '0.06'}), 
-              transparent 70%
-            )
-          `,
-          transition: 'background 0.2s ease-out, opacity 1s ease-in-out'
+          transition: 'opacity 0.8s var(--ease-out)',
         }}
       />
 
-      {/* Static deep ambient bottom light */}
-      <div className="absolute bottom-[-10%] left-1/2 -translate-x-1/2 w-[120vw] h-[60vh] bg-primary/10 rounded-full blur-[160px] -z-10 opacity-30"></div>
+      {/* Deep ambient floor light */}
+      <div
+        className="pointer-events-none absolute bottom-[-12%] left-1/2 z-[1] h-[55vh] w-[120vw] -translate-x-1/2 rounded-full bg-primary/10 opacity-30 blur-[140px]"
+        aria-hidden="true"
+      />
 
-      <div className="relative z-10 mx-auto max-w-[95vw] text-center flex flex-col items-center">
-
-        {/* Status Badge with entrance animation */}
+      <div className="relative z-10 mx-auto flex max-w-[95vw] flex-col items-center text-center">
         <div
-          className={`inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 mb-8 transition-all duration-1000 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          ref={badgeRef}
+          className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 opacity-0"
         >
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
           </span>
-          <span className="font-mono text-xs md:text-sm font-bold text-primary tracking-[0.2em] uppercase">AVAILABLE FOR FREELANCE</span>
+          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-primary md:text-xs">
+            Available for freelance
+          </span>
         </div>
 
-        {/* Massive Animated Heading */}
         <h1
           ref={headingRef}
-          className={`text-[8vw] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black tracking-[-0.05em] leading-[1] mb-6 transition-all duration-1000 ease-out delay-300 uppercase ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+          className="mb-6 max-w-6xl bg-clip-text text-[clamp(2.4rem,7.5vw,7.5rem)] font-black uppercase leading-[0.95] tracking-[-0.04em] opacity-0"
+          style={{
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            backgroundSize: '160% 160%',
+            backgroundPosition: 'center',
+          }}
         >
+          crafting intelligence{' '}
+          <br className="hidden md:block" />
+          from{' '}
           <span
-            className="inline-block transition-all duration-300 bg-clip-text"
             style={{
-              backgroundImage: `radial-gradient(circle at ${textMousePos.x}% ${textMousePos.y}%, #53d22d 0%, #ffffff 30%, #1a1a1a 100%)`,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              backgroundSize: '160% 160%',
-              backgroundPosition: 'center',
+              color: '#53d22d',
+              WebkitTextFillColor: '#53d22d',
             }}
           >
-            crafting intelligence <br className="hidden md:block" /> from <span style={{ color: '#53d22d', WebkitTextFillColor: '#53d22d' }}>backend to behaviour</span>.
+            backend to behaviour
           </span>
+          .
         </h1>
 
-        {/* Subheading */}
         <p
-          className={`max-w-2xl text-lg md:text-xl text-gray-400 font-medium leading-relaxed transition-all duration-1000 delay-500 uppercase tracking-wider ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+          ref={subRef}
+          className="max-w-xl text-base font-medium leading-relaxed tracking-wide text-zinc-400 opacity-0 md:text-lg"
         >
-          I like building systems that make AI work.
+          I build systems that make AI work in production.
         </p>
       </div>
     </section>

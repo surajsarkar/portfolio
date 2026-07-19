@@ -62,7 +62,7 @@ const ConstellationNetwork: React.FC<ConstellationNetworkProps> = ({
             className="absolute inset-0 w-full h-full pointer-events-none"
             style={{
                 opacity: isActive ? 1 : 0,
-                transition: 'opacity 0.5s ease-out',
+                transition: 'opacity 480ms cubic-bezier(0.23, 1, 0.32, 1)',
                 zIndex: 5
             }}
         >

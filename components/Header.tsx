@@ -1,55 +1,66 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DobbyFace from './DobbyFace';
 
 const Header: React.FC = () => {
-  // Trigger excited expression when hovering over Projects
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const handleProjectsMouseEnter = () => {
     window.dispatchEvent(new CustomEvent('dobby-show-excited'));
   };
-
   const handleProjectsMouseLeave = () => {
     window.dispatchEvent(new CustomEvent('dobby-hide-excited'));
   };
-
-  // Trigger love expression when hovering over Contact
   const handleContactMouseEnter = () => {
     window.dispatchEvent(new CustomEvent('dobby-show-love'));
   };
-
   const handleContactMouseLeave = () => {
     window.dispatchEvent(new CustomEvent('dobby-hide-love'));
   };
 
+  const linkClass =
+    'pressable rounded-full px-3 py-2 text-sm font-semibold uppercase tracking-wider text-zinc-300 transition-colors duration-200 hover:text-primary';
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-4">
+    <header className="fixed left-0 right-0 top-0 z-50 flex justify-center px-4 pt-5 md:pt-6">
       <nav
-        className="relative flex items-center gap-6 rounded-full px-6 py-2.5 shadow-2xl overflow-hidden"
+        className={`nav-glass relative flex max-h-16 items-center gap-5 overflow-hidden rounded-full px-5 py-2 md:gap-6 md:px-6 ${
+          scrolled ? 'shadow-[0_12px_40px_rgba(5,5,8,0.55)]' : ''
+        }`}
         style={{
-          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.02) 100%)',
-          backdropFilter: 'blur(20px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 40px rgba(83, 210, 45, 0.05)'
+          transition: 'box-shadow 280ms var(--ease-soft), background 280ms var(--ease-soft)',
         }}
+        aria-label="Primary"
       >
-        {/* Glass shine effect */}
+        {/* Edge refraction highlight */}
         <div
-          className="absolute inset-0 rounded-full pointer-events-none"
+          className="pointer-events-none absolute inset-0 rounded-full"
           style={{
-            background: 'linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.08) 45%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.08) 55%, transparent 60%)',
+            background:
+              'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.07) 48%, rgba(255,255,255,0.11) 50%, rgba(255,255,255,0.07) 52%, transparent 60%)',
           }}
+          aria-hidden="true"
         />
+
         <a
-          className="text-sm font-semibold text-gray-300 hover:text-primary transition-colors uppercase tracking-wider"
+          className={linkClass}
           href="#projects"
           onMouseEnter={handleProjectsMouseEnter}
           onMouseLeave={handleProjectsMouseLeave}
         >
           Projects
         </a>
+
         <DobbyFace />
+
         <a
-          className="text-sm font-semibold text-gray-300 hover:text-primary transition-colors uppercase tracking-wider"
+          className={linkClass}
           href="#contact"
           onMouseEnter={handleContactMouseEnter}
           onMouseLeave={handleContactMouseLeave}

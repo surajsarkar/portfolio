@@ -1,0 +1,153 @@
+/* ============================================
+   Cosmos motion system — GPU-friendly defaults
+   ============================================ */
+
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-soft: cubic-bezier(0.2, 0, 0, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --duration-press: 140ms;
+  --duration-hover: 220ms;
+  --duration-ui: 280ms;
+  --duration-section: 700ms;
+
+  --z-cosmic: 0;
+  --z-content: 10;
+  --z-header: 50;
+  --z-grain: 60;
+}
+
+/* Font smoothing + text quality */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Balanced headings, fewer orphans */
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Focus rings — cosmos green, visible */
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary, #53d22d) 80%, white);
+  outline-offset: 3px;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100%;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 9999px;
+  background: var(--primary, #53d22d);
+  color: #050508;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: top var(--duration-ui) var(--ease-out);
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Film grain — fixed, never on scrolling containers */
+.cosmos-grain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+}
+
+/* Interactive press feedback utility */
+.pressable {
+  transition:
+    transform var(--duration-press) var(--ease-out),
+    opacity var(--duration-hover) var(--ease-soft),
+    border-color var(--duration-hover) var(--ease-soft),
+    background-color var(--duration-hover) var(--ease-soft),
+    color var(--duration-hover) var(--ease-soft),
+    box-shadow var(--duration-hover) var(--ease-soft);
+}
+
+.pressable:active {
+  transform: scale(0.96);
+}
+
+/* Nav glass polish */
+.nav-glass {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.09) 0%,
+      rgba(255, 255, 255, 0.04) 50%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 32px rgba(5, 5, 8, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 40px rgba(83, 210, 45, 0.04);
+}
+
+/* Soft ambient vignette for sections */
+.cosmos-vignette::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 40%,
+    transparent 40%,
+    rgba(5, 5, 8, 0.55) 100%
+  );
+}
+
+/* Hero entrance helpers (GSAP also drives these) */
+.hero-enter {
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: transform, opacity;
+}
+
+/* Card will-change only while scrubbing */
+.is-scrubbing {
+  will-change: transform, opacity;
+}
