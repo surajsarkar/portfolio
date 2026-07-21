@@ -151,3 +151,20 @@ p {
 .is-scrubbing {
   will-change: transform, opacity;
 }
+
+/* Project card — high-end glass refinements */
+.project-stack-card {
+  -webkit-font-smoothing: antialiased;
+}
+
+.project-stack-card a:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary, #53d22d) 85%, white);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-stack-card,
+  .project-stack-card * {
+    transition-duration: 0.01ms !important;
+  }
+}

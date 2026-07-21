@@ -6,7 +6,6 @@ const Hero: React.FC = () => {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
-  const subRef = useRef<HTMLParagraphElement>(null);
 
   // Mouse-driven glow + text spotlight via CSS vars (no React re-render)
   useEffect(() => {
@@ -48,7 +47,7 @@ const Hero: React.FC = () => {
         )
       `;
 
-      heading.style.backgroundImage = `radial-gradient(circle at ${textX}% ${textY}%, #53d22d 0%, #f4f4f5 28%, #1a1a22 100%)`;
+      heading.style.backgroundImage = `radial-gradient(circle at ${textX}% ${textY}%, #53d22d 0%, #f4f4f5 32%, #9f9fad 100%)`;
 
       raf = requestAnimationFrame(tick);
     };
@@ -57,7 +56,7 @@ const Hero: React.FC = () => {
       raf = requestAnimationFrame(tick);
     } else {
       glow.style.background = `radial-gradient(1100px circle at 50% 80%, rgba(83, 210, 45, 0.07), transparent 68%)`;
-      heading.style.backgroundImage = `radial-gradient(circle at 50% 50%, #53d22d 0%, #f4f4f5 28%, #1a1a22 100%)`;
+      heading.style.backgroundImage = `radial-gradient(circle at 50% 50%, #53d22d 0%, #f4f4f5 32%, #9f9fad 100%)`;
     }
 
     const onMove = (e: MouseEvent) => {
@@ -93,7 +92,7 @@ const Hero: React.FC = () => {
   // Staggered entrance — transform/opacity only
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const els = [badgeRef.current, headingRef.current, subRef.current].filter(Boolean) as HTMLElement[];
+    const els = [badgeRef.current, headingRef.current].filter(Boolean) as HTMLElement[];
 
     if (reduceMotion) {
       els.forEach((el) => {
@@ -118,13 +117,6 @@ const Hero: React.FC = () => {
         duration: 1.05,
         ease: 'power3.out',
         delay: 0.2,
-      });
-      gsap.to(subRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.9,
-        ease: 'power3.out',
-        delay: 0.38,
       });
     }, sectionRef);
 
@@ -155,7 +147,7 @@ const Hero: React.FC = () => {
       <div className="relative z-10 mx-auto flex max-w-[95vw] flex-col items-center text-center">
         <div
           ref={badgeRef}
-          className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 opacity-0"
+          className="mb-10 inline-flex items-center gap-2.5 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 opacity-0"
         >
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
@@ -168,7 +160,7 @@ const Hero: React.FC = () => {
 
         <h1
           ref={headingRef}
-          className="mb-6 max-w-6xl bg-clip-text text-[clamp(2.4rem,7.5vw,7.5rem)] font-black uppercase leading-[0.95] tracking-[-0.04em] opacity-0"
+          className="max-w-3xl space-y-6 bg-clip-text text-left text-[clamp(1.15rem,2.4vw,1.65rem)] font-black leading-[1.7] tracking-wide opacity-0 md:text-center"
           style={{
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -177,26 +169,16 @@ const Hero: React.FC = () => {
             backgroundPosition: 'center',
           }}
         >
-          crafting intelligence{' '}
-          <br className="hidden md:block" />
-          from{' '}
-          <span
-            style={{
-              color: '#53d22d',
-              WebkitTextFillColor: '#53d22d',
-            }}
-          >
-            backend to behaviour
+          <span className="block">
+            I work from India, building backend systems and local AI tools.
           </span>
-          .
+          <span className="block">
+            Mostly, I automate the boring stuff—quiet software that handles tedious work in the background so people don&apos;t have to think about it.
+          </span>
+          <span className="block">
+            Day to day, I code in the terminal with Neovim and prefer books over videos to understand how things work.
+          </span>
         </h1>
-
-        <p
-          ref={subRef}
-          className="max-w-xl text-base font-medium leading-relaxed tracking-wide text-zinc-400 opacity-0 md:text-lg"
-        >
-          I build systems that make AI work in production.
-        </p>
       </div>
     </section>
   );

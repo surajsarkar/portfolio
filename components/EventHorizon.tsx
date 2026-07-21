@@ -349,22 +349,13 @@ const NearContent: React.FC<{
             className="near-layer relative z-10 flex min-h-[100dvh] flex-col items-center justify-start pt-[14vh]"
         >
             <div className="mb-8 px-4 text-center">
-                <p className="heading-line-1 mb-4 text-lg font-medium uppercase tracking-wide text-zinc-500 md:text-2xl lg:text-3xl">
-                    The system is ready.
-                </p>
                 <h2
-                    className="heading-line-2 text-[clamp(2.2rem,7.5vw,7.5rem)] font-black uppercase tracking-tighter text-white"
+                    className="heading-line-2 mx-auto max-w-3xl text-[clamp(1.25rem,3.2vw,2rem)] font-black leading-relaxed tracking-wide text-white"
                     style={{
                         textShadow: '0 0 80px rgba(255, 255, 255, 0.18)',
-                        lineHeight: 1,
                     }}
                 >
-                    Where are we going?
-                    <span
-                        className="ml-2 inline-block h-[0.8em] w-[3px] align-middle bg-white md:w-[4px]"
-                        style={{ animation: 'blink 1s step-end infinite' }}
-                        aria-hidden="true"
-                    />
+                    If you need a hand building reliable backend systems or automating the boring stuff, feel free to say hello.
                 </h2>
             </div>
 
@@ -556,7 +547,7 @@ const EventHorizon: React.FC = () => {
         const ctx = gsap.context(() => {
             if (reduceMotion) {
                 gsap.set(
-                    ['.near-layer .heading-line-1', '.near-layer .heading-line-2', '.near-layer .north-star', '.horizon-name', '.social-links'],
+                    ['.near-layer .heading-line-2', '.near-layer .north-star', '.horizon-name', '.social-links'],
                     { opacity: 1, y: 0, scale: 1, autoAlpha: 1 }
                 );
                 return;
@@ -599,22 +590,6 @@ const EventHorizon: React.FC = () => {
                     }
                 },
             });
-
-            gsap.fromTo(
-                '.near-layer .heading-line-1',
-                { opacity: 0, y: 40 },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.9,
-                    ease: 'power3.out',
-                    scrollTrigger: {
-                        trigger: sectionRef.current,
-                        start: 'top 62%',
-                        toggleActions: 'play none none reverse',
-                    },
-                }
-            );
 
             gsap.fromTo(
                 '.near-layer .heading-line-2',
