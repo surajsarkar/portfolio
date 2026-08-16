@@ -137,37 +137,42 @@ const Hero: React.FC = () => {
           ref={badgeRef}
           className="mb-5 font-serif text-base italic leading-[1.2] text-cream-muted opacity-0 pb-1 md:text-lg"
         >
-          Available for freelance
+          Available for consulting
         </p>
 
         <h1
           ref={headingRef}
-          className="max-w-5xl font-serif text-[clamp(2.75rem,8vw,7.25rem)] font-normal leading-[1.02] tracking-[-0.03em] text-cream opacity-0"
+          className="font-serif text-[clamp(2.4rem,6.4vw,5.75rem)] font-normal leading-[1.05] tracking-[-0.03em] text-cream opacity-0"
         >
-          Backend systems
+          Building backend systems
           <br />
-          and local AI.
+          and local AI tools.
         </h1>
 
         <div
           ref={copyRef}
-          className="mt-8 flex max-w-xl flex-col items-start gap-7 opacity-0"
+          className="mt-8 flex max-w-2xl flex-col items-start gap-7 opacity-0"
         >
-          <p className="text-base leading-relaxed text-cream-muted md:text-lg">
-            I work from India, building quiet software that handles the tedious work so people don&apos;t have to think about it.
-          </p>
+          <div className="space-y-4">
+            <p className="text-base leading-relaxed text-cream/90 md:text-lg">
+              Based in India, I focus on creating the infrastructure that makes AI work, from backend to behaviour.
+            </p>
+            <p className="text-base leading-relaxed text-cream/90 md:text-lg">
+              Mostly, I build quiet software. I automate the tedious, background work so people don&apos;t have to think about it. Day to day, I prefer reading books over watching video tutorials. Videos have way too much noise, and books politely force my brain to do its own rendering.
+            </p>
+          </div>
           <a
             href="#projects"
             className="pressable group inline-flex items-center gap-3 text-sm font-medium text-cream"
           >
             Selected work
             <span
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-cream/20 transition-transform duration-300 ease-[var(--ease-soft)] group-hover:translate-x-0.5"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-cream/20 transition-transform duration-300 ease-[var(--ease-soft)] group-hover:translate-y-0.5"
               aria-hidden="true"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14" />
-                <path d="M13 6l6 6-6 6" />
+                <path d="M12 5v14" />
+                <path d="M6 13l6 6 6-6" />
               </svg>
             </span>
           </a>
