@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { CONTACT_EMAIL } from '../lib/contact';
 
 const useConsoleEasterEgg = () => {
     useEffect(() => {
@@ -70,7 +71,7 @@ const useConsoleEasterEgg = () => {
         (window as any).contact = () => {
             console.log('%c📡 Opening communication channel...', styles.text_green);
             setTimeout(() => {
-                window.location.href = 'mailto:hello@surajsarkar.dev';
+                window.location.href = `mailto:${CONTACT_EMAIL}`;
             }, 500);
         };
 

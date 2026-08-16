@@ -1,8 +1,171 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { CONTACT_EMAIL, sendContactMessage } from '../lib/contact';
 
 gsap.registerPlugin(ScrollTrigger);
+
+type FormStatus = 'idle' | 'sending' | 'success' | 'error';
+
+// ============================================
+// CONTACT FORM — works on static hosts (GH Pages)
+// ============================================
+const ContactForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+    const [botcheck, setBotcheck] = useState('');
+    const [status, setStatus] = useState<FormStatus>('idle');
+    const [feedback, setFeedback] = useState('');
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(CONTACT_EMAIL);
+            setCopied(true);
+            window.setTimeout(() => setCopied(false), 1600);
+        } catch {
+            // ignore
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (status === 'sending') return;
+
+        setStatus('sending');
+        setFeedback('');
+
+        const result = await sendContactMessage({ email, message, botcheck });
+
+        if (result.ok) {
+            setStatus('success');
+            setFeedback(result.message);
+            setEmail('');
+            setMessage('');
+            window.dispatchEvent(new CustomEvent('dobby-show-popper'));
+            window.setTimeout(() => onClose(), 2200);
+        } else {
+            setStatus('error');
+            setFeedback(result.message);
+        }
+    };
+
+    return (
+        <form
+            onSubmit={handleSubmit}
+            className="mx-4 w-full max-w-lg rounded-2xl border border-white/10 p-4"
+            style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                boxShadow:
+                    '0 8px 32px rgba(5, 5, 8, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                animation: 'formIn 420ms cubic-bezier(0.23, 1, 0.32, 1) both',
+            }}
+            noValidate
+        >
+            {/* To Field - Email in pill */}
+            <div className="mb-4 flex items-center gap-2">
+                <span className="px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-sm">
+                    {CONTACT_EMAIL}
+                </span>
+                <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="p-2 rounded-xl bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 hover:border-primary/50 transition-all"
+                    aria-label="Copy email"
+                    title={copied ? 'Copied' : 'Copy email'}
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                    </svg>
+                </button>
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="ml-auto p-2 rounded-xl border border-white/10 text-white/40 hover:text-white/80 hover:border-white/25 transition-all"
+                    aria-label="Close form"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            {/* Honeypot — hidden from humans */}
+            <input
+                type="text"
+                name="botcheck"
+                value={botcheck}
+                onChange={(e) => setBotcheck(e.target.value)}
+                className="absolute opacity-0 pointer-events-none h-0 w-0 overflow-hidden"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+            />
+
+            {/* From Field */}
+            <div className="mb-4">
+                <label htmlFor="contact-email" className="sr-only">
+                    Your email
+                </label>
+                <input
+                    id="contact-email"
+                    type="email"
+                    name="email"
+                    required
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={status === 'sending' || status === 'success'}
+                    placeholder="your@email.com"
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all disabled:opacity-60"
+                />
+            </div>
+
+            {/* Message Field with embedded button */}
+            <div className="relative">
+                <label htmlFor="contact-message" className="sr-only">
+                    Your message
+                </label>
+                <textarea
+                    id="contact-message"
+                    name="message"
+                    required
+                    rows={4}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    disabled={status === 'sending' || status === 'success'}
+                    placeholder="Your message..."
+                    className="w-full px-4 py-3 pb-14 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all resize-none disabled:opacity-60"
+                />
+                <button
+                    type="submit"
+                    disabled={status === 'sending' || status === 'success'}
+                    className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-xs uppercase tracking-wider hover:bg-primary/30 hover:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {status === 'sending' ? '… Sending' : status === 'success' ? 'Sent' : '▲ Transmit'}
+                </button>
+            </div>
+
+            {feedback && (
+                <p
+                    className={`mt-3 font-mono text-xs leading-relaxed ${
+                        status === 'error' ? 'text-red-400' : 'text-primary'
+                    }`}
+                    role={status === 'error' ? 'alert' : 'status'}
+                >
+                    {feedback}
+                </p>
+            )}
+        </form>
+    );
+};
 
 // ============================================
 // MID LAYER - Aurora ribbons (medium parallax)
@@ -191,65 +354,7 @@ const HorizonLayer: React.FC<{
                                 </span>
                             </button>
                         ) : (
-                            <div
-                                className="mx-4 w-full max-w-lg rounded-2xl border border-white/10 p-4"
-                                style={{
-                                    background: 'rgba(255, 255, 255, 0.05)',
-                                    backdropFilter: 'blur(20px)',
-                                    WebkitBackdropFilter: 'blur(20px)',
-                                    boxShadow:
-                                        '0 8px 32px rgba(5, 5, 8, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                                    animation: 'formIn 420ms cubic-bezier(0.23, 1, 0.32, 1) both',
-                                }}
-                            >
-                                {/* To Field - Email in pill */}
-                                <div className="mb-4 flex items-center gap-2">
-                                    <span className="px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-sm">
-                                        hello@surajsarkar.dev
-                                    </span>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            navigator.clipboard.writeText('hello@surajsarkar.dev');
-                                        }}
-                                        className="p-2 rounded-xl bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 hover:border-primary/50 transition-all"
-                                        aria-label="Copy email"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                {/* From Field */}
-                                <div className="mb-4">
-                                    <input
-                                        type="email"
-                                        placeholder="your@email.com"
-                                        className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all"
-                                    />
-                                </div>
-
-                                {/* Message Field with embedded button */}
-                                <div className="relative">
-                                    <textarea
-                                        rows={4}
-                                        placeholder="Your message..."
-                                        className="w-full px-4 py-3 pb-14 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all resize-none"
-                                    />
-                                    {/* Send Button - inside message box */}
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            window.dispatchEvent(new CustomEvent('dobby-show-popper'));
-                                            setIsFormVisible(false); // Optionally close form after sending
-                                        }}
-                                        className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-xs uppercase tracking-wider hover:bg-primary/30 hover:border-primary/50 transition-all"
-                                    >
-                                        ▲ Transmit
-                                    </button>
-                                </div>
-                            </div>
+                            <ContactForm onClose={() => setIsFormVisible(false)} />
                         )}
                     </div>
 
@@ -671,7 +776,7 @@ const EventHorizon: React.FC = () => {
     };
 
     const handleContact = () => {
-        window.location.href = 'mailto:hello@surajsarkar.dev';
+        window.location.href = `mailto:${CONTACT_EMAIL}`;
     };
 
     return (
