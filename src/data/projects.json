@@ -1,42 +1,80 @@
 [
-    {
-        "id": "1",
-        "title": "vLLM Inference Engine",
-        "description": "High-throughput LLM serving system with PagedAttention for optimal memory management. Achieves 24x higher throughput than HuggingFace Transformers.",
-        "expression": "excited",
-        "image": "/projects/vllm.jpg",
-        "tags": [
-            "Python",
-            "CUDA",
-            "Transformers"
-        ],
-        "github": "https://github.com/vllm-project/vllm"
-    },
-    {
-        "id": "2",
-        "title": "Watch Tower",
-        "description": "Real-time infrastructure monitoring dashboard with anomaly detection. Visualizes cluster health across regions with sub-second latency.",
-        "expression": "love",
-        "image": "/projects/watch-tower.jpg",
-        "tags": [
-            "TypeScript",
-            "Kubernetes",
-            "Prometheus"
-        ],
-        "article": "https://blog.example.com/watchtower"
-    },
-    {
-        "id": "3",
-        "title": "PSQL Query Engine",
-        "description": "Distributed SQL query engine with intelligent query planning and parallel execution. Handles petabyte-scale analytics.",
-        "expression": "excited",
-        "image": "/projects/psql-engine.jpg",
-        "tags": [
-            "Rust",
-            "PostgreSQL",
-            "Arrow"
-        ],
-        "github": "https://github.com/example/psql-engine",
-        "article": "https://blog.example.com/psql-engine"
-    }
+  {
+    "id": "1",
+    "slug": "watchhog",
+    "title": "WatchHog",
+    "subtitle": "Open-source resource monitoring TUI",
+    "problem": "An 8GB EC2 instance kept locking up on random memory spikes. CloudWatch and Prometheus showed that memory was climbing, never which process caused the crash. We were hard-restarting boxes and losing test data.",
+    "solution": "A crude polling script emailed the team the top consumers when a threshold was crossed. WatchHog is the compiled Go TUI of that script.",
+    "impact": [
+      "Names the leaking process instead of a 3am mystery restart.",
+      "A lightweight open-source TUI so other teams can watch health without a bloated stack."
+    ],
+    "expression": "excited",
+    "image": "/projects/watchhog.jpg?v=2",
+    "tags": ["Go", "TUI", "System APIs"]
+  },
+  {
+    "id": "2",
+    "slug": "ai-workflows",
+    "title": "AI-assisted workflows",
+    "subtitle": "Android and web",
+    "problem": "The client was locked to an agency for Android and web work. Small UI tweaks took weeks and arrived with a large invoice. Handing the codebase to an AI would have been faster, and reckless with secrets.",
+    "solution": "I built an internal agent workflow with our codebase, strict commands, and modular skills. Guardrails strip passwords, API keys, and PII before anything reaches the model. An automated test loop has the agent call our backend endpoints and check its own UI and logic before the change is submitted.",
+    "impact": [
+      "Broke the vendor lock-in and cut external development cost.",
+      "Week-long agency waits became same-day internal deploys.",
+      "No secrets exposed to external LLM providers."
+    ],
+    "expression": "love",
+    "image": "/projects/ai-workflows.jpg?v=2",
+    "tags": ["LLMs", "Workflow orchestration", "Backend APIs"]
+  },
+  {
+    "id": "3",
+    "slug": "data-lake",
+    "title": "Enterprise data lake",
+    "subtitle": "Automated report infrastructure",
+    "problem": "Data lived in legacy databases, marketing tools, and spreadsheets. A simple leadership question meant days of CSV exports and Excel. There was no single source of truth.",
+    "solution": "I designed a data lake as the shared store for the business, with ETL pipelines that collect, clean, and map those sources into one schema. On top of that, a reporting layer lets people generate automated reports or query the data directly.",
+    "impact": [
+      "Fragmented sources became one queryable warehouse.",
+      "Three days of manual ops work became instant reports.",
+      "Leadership can decide from current numbers."
+    ],
+    "expression": "excited",
+    "image": "/projects/data-lake.jpg?v=2",
+    "tags": ["Data engineering", "ETL", "Analytics backend"]
+  },
+  {
+    "id": "4",
+    "slug": "analytics",
+    "title": "Analytics dashboard",
+    "subtitle": "High-performance backend",
+    "problem": "Off-the-shelf analytics were heavy, invasive, and stale. They could not tell us how much traffic came from LLM referrals, or which queries people typed on the page.",
+    "solution": "I built a small Go backend for concurrent metric tracking with no extra load on the landing page. It records classic SEO signals next to AI-interaction metrics and feeds a custom dashboard.",
+    "impact": [
+      "Fast tracking with no front-end bloat.",
+      "Visible insight into how AI search engines reach the site."
+    ],
+    "expression": "excited",
+    "image": "/projects/analytics.jpg?v=3",
+    "tags": ["Go", "Concurrent backend"]
+  },
+  {
+    "id": "5",
+    "slug": "otterspace",
+    "title": "Otterspace",
+    "subtitle": "AI-integrated workspace",
+    "status": "In progress",
+    "problem": "Project tools are either rigid like Jira or loose like Notion. Most products then drop a generic chatbot into the UI, which gets in the way of engineering work.",
+    "solution": "Otterspace is an open-source, developer-focused workspace with team assignments and a Notion-like editor. AI shows up only where it helps, for example turning a long feature thread into a structured technical scope.",
+    "impact": [
+      "Building the backend for permissions and rich-text storage.",
+      "A quieter, UX-first way to put AI in a product."
+    ],
+    "expression": "love",
+    "image": "/projects/otterspace.jpg?v=3",
+    "tags": ["Rich text", "Role-based access", "Targeted AI"]
+  }
 ]

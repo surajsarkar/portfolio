@@ -5,25 +5,21 @@ const Hero: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
-  const badgeRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLParagraphElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
 
-  // Mouse-driven glow + text spotlight via CSS vars (no React re-render)
+  // Mouse-driven glow via CSS (no React re-render)
   useEffect(() => {
     const section = sectionRef.current;
-    const heading = headingRef.current;
     const glow = glowRef.current;
-    if (!section || !heading || !glow) return;
+    if (!section || !glow) return;
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let targetX = 0.5;
-    let targetY = 0.8;
-    let currentX = 0.5;
-    let currentY = 0.8;
-    let textX = 50;
-    let textY = 50;
-    let targetTextX = 50;
-    let targetTextY = 50;
+    let targetX = 0.28;
+    let targetY = 0.72;
+    let currentX = 0.28;
+    let currentY = 0.72;
     let hovering = false;
     let raf = 0;
 
@@ -31,23 +27,19 @@ const Hero: React.FC = () => {
       const lerp = 0.08;
       currentX += (targetX - currentX) * lerp;
       currentY += (targetY - currentY) * lerp;
-      textX += (targetTextX - textX) * lerp;
-      textY += (targetTextY - textY) * lerp;
 
-      const pull = hovering ? 0.28 : 0.06;
-      const glowX = 0.5 + (currentX - 0.5) * pull;
-      const glowY = 0.8 + (currentY - 0.8) * pull;
-      const intensity = hovering ? 0.14 : 0.07;
+      const pull = hovering ? 0.32 : 0.08;
+      const glowX = 0.28 + (currentX - 0.28) * pull;
+      const glowY = 0.72 + (currentY - 0.72) * pull;
+      const intensity = hovering ? 0.12 : 0.06;
 
       glow.style.background = `
         radial-gradient(
-          1100px circle at ${glowX * 100}% ${glowY * 100}%,
-          rgba(83, 210, 45, ${intensity}),
+          900px circle at ${glowX * 100}% ${glowY * 100}%,
+          rgba(235, 230, 220, ${intensity}),
           transparent 68%
         )
       `;
-
-      heading.style.backgroundImage = `radial-gradient(circle at ${textX}% ${textY}%, #53d22d 0%, #f4f4f5 32%, #9f9fad 100%)`;
 
       raf = requestAnimationFrame(tick);
     };
@@ -55,8 +47,7 @@ const Hero: React.FC = () => {
     if (!reduceMotion) {
       raf = requestAnimationFrame(tick);
     } else {
-      glow.style.background = `radial-gradient(1100px circle at 50% 80%, rgba(83, 210, 45, 0.07), transparent 68%)`;
-      heading.style.backgroundImage = `radial-gradient(circle at 50% 50%, #53d22d 0%, #f4f4f5 32%, #9f9fad 100%)`;
+      glow.style.background = `radial-gradient(900px circle at 28% 72%, rgba(235, 230, 220, 0.06), transparent 68%)`;
     }
 
     const onMove = (e: MouseEvent) => {
@@ -65,18 +56,12 @@ const Hero: React.FC = () => {
       targetX = (e.clientX - rect.left) / rect.width;
       targetY = (e.clientY - rect.top) / rect.height;
       hovering = true;
-
-      const hRect = heading.getBoundingClientRect();
-      targetTextX = ((e.clientX - hRect.left) / Math.max(hRect.width, 1)) * 100;
-      targetTextY = ((e.clientY - hRect.top) / Math.max(hRect.height, 1)) * 100;
     };
 
     const onLeave = () => {
       hovering = false;
-      targetX = 0.5;
-      targetY = 0.8;
-      targetTextX = 50;
-      targetTextY = 50;
+      targetX = 0.28;
+      targetY = 0.72;
     };
 
     section.addEventListener('mousemove', onMove, { passive: true });
@@ -92,7 +77,7 @@ const Hero: React.FC = () => {
   // Staggered entrance — transform/opacity only
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const els = [badgeRef.current, headingRef.current].filter(Boolean) as HTMLElement[];
+    const els = [badgeRef.current, headingRef.current, copyRef.current].filter(Boolean) as HTMLElement[];
 
     if (reduceMotion) {
       els.forEach((el) => {
@@ -103,20 +88,27 @@ const Hero: React.FC = () => {
     }
 
     const ctx = gsap.context(() => {
-      gsap.set(els, { opacity: 0, y: 28 });
+      gsap.set(els, { opacity: 0, y: 24 });
       gsap.to(badgeRef.current, {
         opacity: 1,
         y: 0,
-        duration: 0.85,
+        duration: 0.8,
         ease: 'power3.out',
-        delay: 0.08,
+        delay: 0.06,
       });
       gsap.to(headingRef.current, {
         opacity: 1,
         y: 0,
         duration: 1.05,
         ease: 'power3.out',
-        delay: 0.2,
+        delay: 0.16,
+      });
+      gsap.to(copyRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.9,
+        ease: 'power3.out',
+        delay: 0.32,
       });
     }, sectionRef);
 
@@ -126,59 +118,60 @@ const Hero: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-4 select-none cosmos-vignette"
+      className="relative flex min-h-[100dvh] flex-col justify-end overflow-hidden px-6 pb-16 pt-24 cosmos-vignette md:px-12 md:pb-24"
       aria-label="Introduction"
     >
-      {/* Interactive cursor glow */}
       <div
         ref={glowRef}
         className="pointer-events-none absolute inset-0 z-[1]"
-        style={{
-          transition: 'opacity 0.8s var(--ease-out)',
-        }}
-      />
-
-      {/* Deep ambient floor light */}
-      <div
-        className="pointer-events-none absolute bottom-[-12%] left-1/2 z-[1] h-[55vh] w-[120vw] -translate-x-1/2 rounded-full bg-primary/10 opacity-30 blur-[140px]"
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto flex max-w-[95vw] flex-col items-center text-center">
-        <div
+      <div
+        className="pointer-events-none absolute bottom-[-18%] left-[-10%] z-[1] h-[50vh] w-[70vw] rounded-full bg-cream/10 opacity-40 blur-[140px]"
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-[1400px]">
+        <p
           ref={badgeRef}
-          className="mb-10 inline-flex items-center gap-2.5 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 opacity-0"
+          className="mb-5 font-serif text-base italic leading-[1.2] text-cream-muted opacity-0 pb-1 md:text-lg"
         >
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-          </span>
-          <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-primary md:text-xs">
-            Available for freelance
-          </span>
-        </div>
+          Available for freelance
+        </p>
 
         <h1
           ref={headingRef}
-          className="max-w-3xl space-y-6 bg-clip-text text-left text-[clamp(1.15rem,2.4vw,1.65rem)] font-black leading-[1.7] tracking-wide opacity-0 md:text-center"
-          style={{
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            backgroundSize: '160% 160%',
-            backgroundPosition: 'center',
-          }}
+          className="max-w-5xl font-serif text-[clamp(2.75rem,8vw,7.25rem)] font-normal leading-[1.02] tracking-[-0.03em] text-cream opacity-0"
         >
-          <span className="block">
-            I work from India, building backend systems and local AI tools.
-          </span>
-          <span className="block">
-            Mostly, I automate the boring stuff—quiet software that handles tedious work in the background so people don&apos;t have to think about it.
-          </span>
-          <span className="block">
-            Day to day, I code in the terminal with Neovim and prefer books over videos to understand how things work.
-          </span>
+          Backend systems
+          <br />
+          and local AI.
         </h1>
+
+        <div
+          ref={copyRef}
+          className="mt-8 flex max-w-xl flex-col items-start gap-7 opacity-0"
+        >
+          <p className="text-base leading-relaxed text-cream-muted md:text-lg">
+            I work from India, building quiet software that handles the tedious work so people don&apos;t have to think about it.
+          </p>
+          <a
+            href="#projects"
+            className="pressable group inline-flex items-center gap-3 text-sm font-medium text-cream"
+          >
+            Selected work
+            <span
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-cream/20 transition-transform duration-300 ease-[var(--ease-soft)] group-hover:translate-x-0.5"
+              aria-hidden="true"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14" />
+                <path d="M13 6l6 6-6 6" />
+              </svg>
+            </span>
+          </a>
+        </div>
       </div>
     </section>
   );

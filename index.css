@@ -1,5 +1,5 @@
 /* ============================================
-   Cosmos motion system — GPU-friendly defaults
+   Editorial cosmos — GPU-friendly defaults
    ============================================ */
 
 :root {
@@ -17,6 +17,11 @@
   --z-content: 10;
   --z-header: 50;
   --z-grain: 60;
+
+  --cream: #ebe6dc;
+  --cream-muted: #9a9488;
+  --ink: #0c0c0b;
+  --primary: #7d9a68;
 }
 
 /* Font smoothing + text quality */
@@ -44,6 +49,8 @@ html {
 
 body {
   overflow-x: hidden;
+  color: var(--cream);
+  background-color: var(--ink);
 }
 
 /* Balanced headings, fewer orphans */
@@ -55,9 +62,9 @@ p {
   text-wrap: pretty;
 }
 
-/* Focus rings — cosmos green, visible */
+/* Focus rings — cream, visible */
 :focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--primary, #53d22d) 80%, white);
+  outline: 2px solid color-mix(in srgb, var(--cream) 80%, white);
   outline-offset: 3px;
 }
 
@@ -69,8 +76,8 @@ p {
   z-index: 100;
   padding: 0.75rem 1.25rem;
   border-radius: 9999px;
-  background: var(--primary, #53d22d);
-  color: #050508;
+  background: var(--cream);
+  color: var(--ink);
   font-weight: 600;
   font-size: 0.875rem;
   transition: top var(--duration-ui) var(--ease-out);
@@ -86,7 +93,7 @@ p {
   inset: 0;
   z-index: var(--z-grain);
   pointer-events: none;
-  opacity: 0.035;
+  opacity: 0.045;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
@@ -108,22 +115,21 @@ p {
   transform: scale(0.96);
 }
 
-/* Nav glass polish */
+/* Quiet nav glass — warm, no neon */
 .nav-glass {
   background:
     linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.09) 0%,
-      rgba(255, 255, 255, 0.04) 50%,
-      rgba(255, 255, 255, 0.02) 100%
+      rgba(235, 230, 220, 0.08) 0%,
+      rgba(235, 230, 220, 0.03) 50%,
+      rgba(12, 12, 11, 0.35) 100%
     );
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(235, 230, 220, 0.1);
   box-shadow:
-    0 8px 32px rgba(5, 5, 8, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 0 40px rgba(83, 210, 45, 0.04);
+    0 8px 28px rgba(12, 12, 11, 0.4),
+    inset 0 1px 0 rgba(235, 230, 220, 0.1);
 }
 
 /* Soft ambient vignette for sections */
@@ -136,7 +142,7 @@ p {
   background: radial-gradient(
     ellipse 80% 70% at 50% 40%,
     transparent 40%,
-    rgba(5, 5, 8, 0.55) 100%
+    rgba(12, 12, 11, 0.55) 100%
   );
 }
 
@@ -147,24 +153,25 @@ p {
   will-change: transform, opacity;
 }
 
-/* Card will-change only while scrubbing */
-.is-scrubbing {
-  will-change: transform, opacity;
+.work-image {
+  outline: 1px solid rgba(255, 255, 255, 0.1);
+  outline-offset: -1px;
 }
 
-/* Project card — high-end glass refinements */
-.project-stack-card {
-  -webkit-font-smoothing: antialiased;
+.work-index-current {
+  color: var(--cream);
 }
 
-.project-stack-card a:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--primary, #53d22d) 85%, white);
-  outline-offset: 3px;
+.work-image img,
+.work-image .work-media {
+  transition:
+    transform 700ms var(--ease-drawer),
+    filter 500ms var(--ease-soft);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-stack-card,
-  .project-stack-card * {
+  .work-image img,
+  .work-image .work-media {
     transition-duration: 0.01ms !important;
   }
 }

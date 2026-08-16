@@ -13,7 +13,7 @@ const App: React.FC = () => {
   useConsoleEasterEgg();
 
   return (
-    <div className="relative flex min-h-[100dvh] flex-col selection:bg-primary selection:text-background-dark">
+    <div className="relative flex min-h-[100dvh] flex-col selection:bg-cream/25 selection:text-ink">
       <a href="#main" className="skip-link">
         Skip to content
       </a>
@@ -22,12 +22,13 @@ const App: React.FC = () => {
       <Suspense fallback={null}>
         <CosmicBackground
           fixed
-          density={1.5}
-          mouseParallax={0.28}
-          drift={0.7}
+          density={1.15}
+          mouseParallax={0.22}
+          drift={0.55}
           nebula
-          opacity={1}
-          scrollDepth={200}
+          accent="#d4c4a8"
+          opacity={0.78}
+          scrollDepth={160}
           className="!z-0"
         />
       </Suspense>

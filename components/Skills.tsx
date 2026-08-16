@@ -270,8 +270,8 @@ const Skills: React.FC = () => {
       if (!circlePoolRef.current[index]) {
         const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         c.setAttribute('r', '3');
-        c.setAttribute('fill', '#53d22d');
-        c.style.filter = 'drop-shadow(0 0 4px rgba(83, 210, 45, 0.85))';
+        c.setAttribute('fill', '#ebe6dc');
+        c.style.filter = 'drop-shadow(0 0 4px rgba(235, 230, 220, 0.45))';
         layer.appendChild(c);
         circlePoolRef.current[index] = c;
       }
@@ -363,25 +363,24 @@ const Skills: React.FC = () => {
               style={{
                 width: '210px',
                 height: '210px',
-                background: 'radial-gradient(circle, rgba(83, 210, 45, 0.28) 0%, transparent 70%)',
+                background: 'radial-gradient(circle, rgba(235, 230, 220, 0.16) 0%, transparent 70%)',
                 filter: 'blur(18px)',
               }}
             />
             <div
               className={`relative flex h-[168px] w-[168px] items-center justify-center rounded-full border transition-[border-color,box-shadow] duration-200 ${
                 centerPulse
-                  ? 'border-primary/80 shadow-[0_0_50px_rgba(83,210,45,0.45)]'
-                  : 'border-primary/30 shadow-[0_0_28px_rgba(83,210,45,0.18)]'
+                  ? 'border-cream/60 shadow-[0_0_40px_rgba(235,230,220,0.16)]'
+                  : 'border-cream/20 shadow-[0_0_24px_rgba(235,230,220,0.08)]'
               }`}
               style={{
                 background:
-                  'radial-gradient(circle, rgba(83, 210, 45, 0.18) 0%, rgba(5, 5, 8, 0.95) 70%)',
+                  'radial-gradient(circle, rgba(235, 230, 220, 0.08) 0%, rgba(12, 12, 11, 0.92) 70%)',
               }}
             >
               <span
                 ref={headingRef}
-                className="origin-center text-sm font-black uppercase tracking-[0.14em] text-white md:text-base"
-                style={{ textShadow: '0 0 18px rgba(255,255,255,0.25)' }}
+                className="origin-center font-serif text-base italic leading-[1.2] text-cream md:text-lg"
               >
                 Toolchain
               </span>
@@ -403,7 +402,7 @@ const Skills: React.FC = () => {
                       y1={catPos.y}
                       x2={centerX}
                       y2={centerY}
-                      stroke="rgba(83, 210, 45, 0.16)"
+                      stroke="rgba(235, 230, 220, 0.16)"
                       strokeWidth={1}
                     />
                     {category.skills.map((_, skillIndex) => {
@@ -419,7 +418,7 @@ const Skills: React.FC = () => {
                           y1={skillPos.y}
                           x2={catPos.x}
                           y2={catPos.y}
-                          stroke="rgba(160, 160, 180, 0.18)"
+                          stroke="rgba(154, 148, 136, 0.28)"
                           strokeWidth={1}
                         />
                       );
@@ -443,8 +442,8 @@ const Skills: React.FC = () => {
                     transform: 'translate(-50%, -50%)',
                   }}
                 >
-                  <div className="rounded-full border border-primary/30 bg-surface-dark/85 px-4 py-2 shadow-[0_0_16px_rgba(83,210,45,0.1)] backdrop-blur-md">
-                    <span className="whitespace-nowrap text-sm font-semibold uppercase tracking-wide text-primary/90">
+                  <div className="rounded-full border border-cream/15 bg-ink/70 px-4 py-2 backdrop-blur-md">
+                    <span className="whitespace-nowrap font-serif text-sm italic leading-[1.2] text-cream">
                       {category.name}
                     </span>
                   </div>
@@ -470,8 +469,8 @@ const Skills: React.FC = () => {
                       transform: 'translate(-50%, -50%)',
                     }}
                   >
-                    <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-sm">
-                      <span className="whitespace-nowrap text-sm font-medium text-zinc-300">
+                    <div className="rounded-full border border-cream/10 bg-cream/[0.04] px-3 py-1.5 backdrop-blur-sm">
+                      <span className="whitespace-nowrap text-sm font-medium text-cream/80">
                         {skill}
                       </span>
                     </div>

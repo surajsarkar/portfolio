@@ -1,8 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import ProjectStackCard from './ProjectStackCard';
-import ConstellationNetwork from './ConstellationNetwork';
 import projectsData from '../src/data/projects.json';
 import { Project } from '../types';
 
@@ -10,367 +8,292 @@ gsap.registerPlugin(ScrollTrigger);
 
 const projects: Project[] = projectsData as Project[];
 
-const getConstellationPositions = (w: number, h: number) => {
-  const cx = w / 2;
-  const cy = h / 2;
-  const radius = Math.min(w, h) * 0.32;
-  return [
-    { x: cx, y: cy - radius * 0.75 },
-    { x: cx - radius, y: cy + radius * 0.55 },
-    { x: cx + radius, y: cy + radius * 0.55 },
-  ];
+const WorkCase: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const links = [
+    project.github ? { href: project.github, label: 'View source' } : null,
+    project.article ? { href: project.article, label: 'Read article' } : null,
+  ].filter(Boolean) as { href: string; label: string }[];
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    window.dispatchEvent(
+      new CustomEvent('dobby-set-expression', {
+        detail: { expression: project.expression },
+      })
+    );
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    window.dispatchEvent(
+      new CustomEvent('dobby-set-expression', {
+        detail: { expression: 'neutral' },
+      })
+    );
+  };
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = mediaRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    el.style.setProperty('--spot-x', `${x}%`);
+    el.style.setProperty('--spot-y', `${y}%`);
+  }, []);
+
+  return (
+    <article
+      id={`work-${project.slug}`}
+      className="work-piece scroll-mt-28"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <header className="mb-6 md:mb-8">
+        <p className="mb-3 font-mono text-[11px] tabular-nums tracking-[0.14em] text-cream-muted">
+          {String(index + 1).padStart(2, '0')}
+        </p>
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
+          <h3 className="font-serif text-[clamp(2rem,4vw,3.25rem)] font-normal leading-[1.1] tracking-[-0.02em] text-cream pb-1">
+            {project.title}
+          </h3>
+          {project.status && (
+            <span className="font-serif text-base italic leading-[1.2] text-cream-muted pb-1">
+              {project.status}
+            </span>
+          )}
+        </div>
+        <p className="mt-2 max-w-[40ch] font-serif text-lg italic leading-[1.25] text-cream/85 pb-1">
+          {project.subtitle}
+        </p>
+        <p className="mt-3 font-mono text-[11px] tracking-wide text-cream/45">
+          {project.tags.join('  /  ')}
+        </p>
+      </header>
+
+      <div
+        ref={mediaRef}
+        className="work-image group relative aspect-[16/9] w-full overflow-hidden rounded-[1rem] bg-surface-dark"
+        style={{ ['--spot-x' as string]: '50%', ['--spot-y' as string]: '50%' }}
+        onMouseMove={handleMouseMove}
+      >
+        <div
+          className="work-media absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('${project.image}')`,
+            transform: isHovered ? 'scale(1.035)' : 'scale(1)',
+            filter: isHovered ? 'brightness(1) saturate(1.04)' : 'brightness(0.9) saturate(0.96)',
+          }}
+          role="img"
+          aria-label={`${project.title} still`}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            background:
+              'radial-gradient(420px circle at var(--spot-x) var(--spot-y), rgba(235,230,220,0.12), transparent 55%)',
+          }}
+          aria-hidden="true"
+        />
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 gap-8 md:mt-10 md:grid-cols-3 md:gap-10">
+        <div>
+          <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
+            Problem
+          </h4>
+          <p className="max-w-[42ch] text-[16px] font-medium leading-relaxed text-cream/90">
+            {project.problem}
+          </p>
+        </div>
+        <div>
+          <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
+            Solution
+          </h4>
+          <p className="max-w-[42ch] text-[16px] font-medium leading-relaxed text-cream/90">
+            {project.solution}
+          </p>
+        </div>
+        <div>
+          <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
+            Impact
+          </h4>
+          <ul className="max-w-[42ch] list-none space-y-3">
+            {project.impact.map((item) => (
+              <li key={item} className="text-[16px] font-medium leading-relaxed text-cream/90">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {links.length > 0 && (
+        <div className="mt-7 flex flex-wrap gap-3">
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pressable inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-cream/20 px-4 py-2 text-sm text-cream hover:bg-cream hover:text-ink"
+            >
+              {link.label}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M7 17L17 7" />
+                <path d="M8 7h9v9" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      )}
+    </article>
+  );
 };
 
-/**
- * Sticky project stack driven entirely by GSAP + ScrollTrigger.
- * Card transforms update via gsap.set (no React re-renders per frame).
- */
 const ProjectsScroll: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const cardsWrapRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const progressBarRef = useRef<HTMLDivElement>(null);
-  const constellationWrapRef = useRef<HTMLDivElement>(null);
-  const positionsRef = useRef(getConstellationPositions(window.innerWidth, window.innerHeight));
-  const networkRef = useRef<{ setProgress: (p: number, active: boolean) => void } | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLElement>(null);
+  const [activeSlug, setActiveSlug] = useState(projects[0]?.slug ?? '');
 
   useEffect(() => {
-    const container = containerRef.current;
-    const sticky = stickyRef.current;
-    if (!container || !sticky) return;
+    const section = sectionRef.current;
+    if (!section) return;
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const cards = () => cardRefs.current.filter(Boolean) as HTMLDivElement[];
-
-    const updatePositions = () => {
-      positionsRef.current = getConstellationPositions(window.innerWidth, window.innerHeight);
-    };
-    updatePositions();
-    window.addEventListener('resize', updatePositions);
-
-    // Initial off-screen state
-    cards().forEach((card) => {
-      gsap.set(card, {
-        y: window.innerHeight,
-        x: 0,
-        rotation: 0,
-        scale: 0.92,
-        opacity: 0,
-        force3D: true,
-      });
-    });
-
-    if (titleRef.current) {
-      gsap.set(titleRef.current, { opacity: 1, scale: 1, force3D: true });
-    }
-
-    const applyFrame = (progress: number) => {
-      const n = projects.length;
-      const title = titleRef.current;
-      const subtitle = subtitleRef.current;
-      const bar = progressBarRef.current;
-
-      // Phases
-      // 0–0.06 entering title
-      // 0.06–0.72 stacking
-      // 0.72–1.0 constellation
-      const enterEnd = 0.06;
-      const stackEnd = 0.72;
-
-      if (bar) {
-        gsap.set(bar, { scaleX: progress, force3D: true });
-      }
-
-      if (progress < enterEnd) {
-        if (title) gsap.set(title, { opacity: 1, scale: 1 });
-        if (subtitle) gsap.set(subtitle, { opacity: 1 });
-        networkRef.current?.setProgress(0, false);
-        cards().forEach((card) => {
-          gsap.set(card, {
-            y: window.innerHeight * 0.95,
-            x: 0,
-            rotation: 0,
-            scale: 0.92,
-            opacity: 0,
-            zIndex: 10,
-          });
-        });
-        return;
-      }
-
-      if (progress < stackEnd) {
-        const stackingProgress = (progress - enterEnd) / (stackEnd - enterEnd);
-        const activeIndex = Math.min(Math.floor(stackingProgress * n), n - 1);
-
-        // Title recedes behind stack
-        const titleFade = Math.min(1, stackingProgress * 1.6);
-        if (title) {
-          gsap.set(title, {
-            opacity: Math.max(0.12, 1 - titleFade),
-            scale: Math.max(0.32, 1 - stackingProgress * 0.65),
-          });
-        }
-        if (subtitle) {
-          gsap.set(subtitle, { opacity: Math.max(0, 1 - stackingProgress * 3.2) });
-        }
-        networkRef.current?.setProgress(0, false);
-
-        cards().forEach((card, index) => {
-          const cardProgress = stackingProgress * n - index;
-
-          if (cardProgress < 0) {
-            gsap.set(card, {
-              y: window.innerHeight * 0.9,
-              x: 0,
-              rotation: 0,
-              opacity: 0,
-              scale: 0.92,
-              zIndex: index + 10,
-            });
-          } else if (cardProgress < 1) {
-            // Smooth ease into view (ease-out feel via cubic)
-            const t = cardProgress;
-            const eased = 1 - Math.pow(1 - t, 3);
-            gsap.set(card, {
-              y: (1 - eased) * window.innerHeight * 0.72,
-              x: 0,
-              rotation: 0,
-              opacity: eased,
-              scale: 0.94 + eased * 0.06,
-              zIndex: 200,
-            });
-          } else {
-            const stackPos = activeIndex - index;
-            const stackOffset = stackPos * 28;
-            const xOffset = stackPos * (stackPos % 2 === 0 ? 8 : -8);
-            const rotation = stackPos * (stackPos % 2 === 0 ? 1.6 : -1.6);
-            gsap.set(card, {
-              y: stackOffset,
-              x: xOffset,
-              rotation,
-              opacity: 1,
-              scale: 1 - stackPos * 0.018,
-              zIndex: 100 + index,
-            });
-          }
-        });
-        return;
-      }
-
-      // Constellation phase
-      const cProg = (progress - stackEnd) / (1 - stackEnd);
-      const eased = 1 - Math.pow(1 - cProg, 2.4);
-      const positions = positionsRef.current;
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-
-      if (title) gsap.set(title, { opacity: 0.08, scale: 0.3 });
-      if (subtitle) gsap.set(subtitle, { opacity: 0 });
-      networkRef.current?.setProgress(Math.max(0, (eased - 0.25) / 0.75), eased > 0.25);
-
-      cards().forEach((card, index) => {
-        const target = positions[index];
-        if (!target) return;
-        gsap.set(card, {
-          x: (target.x - centerX) * eased,
-          y: (target.y - centerY) * eased,
-          rotation: 0,
-          scale: 0.36 + (1 - eased) * 0.32,
-          opacity: 1,
-          zIndex: 20 + index,
-        });
-      });
-    };
+    const pieces = section.querySelectorAll<HTMLElement>('.work-piece');
 
     const ctx = gsap.context(() => {
       if (reduceMotion) {
-        // Show first card static; skip scrub cinema
-        const first = cards()[0];
-        if (first) {
-          gsap.set(first, { y: 0, opacity: 1, scale: 1, x: 0 });
-        }
-        cards().slice(1).forEach((c, i) => {
-          gsap.set(c, { y: (i + 1) * 24, x: (i % 2 === 0 ? 10 : -10), opacity: 0.85, scale: 0.96 });
-        });
-        if (titleRef.current) gsap.set(titleRef.current, { opacity: 0.2, scale: 0.5 });
+        gsap.set([titleRef.current, pieces], { opacity: 1, y: 0 });
         return;
       }
 
-      ScrollTrigger.create({
-        trigger: container,
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: 0.65, // inertial feel — smoother than 1
-        pin: sticky,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => applyFrame(self.progress),
-        onRefresh: (self) => applyFrame(self.progress),
-      });
-
-      // Title entrance when section approaches
       if (titleRef.current) {
         gsap.fromTo(
           titleRef.current,
-          { opacity: 0, y: 40 },
+          { opacity: 0, y: 28 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.9,
+            duration: 0.95,
             ease: 'power3.out',
             scrollTrigger: {
-              trigger: container,
-              start: 'top 85%',
+              trigger: titleRef.current,
+              start: 'top 86%',
               toggleActions: 'play none none reverse',
             },
           }
         );
       }
-    }, container);
 
-    // First paint
-    applyFrame(0);
+      pieces.forEach((piece) => {
+        gsap.fromTo(
+          piece,
+          { opacity: 0, y: 36 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.85,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: piece,
+              start: 'top 88%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      });
+    }, section);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        const slug = visible?.target.getAttribute('id')?.replace('work-', '');
+        if (slug) setActiveSlug(slug);
+      },
+      { rootMargin: '-28% 0px -48% 0px', threshold: [0.15, 0.35, 0.6] }
+    );
+
+    pieces.forEach((piece) => observer.observe(piece));
 
     return () => {
       ctx.revert();
-      window.removeEventListener('resize', updatePositions);
+      observer.disconnect();
     };
   }, []);
 
+  const scrollToCase = (slug: string) => {
+    document.getElementById(`work-${slug}`)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
+
   return (
     <section
-      ref={containerRef}
+      ref={sectionRef}
       id="projects"
-      className="relative"
-      style={{ height: '420vh' }}
+      className="relative px-6 pb-32 pt-20 md:px-12 md:pb-44 md:pt-28"
       aria-label="Projects"
     >
-      <div
-        ref={stickyRef}
-        className="relative h-[100dvh] w-full overflow-hidden bg-background-dark/50"
-      >
-        {/* Soft top continuity glow from hero */}
-        <div
-          className="pointer-events-none absolute left-1/2 top-[-18%] h-[45vh] w-[110vw] -translate-x-1/2"
-          style={{
-            background:
-              'radial-gradient(ellipse at center, rgba(83, 210, 45, 0.07) 0%, transparent 70%)',
-            filter: 'blur(70px)',
-          }}
-          aria-hidden="true"
-        />
+      <div className="mx-auto max-w-[1400px]">
+        <header ref={titleRef} className="mb-14 md:mb-20">
+          <h2 className="font-serif text-[clamp(4.5rem,14vw,10rem)] font-normal leading-[0.86] tracking-[-0.04em] text-cream">
+            Work
+          </h2>
+          <p className="mt-4 font-serif text-xl italic leading-[1.2] text-cream-muted pb-1 md:text-2xl">
+            Selected projects
+          </p>
+        </header>
 
-        {/* Progress rail */}
-        <div
-          className="absolute bottom-0 left-0 right-0 z-40 h-[2px] bg-white/5"
-          aria-hidden="true"
-        >
-          <div
-            ref={progressBarRef}
-            className="h-full origin-left bg-primary/70"
-            style={{ transform: 'scaleX(0)' }}
-          />
-        </div>
+        <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start lg:gap-16 xl:grid-cols-[240px_minmax(0,1fr)]">
+          <nav
+            className="mb-12 hidden lg:sticky lg:top-28 lg:mb-0 lg:block"
+            aria-label="Project index"
+          >
+            <ol className="space-y-1">
+              {projects.map((project, index) => {
+                const isActive = activeSlug === project.slug;
+                return (
+                  <li key={project.id}>
+                    <button
+                      type="button"
+                      onClick={() => scrollToCase(project.slug)}
+                      className={`pressable flex w-full items-baseline gap-3 rounded-lg px-2 py-2 text-left ${
+                        isActive ? 'text-cream' : 'text-cream-muted hover:text-cream'
+                      }`}
+                      aria-current={isActive ? 'true' : undefined}
+                    >
+                      <span className="font-mono text-[11px] tabular-nums tracking-[0.12em] text-cream/40">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span
+                        className={`font-serif leading-[1.2] pb-0.5 ${
+                          isActive ? 'text-[1.45rem]' : 'text-[1.05rem]'
+                        }`}
+                      >
+                        {project.title}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </nav>
 
-        {/* Section title */}
-        <div
-          ref={titleRef}
-          className="pointer-events-none absolute inset-0 z-[5] flex items-center justify-center"
-        >
-          <div className="text-center px-4">
-            <h2
-              className="text-[clamp(2.5rem,8vw,7.5rem)] font-black uppercase leading-[0.88] tracking-[-0.03em] text-white"
-              style={{
-                textShadow:
-                  '0 0 80px rgba(255,255,255,0.22), 0 4px 30px rgba(0,0,0,0.85)',
-              }}
-            >
-              Core
-              <br />
-              systems
-            </h2>
-            <p
-              ref={subtitleRef}
-              className="mt-5 font-mono text-sm uppercase tracking-[0.22em] text-zinc-500 md:text-base"
-            >
-              Selected production work
-            </p>
+          <div className="flex flex-col gap-24 md:gap-32">
+            {projects.map((project, index) => (
+              <WorkCase key={project.id} project={project} index={index} />
+            ))}
           </div>
-        </div>
-
-        {/* Cards */}
-        <div
-          ref={cardsWrapRef}
-          className="absolute inset-0 z-10 flex items-center justify-center is-scrubbing"
-        >
-          {projects.map((project, index) => (
-            <div
-              key={project.id}
-              ref={(el) => {
-                cardRefs.current[index] = el;
-              }}
-              className="absolute will-change-transform"
-            >
-              <ProjectStackCard
-                project={project}
-                index={index}
-                totalCards={projects.length}
-                isActive={false}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Constellation lines (imperative progress) */}
-        <div ref={constellationWrapRef} className="pointer-events-none absolute inset-0 z-[15]">
-          <ConstellationNetworkBridge
-            positionsRef={positionsRef}
-            networkRef={networkRef}
-          />
         </div>
       </div>
     </section>
-  );
-};
-
-/** Thin bridge so constellation can update without parent re-renders */
-const ConstellationNetworkBridge: React.FC<{
-  positionsRef: React.MutableRefObject<{ x: number; y: number }[]>;
-  networkRef: React.MutableRefObject<{ setProgress: (p: number, active: boolean) => void } | null>;
-}> = ({ positionsRef, networkRef }) => {
-  const [state, setState] = React.useState({ progress: 0, active: false, positions: positionsRef.current });
-
-  useEffect(() => {
-    networkRef.current = {
-      setProgress: (p, active) => {
-        setState((prev) => {
-          // Throttle React updates: only when active flips or progress jumps ~4%
-          if (
-            prev.active === active &&
-            Math.abs(prev.progress - p) < 0.04 &&
-            p !== 0 &&
-            p !== 1
-          ) {
-            return prev;
-          }
-          return { progress: p, active, positions: positionsRef.current };
-        });
-      },
-    };
-    return () => {
-      networkRef.current = null;
-    };
-  }, [networkRef, positionsRef]);
-
-  return (
-    <ConstellationNetwork
-      positions={state.positions}
-      isActive={state.active}
-      progress={state.progress}
-    />
   );
 };
 

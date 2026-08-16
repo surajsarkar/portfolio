@@ -130,7 +130,7 @@ async function sendViaFormSubmit(args: {
     return {
       ok: true,
       message:
-        'Almost there — check your inbox to activate the contact form (one-time). Then try again.',
+        'Almost there. Check your inbox to activate the contact form (one time), then try again.',
     };
   }
 

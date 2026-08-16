@@ -25,25 +25,24 @@ const Header: React.FC = () => {
   };
 
   const linkClass =
-    'pressable rounded-full px-3 py-2 text-sm font-semibold uppercase tracking-wider text-zinc-300 transition-colors duration-200 hover:text-primary';
+    'pressable rounded-full px-3 py-2 text-sm font-medium tracking-wide text-cream/70 hover:text-cream';
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 flex justify-center px-4 pt-5 md:pt-6">
       <nav
         className={`nav-glass relative flex max-h-16 items-center gap-5 overflow-hidden rounded-full px-5 py-2 md:gap-6 md:px-6 ${
-          scrolled ? 'shadow-[0_12px_40px_rgba(5,5,8,0.55)]' : ''
+          scrolled ? 'shadow-[0_12px_40px_rgba(12,12,11,0.55)]' : ''
         }`}
         style={{
           transition: 'box-shadow 280ms var(--ease-soft), background 280ms var(--ease-soft)',
         }}
         aria-label="Primary"
       >
-        {/* Edge refraction highlight */}
         <div
           className="pointer-events-none absolute inset-0 rounded-full"
           style={{
             background:
-              'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.07) 48%, rgba(255,255,255,0.11) 50%, rgba(255,255,255,0.07) 52%, transparent 60%)',
+              'linear-gradient(105deg, transparent 40%, rgba(235,230,220,0.06) 48%, rgba(235,230,220,0.1) 50%, rgba(235,230,220,0.06) 52%, transparent 60%)',
           }}
           aria-hidden="true"
         />

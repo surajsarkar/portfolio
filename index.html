@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Suraj Sarkar — backend to behaviour</title>
+    <title>Suraj Sarkar - backend to behaviour</title>
     <meta name="description" content="Portfolio of Suraj Sarkar. Backend systems, AI infrastructure, and production intelligence." />
-    <meta name="theme-color" content="#050508" />
+    <meta name="theme-color" content="#0c0c0b" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" id="favicon">
     <script>
         // Animated Favicon - DobbyFace with blinking eyes
@@ -52,9 +52,7 @@
         });
     </script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,500&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
@@ -63,20 +61,25 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#53d22d",
-                        "background-light": "#f6f8f6",
-                        "background-dark": "#050508",
-                        "surface-dark": "#0a0a0f",
-                        "border-dark": "#1a1a25",
+                        "primary": "#7d9a68",
+                        "cream": "#ebe6dc",
+                        "cream-muted": "#9a9488",
+                        "ink": "#0c0c0b",
+                        "background-light": "#f4f1ea",
+                        "background-dark": "#0c0c0b",
+                        "surface-dark": "#141412",
+                        "border-dark": "#2a2924",
                     },
                     fontFamily: {
-                        "display": ["Manrope", "sans-serif"],
+                        "display": ["Newsreader", "Georgia", "serif"],
+                        "serif": ["Newsreader", "Georgia", "serif"],
+                        "sans": ["Manrope", "sans-serif"],
                         "mono": ["JetBrains Mono", "monospace"],
                     },
                     borderRadius: {
-                        "DEFAULT": "1rem",
-                        "lg": "1.25rem",
-                        "xl": "1.75rem",
+                        "DEFAULT": "0.75rem",
+                        "lg": "1rem",
+                        "xl": "1.25rem",
                         "full": "9999px"
                     },
                 },
@@ -91,15 +94,15 @@
         }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(10, 10, 15, 0.5); }
+        ::-webkit-scrollbar-track { background: rgba(12, 12, 11, 0.5); }
         ::-webkit-scrollbar-thumb {
-            background: rgba(26, 26, 37, 0.8);
+            background: rgba(42, 41, 36, 0.85);
             border-radius: 3px;
         }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(83, 210, 45, 0.3); }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(235, 230, 220, 0.28); }
         * {
             scrollbar-width: thin;
-            scrollbar-color: rgba(26, 26, 37, 0.8) rgba(10, 10, 15, 0.5);
+            scrollbar-color: rgba(42, 41, 36, 0.85) rgba(12, 12, 11, 0.5);
         }
     </style>
     <script type="importmap">
@@ -114,7 +117,7 @@
     <link rel="stylesheet" href="/index.css">
 </head>
 
-<body class="bg-background-dark font-display text-white antialiased overflow-x-hidden" style="-webkit-font-smoothing: antialiased;">
+<body class="bg-background-dark font-sans text-cream antialiased overflow-x-hidden" style="-webkit-font-smoothing: antialiased;">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

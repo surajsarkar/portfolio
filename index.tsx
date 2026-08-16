@@ -11,6 +11,8 @@ const injectThemeStyles = () => {
   style.textContent = `
     :root {
       --primary: ${theme.primary};
+      --cream: ${theme.cream};
+      --cream-muted: ${theme.creamMuted};
       --background-light: ${theme.backgroundLight};
       --background-dark: ${theme.backgroundDark};
       --surface-dark: ${theme.surfaceDark};
@@ -41,6 +43,9 @@ const injectThemeStyles = () => {
     (window as any).tailwind.config.theme.extend.colors = {
       ...((window as any).tailwind.config.theme.extend.colors || {}),
       primary: theme.primary,
+      cream: theme.cream,
+      'cream-muted': theme.creamMuted,
+      ink: theme.backgroundDark,
       'background-light': theme.backgroundLight,
       'background-dark': theme.backgroundDark,
       'surface-dark': theme.surfaceDark,

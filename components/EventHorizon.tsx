@@ -53,26 +53,26 @@ const ContactForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     return (
         <form
             onSubmit={handleSubmit}
-            className="mx-4 w-full max-w-lg rounded-2xl border border-white/10 p-4"
+            className="mx-4 w-full max-w-lg rounded-xl border border-cream/15 p-4"
             style={{
-                background: 'rgba(255, 255, 255, 0.05)',
+                background: 'rgba(20, 20, 18, 0.78)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
                 boxShadow:
-                    '0 8px 32px rgba(5, 5, 8, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                    '0 8px 32px rgba(12, 12, 11, 0.45), inset 0 1px 0 rgba(235, 230, 220, 0.08)',
                 animation: 'formIn 420ms cubic-bezier(0.23, 1, 0.32, 1) both',
             }}
             noValidate
         >
             {/* To Field - Email in pill */}
             <div className="mb-4 flex items-center gap-2">
-                <span className="px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-sm">
+                <span className="px-4 py-2 rounded-lg border border-cream/20 bg-cream/10 font-mono text-sm text-cream">
                     {CONTACT_EMAIL}
                 </span>
                 <button
                     type="button"
                     onClick={handleCopy}
-                    className="p-2 rounded-xl bg-primary/20 border border-primary/30 text-primary hover:bg-primary/30 hover:border-primary/50 transition-all"
+                    className="pressable rounded-lg border border-cream/20 bg-cream/10 p-2 text-cream hover:bg-cream/15"
                     aria-label="Copy email"
                     title={copied ? 'Copied' : 'Copy email'}
                 >
@@ -88,7 +88,7 @@ const ContactForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <button
                     type="button"
                     onClick={onClose}
-                    className="ml-auto p-2 rounded-xl border border-white/10 text-white/40 hover:text-white/80 hover:border-white/25 transition-all"
+                    className="pressable ml-auto rounded-lg border border-cream/15 p-2 text-cream/50 hover:border-cream/30 hover:text-cream"
                     aria-label="Close form"
                 >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +124,7 @@ const ContactForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     onChange={(e) => setEmail(e.target.value)}
                     disabled={status === 'sending' || status === 'success'}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all disabled:opacity-60"
+                    className="w-full rounded-lg border border-cream/15 bg-cream/[0.04] px-4 py-3 font-mono text-sm text-cream placeholder:text-cream-muted focus:border-cream/40 focus:bg-cream/[0.07] focus:outline-none disabled:opacity-60"
                 />
             </div>
 
@@ -142,21 +142,21 @@ const ContactForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     onChange={(e) => setMessage(e.target.value)}
                     disabled={status === 'sending' || status === 'success'}
                     placeholder="Your message..."
-                    className="w-full px-4 py-3 pb-14 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 font-mono text-sm focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all resize-none disabled:opacity-60"
+                    className="w-full resize-none rounded-lg border border-cream/15 bg-cream/[0.04] px-4 py-3 pb-14 font-mono text-sm text-cream placeholder:text-cream-muted focus:border-cream/40 focus:bg-cream/[0.07] focus:outline-none disabled:opacity-60"
                 />
                 <button
                     type="submit"
                     disabled={status === 'sending' || status === 'success'}
-                    className="absolute bottom-4 right-4 px-4 py-2 rounded-xl bg-primary/20 border border-primary/30 text-primary font-mono text-xs uppercase tracking-wider hover:bg-primary/30 hover:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="pressable absolute bottom-4 right-4 rounded-full bg-cream px-4 py-2 text-sm font-medium text-ink disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    {status === 'sending' ? '… Sending' : status === 'success' ? 'Sent' : '▲ Transmit'}
+                    {status === 'sending' ? 'Sending' : status === 'success' ? 'Sent' : 'Send'}
                 </button>
             </div>
 
             {feedback && (
                 <p
                     className={`mt-3 font-mono text-xs leading-relaxed ${
-                        status === 'error' ? 'text-red-400' : 'text-primary'
+                        status === 'error' ? 'text-red-300' : 'text-cream'
                     }`}
                     role={status === 'error' ? 'alert' : 'status'}
                 >
@@ -182,9 +182,9 @@ const MidAurora: React.FC = () => {
                 style={{
                     background: `linear-gradient(180deg, 
             transparent 0%, 
-            rgba(83, 210, 45, calc(0.03 * var(--aurora))) 30%,
-            rgba(83, 210, 45, calc(0.12 * var(--aurora))) 60%,
-            rgba(83, 210, 45, calc(0.3 * var(--aurora))) 100%)`,
+            rgba(235, 230, 220, calc(0.02 * var(--aurora))) 30%,
+            rgba(235, 230, 220, calc(0.07 * var(--aurora))) 60%,
+            rgba(235, 230, 220, calc(0.16 * var(--aurora))) 100%)`,
                     filter: 'blur(60px)',
                     animation: 'auroraWave 10s ease-in-out infinite',
                     willChange: 'transform',
@@ -197,9 +197,9 @@ const MidAurora: React.FC = () => {
                 style={{
                     background: `linear-gradient(180deg, 
             transparent 0%, 
-            rgba(83, 210, 45, calc(0.02 * var(--aurora))) 30%,
-            rgba(83, 210, 45, calc(0.1 * var(--aurora))) 60%,
-            rgba(83, 210, 45, calc(0.25 * var(--aurora))) 100%)`,
+            rgba(212, 196, 168, calc(0.02 * var(--aurora))) 30%,
+            rgba(212, 196, 168, calc(0.06 * var(--aurora))) 60%,
+            rgba(212, 196, 168, calc(0.14 * var(--aurora))) 100%)`,
                     filter: 'blur(70px)',
                     animation: 'auroraWave 12s ease-in-out infinite reverse',
                     animationDelay: '-2s',
@@ -213,9 +213,9 @@ const MidAurora: React.FC = () => {
                 style={{
                     background: `linear-gradient(180deg, 
             transparent 0%, 
-            rgba(83, 210, 45, calc(0.04 * var(--aurora))) 30%,
-            rgba(83, 210, 45, calc(0.15 * var(--aurora))) 60%,
-            rgba(83, 210, 45, calc(0.35 * var(--aurora))) 100%)`,
+            rgba(125, 154, 104, calc(0.02 * var(--aurora))) 30%,
+            rgba(125, 154, 104, calc(0.07 * var(--aurora))) 60%,
+            rgba(125, 154, 104, calc(0.14 * var(--aurora))) 100%)`,
                     filter: 'blur(55px)',
                     animation: 'auroraWave 14s ease-in-out infinite',
                     animationDelay: '-4s',
@@ -231,7 +231,7 @@ const MidAurora: React.FC = () => {
             >
                 <path
                     d="M0,256 Q720,-80 1440,256 L1440,256 L0,256 Z"
-                    fill="#030306"
+                    fill="#0c0c0b"
                 />
             </svg>
 
@@ -330,7 +330,7 @@ const HorizonLayer: React.FC<{
                         {!isFormVisible ? (
                             <button
                                 onClick={() => setIsFormVisible(true)}
-                                className="pressable group relative overflow-hidden rounded-full border border-white/20 bg-white/5 px-6 py-3 backdrop-blur-md hover:bg-white/10"
+                                className="pressable group relative overflow-hidden rounded-full border border-cream/20 bg-cream/5 px-6 py-3 backdrop-blur-md hover:bg-cream/10"
                                 style={{
                                     transition:
                                         'background-color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)',
@@ -340,8 +340,8 @@ const HorizonLayer: React.FC<{
                                     className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[100%]"
                                     aria-hidden="true"
                                 />
-                                <span className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.28em] text-white">
-                                    Let&apos;s connect
+                                <span className="flex items-center gap-3 font-serif text-base italic leading-[1.2] text-cream">
+                                    Say hello
                                     <svg
                                         className="h-4 w-4 opacity-70 transition-transform duration-200 ease-out group-hover:translate-x-1"
                                         fill="none"
@@ -421,21 +421,15 @@ const HorizonLayer: React.FC<{
                         </div>
                     </div>
 
-                    <span className="block text-[clamp(2.5rem,10vw,7rem)] font-black leading-none tracking-tighter text-white/20">
-                        SURAJ
+                    <span className="block font-serif text-[clamp(2.75rem,10vw,7.5rem)] font-normal leading-[0.88] tracking-[-0.04em] text-cream/20">
+                        Suraj
                     </span>
-                    <span className="block text-[clamp(2.5rem,10vw,7rem)] font-black leading-none tracking-tighter text-white/20">
-                        SARKAR
+                    <span className="block font-serif text-[clamp(2.75rem,10vw,7.5rem)] font-normal leading-[0.88] tracking-[-0.04em] text-cream/20">
+                        Sarkar
                     </span>
                 </div>
             </div>
 
-            {/* Horizon heading */}
-            <span
-                className="absolute bottom-3 left-1/2 -translate-x-1/2 font-mono text-[13px] text-gray-400 tracking-[0.3em] uppercase z-10 pointer-events-none"
-            >
-                THE EXPANDED UNIVERSE
-            </span>
         </div>
     );
 };
@@ -455,10 +449,7 @@ const NearContent: React.FC<{
         >
             <div className="mb-8 px-4 text-center">
                 <h2
-                    className="heading-line-2 mx-auto max-w-3xl text-[clamp(1.25rem,3.2vw,2rem)] font-black leading-relaxed tracking-wide text-white"
-                    style={{
-                        textShadow: '0 0 80px rgba(255, 255, 255, 0.18)',
-                    }}
+                    className="heading-line-2 mx-auto max-w-2xl font-serif text-[clamp(1.6rem,3.4vw,2.6rem)] font-normal leading-[1.25] tracking-[-0.02em] text-cream"
                 >
                     If you need a hand building reliable backend systems or automating the boring stuff, feel free to say hello.
                 </h2>
@@ -621,15 +612,15 @@ const CinematicStar: React.FC<{
             onClick={onClick}
             onMouseEnter={() => onHover(true)}
             onMouseLeave={() => onHover(false)}
-            aria-label="Send email"
+            aria-label="Say hello"
         >
             <canvas ref={canvasRef} style={{ width: '100px', height: '100px' }} />
             <span
-                className={`absolute -bottom-6 left-1/2 -translate-x-1/2 font-mono text-xs uppercase tracking-widest transition-[opacity,color] duration-300 ease-out ${
-                    isHovered ? 'text-primary opacity-100' : 'text-white/40 opacity-0'
+                className={`absolute -bottom-6 left-1/2 -translate-x-1/2 font-serif text-sm italic leading-[1.2] transition-[opacity,color] duration-300 ease-out ${
+                    isHovered ? 'text-cream opacity-100' : 'text-cream/40 opacity-0'
                 }`}
             >
-                Transmit
+                Say hello
             </span>
         </button>
     );
@@ -775,10 +766,6 @@ const EventHorizon: React.FC = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const handleContact = () => {
-        window.location.href = `mailto:${CONTACT_EMAIL}`;
-    };
-
     return (
         <section
             ref={sectionRef}
@@ -800,7 +787,14 @@ const EventHorizon: React.FC = () => {
             <NearContent
                 isStarHovered={isStarHovered}
                 onStarHover={handleStarHover}
-                onContact={handleContact}
+                onContact={() => {
+                    setIsFormVisible(true);
+                    requestAnimationFrame(() => {
+                        document
+                            .querySelector('.horizon-name')
+                            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    });
+                }}
                 onReboot={handleReboot}
             />
 
@@ -810,7 +804,7 @@ const EventHorizon: React.FC = () => {
                     href="https://github.com/surajsarkar"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/40 hover:border-white/50 hover:text-white/90"
+                    className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream"
                     style={{ transition: 'color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)' }}
                     aria-label="GitHub"
                 >
@@ -822,7 +816,7 @@ const EventHorizon: React.FC = () => {
                     href="https://linkedin.com/in/surajsarkar"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/40 hover:border-white/50 hover:text-white/90"
+                    className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream"
                     style={{ transition: 'color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)' }}
                     aria-label="LinkedIn"
                 >
@@ -834,7 +828,7 @@ const EventHorizon: React.FC = () => {
                     href="https://medium.com/@surajsarkar"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/40 hover:border-white/50 hover:text-white/90"
+                    className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream"
                     style={{ transition: 'color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)' }}
                     aria-label="Medium"
                 >
