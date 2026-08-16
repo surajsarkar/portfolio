@@ -1,5 +1,5 @@
 /** Public contact target shown on the site. */
-export const CONTACT_EMAIL = 'hello@surajsarkar.dev';
+export const CONTACT_EMAIL = 'surajsarkar@browniestudio.io';
 
 export type ContactPayload = {
   email: string;

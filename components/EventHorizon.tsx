@@ -313,10 +313,7 @@ const MidAurora: React.FC = () => {
 // ============================================
 // HORIZON LAYER - Shared Parallax for Name + Button
 // ============================================
-const HorizonLayer: React.FC<{
-    isFormVisible: boolean;
-    setIsFormVisible: (visible: boolean) => void;
-}> = ({ isFormVisible, setIsFormVisible }) => {
+const HorizonLayer: React.FC = () => {
     return (
         <div
             className="mid-layer absolute inset-0 pointer-events-none"
@@ -327,35 +324,31 @@ const HorizonLayer: React.FC<{
                 <div className="relative inline-block">
                     {/* Contact Interaction - Anchored above Rocket */}
                     <div className="absolute bottom-full left-0 right-0 mb-6 flex justify-center pointer-events-auto">
-                        {!isFormVisible ? (
-                            <button
-                                onClick={() => setIsFormVisible(true)}
-                                className="pressable group relative overflow-hidden rounded-full border border-cream/20 bg-cream/5 px-6 py-3 backdrop-blur-md hover:bg-cream/10"
-                                style={{
-                                    transition:
-                                        'background-color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)',
-                                }}
-                            >
-                                <div
-                                    className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[100%]"
+                        <a
+                            href={`mailto:${CONTACT_EMAIL}`}
+                            className="pressable group relative overflow-hidden rounded-full border border-cream/20 bg-cream/5 px-6 py-3 backdrop-blur-md hover:bg-cream/10"
+                            style={{
+                                transition:
+                                    'background-color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)',
+                            }}
+                        >
+                            <div
+                                className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[100%]"
+                                aria-hidden="true"
+                            />
+                            <span className="flex items-center gap-3 font-serif text-base italic leading-[1.2] text-cream">
+                                Say hello
+                                <svg
+                                    className="h-4 w-4 opacity-70 transition-transform duration-200 ease-out group-hover:translate-x-1"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
                                     aria-hidden="true"
-                                />
-                                <span className="flex items-center gap-3 font-serif text-base italic leading-[1.2] text-cream">
-                                    Say hello
-                                    <svg
-                                        className="h-4 w-4 opacity-70 transition-transform duration-200 ease-out group-hover:translate-x-1"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                    >
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                    </svg>
-                                </span>
-                            </button>
-                        ) : (
-                            <ContactForm onClose={() => setIsFormVisible(false)} />
-                        )}
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </span>
+                        </a>
                     </div>
 
                     {/* Launch Pad - Rocket + Gantry Tower above name */}
@@ -633,7 +626,6 @@ const EventHorizon: React.FC = () => {
     const sectionRef = useRef<HTMLElement>(null);
     const midLayerRef = useRef<HTMLDivElement>(null);
     const [isStarHovered, setIsStarHovered] = useState(false);
-    const [isFormVisible, setIsFormVisible] = useState(false);
 
     // Parallax + entrances — transform/opacity only, no per-frame React state
     useEffect(() => {
@@ -780,7 +772,7 @@ const EventHorizon: React.FC = () => {
             {/* MID LAYER - Aurora ribbons */}
             <div ref={midLayerRef} className="absolute inset-0">
                 <MidAurora />
-                <HorizonLayer isFormVisible={isFormVisible} setIsFormVisible={setIsFormVisible} />
+                <HorizonLayer />
             </div>
 
             {/* NEAR LAYER - Content */}
@@ -788,12 +780,7 @@ const EventHorizon: React.FC = () => {
                 isStarHovered={isStarHovered}
                 onStarHover={handleStarHover}
                 onContact={() => {
-                    setIsFormVisible(true);
-                    requestAnimationFrame(() => {
-                        document
-                            .querySelector('.horizon-name')
-                            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    });
+                    window.location.href = `mailto:${CONTACT_EMAIL}`;
                 }}
                 onReboot={handleReboot}
             />
