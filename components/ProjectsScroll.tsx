@@ -99,34 +99,36 @@ const WorkCase: React.FC<{ project: Project; index: number }> = ({ project, inde
         />
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-8 md:mt-10 md:grid-cols-3 md:gap-10">
-        <div>
-          <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
-            Problem
-          </h4>
-          <p className="max-w-[42ch] text-[16px] font-medium leading-relaxed text-cream/90">
-            {project.problem}
-          </p>
-        </div>
-        <div>
-          <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
-            Solution
-          </h4>
-          <p className="max-w-[42ch] text-[16px] font-medium leading-relaxed text-cream/90">
-            {project.solution}
-          </p>
-        </div>
-        <div>
-          <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
-            Impact
-          </h4>
-          <ul className="max-w-[42ch] list-none space-y-3">
-            {project.impact.map((item) => (
-              <li key={item} className="text-[16px] font-medium leading-relaxed text-cream/90">
-                {item}
-              </li>
-            ))}
-          </ul>
+      <div className="work-copy mt-8 rounded-[1rem] px-5 py-6 md:mt-10 md:px-8 md:py-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
+          <div>
+            <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
+              Problem
+            </h4>
+            <p className="max-w-[42ch] text-[16px] font-medium leading-relaxed text-cream">
+              {project.problem}
+            </p>
+          </div>
+          <div>
+            <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
+              Solution
+            </h4>
+            <p className="max-w-[42ch] text-[16px] font-medium leading-relaxed text-cream">
+              {project.solution}
+            </p>
+          </div>
+          <div>
+            <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
+              Impact
+            </h4>
+            <ul className="max-w-[42ch] list-none space-y-3">
+              {project.impact.map((item) => (
+                <li key={item} className="text-[16px] font-medium leading-relaxed text-cream">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 
