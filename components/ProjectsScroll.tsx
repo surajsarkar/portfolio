@@ -1,328 +1,302 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import ProjectStackCard from './ProjectStackCard';
-import ConstellationNetwork from './ConstellationNetwork';
 import projectsData from '../src/data/projects.json';
 import { Project } from '../types';
 
-// Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
 const projects: Project[] = projectsData as Project[];
 
-// Calculate triangle positions for constellation
-const getConstellationPositions = (containerWidth: number, containerHeight: number) => {
-    const centerX = containerWidth / 2;
-    const centerY = containerHeight / 2;
-    const radius = Math.min(containerWidth, containerHeight) * 0.35;
+const WorkCase: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const links = [
+    project.github ? { href: project.github, label: 'View source' } : null,
+    project.article ? { href: project.article, label: 'Read article' } : null,
+  ].filter(Boolean) as { href: string; label: string }[];
 
-    // Triangle formation (pointing up)
-    return [
-        { x: centerX, y: centerY - radius * 0.8 }, // Top
-        { x: centerX - radius, y: centerY + radius * 0.6 }, // Bottom left
-        { x: centerX + radius, y: centerY + radius * 0.6 }, // Bottom right
-    ];
-};
-
-type Phase = 'entering' | 'stacking' | 'constellation';
-
-// Simple static stars for the projects section background
-const ProjectsStars: React.FC<{ count: number }> = ({ count }) => {
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        const stars: HTMLDivElement[] = [];
-        const width = container.offsetWidth;
-        const height = container.offsetHeight;
-
-        for (let i = 0; i < count; i++) {
-            const star = document.createElement('div');
-            const size = Math.random() * 2 + 0.5;
-            const x = Math.random() * width;
-            const y = Math.random() * height;
-            const opacity = 0.2 + Math.random() * 0.4;
-
-            star.style.cssText = `
-                position: absolute;
-                width: ${size}px;
-                height: ${size}px;
-                background: #ffffff;
-                border-radius: 50%;
-                opacity: ${opacity};
-                pointer-events: none;
-                left: ${x}px;
-                top: ${y}px;
-                box-shadow: 0 0 ${size}px rgba(255, 255, 255, 0.5);
-            `;
-
-            container.appendChild(star);
-            stars.push(star);
-        }
-
-        return () => {
-            stars.forEach(star => star.remove());
-        };
-    }, [count]);
-
-    return (
-        <div
-            ref={containerRef}
-            className="absolute inset-0 overflow-hidden pointer-events-none"
-            style={{ zIndex: 0 }}
-        />
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    window.dispatchEvent(
+      new CustomEvent('dobby-set-expression', {
+        detail: { expression: project.expression },
+      })
     );
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    window.dispatchEvent(
+      new CustomEvent('dobby-set-expression', {
+        detail: { expression: 'neutral' },
+      })
+    );
+  };
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = mediaRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    el.style.setProperty('--spot-x', `${x}%`);
+    el.style.setProperty('--spot-y', `${y}%`);
+  }, []);
+
+  return (
+    <article
+      id={`work-${project.slug}`}
+      className="work-piece scroll-mt-28"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <header className="mb-6 md:mb-8">
+        <p className="mb-3 font-mono text-[11px] tabular-nums tracking-[0.14em] text-cream-muted">
+          {String(index + 1).padStart(2, '0')}
+        </p>
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
+          <h3 className="font-serif text-[clamp(2rem,4vw,3.25rem)] font-normal leading-[1.1] tracking-[-0.02em] text-cream pb-1">
+            {project.title}
+          </h3>
+          {project.status && (
+            <span className="font-serif text-base italic leading-[1.2] text-cream-muted pb-1">
+              {project.status}
+            </span>
+          )}
+        </div>
+        <p className="mt-2 max-w-[40ch] font-serif text-lg italic leading-[1.25] text-cream/85 pb-1">
+          {project.subtitle}
+        </p>
+        <p className="mt-3 font-mono text-[11px] tracking-wide text-cream/45">
+          {project.tags.join('  /  ')}
+        </p>
+      </header>
+
+      <div
+        ref={mediaRef}
+        className="work-image group relative aspect-[16/9] w-full overflow-hidden rounded-[1rem] bg-surface-dark"
+        style={{ ['--spot-x' as string]: '50%', ['--spot-y' as string]: '50%' }}
+        onMouseMove={handleMouseMove}
+      >
+        <div
+          className="work-media absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('${project.image}')`,
+            transform: isHovered ? 'scale(1.035)' : 'scale(1)',
+            filter: isHovered ? 'brightness(1) saturate(1.04)' : 'brightness(0.9) saturate(0.96)',
+          }}
+          role="img"
+          aria-label={`${project.title} still`}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            background:
+              'radial-gradient(420px circle at var(--spot-x) var(--spot-y), rgba(235,230,220,0.12), transparent 55%)',
+          }}
+          aria-hidden="true"
+        />
+      </div>
+
+      <div className="work-copy mt-8 rounded-[1rem] px-5 py-6 md:mt-10 md:px-8 md:py-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
+          <div>
+            <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
+              Problem
+            </h4>
+            <p className="max-w-[42ch] text-[16px] font-medium leading-relaxed text-cream">
+              {project.problem}
+            </p>
+          </div>
+          <div>
+            <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
+              Solution
+            </h4>
+            <p className="max-w-[42ch] text-[16px] font-medium leading-relaxed text-cream">
+              {project.solution}
+            </p>
+          </div>
+          <div>
+            <h4 className="mb-3 font-serif text-lg italic leading-[1.2] text-cream pb-1">
+              Impact
+            </h4>
+            <ul className="max-w-[42ch] list-none space-y-3">
+              {project.impact.map((item) => (
+                <li key={item} className="text-[16px] font-medium leading-relaxed text-cream">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {links.length > 0 && (
+        <div className="mt-7 flex flex-wrap gap-3">
+          {links.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pressable inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-cream/20 px-4 py-2.5 text-sm text-cream hover:bg-cream hover:text-ink min-h-[44px]"
+            >
+              {link.label}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M7 17L17 7" />
+                <path d="M8 7h9v9" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      )}
+    </article>
+  );
 };
 
 const ProjectsScroll: React.FC = () => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const stickyRef = useRef<HTMLDivElement>(null);
-    const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLElement>(null);
+  const [activeSlug, setActiveSlug] = useState(projects[0]?.slug ?? '');
 
-    const [phase, setPhase] = useState<Phase>('entering');
-    const [activeCardIndex, setActiveCardIndex] = useState(-1);
-    const [stackProgress, setStackProgress] = useState(0);
-    const [constellationProgress, setConstellationProgress] = useState(0);
-    const [constellationPositions, setConstellationPositions] = useState<{ x: number; y: number }[]>([]);
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
 
-    useEffect(() => {
-        const container = containerRef.current;
-        const sticky = stickyRef.current;
-        if (!container || !sticky) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const pieces = section.querySelectorAll<HTMLElement>('.work-piece');
 
-        // Calculate constellation positions based on viewport
-        const updatePositions = () => {
-            const positions = getConstellationPositions(window.innerWidth, window.innerHeight);
-            setConstellationPositions(positions);
-        };
-        updatePositions();
-        window.addEventListener('resize', updatePositions);
+    const ctx = gsap.context(() => {
+      if (reduceMotion) {
+        gsap.set([titleRef.current, pieces], { opacity: 1, y: 0 });
+        return;
+      }
 
-        // Main scroll timeline
-        const scrollTrigger = ScrollTrigger.create({
-            trigger: container,
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: 1,
-            pin: sticky,
-            onUpdate: (self) => {
-                const progress = self.progress;
+      if (titleRef.current) {
+        gsap.fromTo(
+          titleRef.current,
+          { opacity: 0, y: 28 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.95,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: titleRef.current,
+              start: 'top 86%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
 
-                // Phase calculations
-                // 0-0.05: Entry
-                // 0.05-0.7: Card stacking
-                // 0.7-1.0: Constellation explosion
+      pieces.forEach((piece) => {
+        gsap.fromTo(
+          piece,
+          { opacity: 0, y: 36 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.85,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: piece,
+              start: 'top 88%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      });
+    }, section);
 
-                if (progress < 0.05) {
-                    setPhase('entering');
-                    setActiveCardIndex(-1);
-                } else if (progress < 0.7) {
-                    // Stacking phase
-                    setPhase('stacking');
-
-                    const stackingProgress = (progress - 0.05) / 0.65;
-                    setStackProgress(stackingProgress);
-
-                    // Determine which card is active
-                    const cardIndex = Math.min(
-                        Math.floor(stackingProgress * projects.length),
-                        projects.length - 1
-                    );
-                    setActiveCardIndex(cardIndex);
-                } else {
-                    // Constellation phase
-                    setPhase('constellation');
-
-                    const constellationProg = (progress - 0.7) / 0.3;
-                    setConstellationProgress(constellationProg);
-                    setActiveCardIndex(projects.length);
-                }
-            }
-        });
-
-        return () => {
-            scrollTrigger.kill();
-            window.removeEventListener('resize', updatePositions);
-        };
-    }, []);
-
-    // Animate cards based on phase and progress
-    useEffect(() => {
-        cardRefs.current.forEach((cardEl, index) => {
-            if (!cardEl) return;
-
-            if (phase === 'entering' || activeCardIndex < 0) {
-                // Cards hidden during entry
-                gsap.to(cardEl, {
-                    y: '100vh',
-                    opacity: 0,
-                    scale: 0.8,
-                    duration: 0.3
-                });
-            } else if (phase === 'stacking') {
-                // Stacking animation
-                const cardProgress = (stackProgress * projects.length) - index;
-
-                if (cardProgress < 0) {
-                    // Card hasn't entered yet - waiting below
-                    gsap.to(cardEl, {
-                        y: '100vh',
-                        x: 0,
-                        rotation: 0,
-                        opacity: 0,
-                        scale: 0.9,
-                        zIndex: index + 10,
-                        duration: 0.3
-                    });
-                } else if (cardProgress < 1) {
-                    // Card is entering - slides up from bottom
-                    const entryProgress = cardProgress;
-                    gsap.to(cardEl, {
-                        y: (1 - entryProgress) * window.innerHeight * 0.8,
-                        x: 0,
-                        rotation: 0,
-                        opacity: 1,
-                        scale: 1,
-                        zIndex: 200, // Entering card ALWAYS on top of everything
-                        duration: 0.1
-                    });
-                } else {
-                    // Card is stacked - shuffled card effect
-                    // stackPosition = how far behind the active card this card is
-                    const stackPosition = activeCardIndex - index;
-                    // Older cards (higher stackPosition) move DOWN and get pushed back
-                    const stackOffset = stackPosition * 30; // Positive = moves down
-                    const xOffset = stackPosition * (stackPosition % 2 === 0 ? 10 : -10); // Alternating horizontal shuffle
-                    const rotation = stackPosition * (stackPosition % 2 === 0 ? 2 : -2); // Alternating rotation
-
-                    gsap.to(cardEl, {
-                        y: stackOffset, // Push older cards DOWN
-                        x: xOffset,
-                        rotation: rotation,
-                        opacity: 1, // Fully opaque for all cards
-                        scale: 1 - stackPosition * 0.02,
-                        zIndex: 100 + index, // Higher index = newer card = on top
-                        duration: 0.2
-                    });
-                }
-            } else if (phase === 'constellation') {
-                // Explosion to triangle formation
-                const targetPos = constellationPositions[index];
-                if (targetPos) {
-                    const centerX = window.innerWidth / 2;
-                    const centerY = window.innerHeight / 2;
-
-                    gsap.to(cardEl, {
-                        x: (targetPos.x - centerX) * constellationProgress,
-                        y: (targetPos.y - centerY) * constellationProgress,
-                        scale: 0.35 + (1 - constellationProgress) * 0.35,
-                        opacity: 1,
-                        zIndex: 20,
-                        duration: 0.3
-                    });
-                }
-            }
-        });
-    }, [phase, activeCardIndex, stackProgress, constellationProgress, constellationPositions]);
-
-    return (
-        <section
-            ref={containerRef}
-            className="relative"
-            style={{ height: `${450}vh` }} // Extended scroll area for longer sticky effect
-            id="projects"
-        >
-            {/* Sticky container */}
-            <div
-                ref={stickyRef}
-                className="relative w-full h-screen overflow-hidden bg-background-dark"
-            >
-                {/* Top ambient glow - matches hero section for continuity */}
-                <div
-                    className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[120vw] h-[50vh] pointer-events-none"
-                    style={{
-                        background: 'radial-gradient(ellipse at center, rgba(83, 210, 45, 0.08) 0%, transparent 70%)',
-                        filter: 'blur(80px)'
-                    }}
-                />
-
-                {/* Simple stars background */}
-                <ProjectsStars count={400} />
-
-                {/* Section Title - Centered, shrinks and goes behind cards on scroll */}
-                <div
-                    className="absolute inset-0 flex items-center justify-center z-5 pointer-events-none"
-                    style={{
-                        opacity: phase === 'entering' ? 1 : Math.max(0.15, 1 - stackProgress * 1.5),
-                        transform: `scale(${phase === 'entering' ? 1 : Math.max(0.3, 1 - stackProgress * 0.7)})`,
-                        transition: 'opacity 0.3s ease-out, transform 0.3s ease-out'
-                    }}
-                >
-                    <div className="text-center">
-                        <h2
-                            className="text-[8vw] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black text-white uppercase tracking-tighter"
-                            style={{
-                                textShadow: '0 0 80px rgba(255, 255, 255, 0.3), 0 4px 30px rgba(0, 0, 0, 0.9)',
-                                lineHeight: '0.85',
-                                letterSpacing: '-0.02em'
-                            }}
-                        >
-                            CORE<br />SYSTEMS
-                        </h2>
-                        <p
-                            className="text-gray-400 text-base md:text-lg mt-6 font-mono tracking-widest uppercase"
-                            style={{
-                                opacity: phase === 'entering' ? 1 : Math.max(0, 1 - stackProgress * 3)
-                            }}
-                        >
-                            // Scroll to explore
-                        </p>
-                    </div>
-                </div>
-
-                {/* Card stack container */}
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                    {projects.map((project, index) => (
-                        <div
-                            key={project.id}
-                            ref={el => { cardRefs.current[index] = el; }}
-                            className="absolute"
-                            style={{
-                                transform: 'translateY(100vh)',
-                                opacity: 0
-                            }}
-                        >
-                            <ProjectStackCard
-                                project={project}
-                                index={index}
-                                totalCards={projects.length}
-                                isActive={index === activeCardIndex}
-                            />
-                        </div>
-                    ))}
-                </div>
-
-                {/* Constellation network lines */}
-                <ConstellationNetwork
-                    positions={constellationPositions}
-                    isActive={phase === 'constellation' && constellationProgress > 0.3}
-                    progress={Math.max(0, (constellationProgress - 0.3) / 0.7)}
-                />
-
-                {/* Scroll indicator */}
-                <div
-                    className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2 transition-opacity duration-500"
-                    style={{ opacity: phase === 'stacking' && activeCardIndex < projects.length - 1 ? 1 : 0 }}
-                >
-                    <span className="text-gray-500 text-xs font-mono">SCROLL</span>
-                    <div className="w-px h-8 bg-gradient-to-b from-white/50 to-transparent animate-pulse" />
-                </div>
-            </div>
-        </section>
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        const slug = visible?.target.getAttribute('id')?.replace('work-', '');
+        if (slug) setActiveSlug(slug);
+      },
+      { rootMargin: '-28% 0px -48% 0px', threshold: [0.15, 0.35, 0.6] }
     );
+
+    pieces.forEach((piece) => observer.observe(piece));
+
+    return () => {
+      ctx.revert();
+      observer.disconnect();
+    };
+  }, []);
+
+  const scrollToCase = (slug: string) => {
+    document.getElementById(`work-${slug}`)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
+
+  return (
+    <section
+      ref={sectionRef}
+      id="projects"
+      className="relative px-5 pb-24 pt-16 md:px-12 md:pb-44 md:pt-28"
+      aria-label="Projects"
+    >
+      <div className="mx-auto max-w-[1400px]">
+        <header ref={titleRef} className="mb-14 md:mb-20">
+          <h2 className="font-serif text-[clamp(3.5rem,14vw,10rem)] font-normal leading-[0.86] tracking-[-0.04em] text-cream">
+            Work
+          </h2>
+          <p className="mt-4 font-serif text-xl italic leading-[1.2] text-cream-muted pb-1 md:text-2xl">
+            Selected projects
+          </p>
+        </header>
+
+        <div className="lg:grid lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start lg:gap-16 xl:grid-cols-[240px_minmax(0,1fr)]">
+          <nav
+            className="mb-12 hidden lg:sticky lg:top-28 lg:mb-0 lg:block"
+            aria-label="Project index"
+          >
+            <ol className="space-y-1">
+              {projects.map((project, index) => {
+                const isActive = activeSlug === project.slug;
+                return (
+                  <li key={project.id}>
+                    <button
+                      type="button"
+                      onClick={() => scrollToCase(project.slug)}
+                      className={`pressable flex w-full items-baseline gap-3 rounded-lg px-2 py-2 text-left ${
+                        isActive ? 'text-cream' : 'text-cream-muted hover:text-cream'
+                      }`}
+                      aria-current={isActive ? 'true' : undefined}
+                    >
+                      <span className="font-mono text-[11px] tabular-nums tracking-[0.12em] text-cream/40">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span
+                        className={`font-serif leading-[1.2] pb-0.5 ${
+                          isActive ? 'text-[1.45rem]' : 'text-[1.05rem]'
+                        }`}
+                      >
+                        {project.title}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </nav>
+
+          <div className="flex flex-col gap-20 md:gap-32">
+            {projects.map((project, index) => (
+              <WorkCase key={project.id} project={project} index={index} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default ProjectsScroll;

@@ -26,7 +26,7 @@ const Contact: React.FC = () => {
             <div>
               <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-6">Let's collaborate</h2>
               <p className="text-gray-400 text-lg mb-12 leading-relaxed max-w-lg">
-                Whether you need a backend architect for your startup or an AI engineer to fine-tune your models, my inbox is open.
+                If you need a hand building reliable backend systems or automating the boring stuff, feel free to say hello.
               </p>
               <div className="space-y-10">
                 <div>

@@ -1,82 +1,32 @@
-
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Skill categories with compass positions
 const SKILL_CATEGORIES = [
   {
-    name: 'LANGUAGES',
+    name: 'Languages',
     skills: ['Python', 'Rust', 'Go'],
-    angle: -90, // North
+    angle: -90,
   },
   {
-    name: 'INFRASTRUCTURE',
+    name: 'Infrastructure',
     skills: ['AWS'],
-    angle: 0, // East
+    angle: 0,
   },
   {
-    name: 'STORAGE',
+    name: 'Storage',
     skills: ['Postgres', 'Redis', 'Qdrant', 'Chroma'],
-    angle: 90, // South
+    angle: 90,
   },
   {
-    name: 'INTELLIGENCE',
+    name: 'Intelligence',
     skills: ['PyTorch', 'Hugging Face', 'vLLM'],
-    angle: 180, // West
+    angle: 180,
   },
 ];
 
-// Star field background
-const SkillsStars: React.FC<{ count: number }> = ({ count }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const stars: HTMLDivElement[] = [];
-    const width = container.offsetWidth;
-    const height = container.offsetHeight;
-
-    for (let i = 0; i < count; i++) {
-      const star = document.createElement('div');
-      const size = Math.random() * 2 + 0.5;
-      const x = Math.random() * width;
-      const y = Math.random() * height;
-      const opacity = 0.15 + Math.random() * 0.3;
-
-      star.style.cssText = `
-        position: absolute;
-        width: ${size}px;
-        height: ${size}px;
-        background: #ffffff;
-        border-radius: 50%;
-        opacity: ${opacity};
-        pointer-events: none;
-        left: ${x}px;
-        top: ${y}px;
-      `;
-
-      container.appendChild(star);
-      stars.push(star);
-    }
-
-    return () => stars.forEach(star => star.remove());
-  }, [count]);
-
-  return (
-    <div
-      ref={containerRef}
-      className="absolute inset-0 overflow-hidden pointer-events-none"
-      style={{ zIndex: 0 }}
-    />
-  );
-};
-
-// Signal packet type
 interface SignalPacket {
   id: number;
   skillIndex: number;
@@ -91,15 +41,15 @@ const Skills: React.FC = () => {
   const centerRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLSpanElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const packetsLayerRef = useRef<SVGGElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [centerPulse, setCenterPulse] = useState(false);
   const packetsRef = useRef<SignalPacket[]>([]);
   const packetIdRef = useRef(0);
   const animationFrameRef = useRef<number | null>(null);
-  const [, forceUpdate] = useState({});
+  const circlePoolRef = useRef<SVGCircleElement[]>([]);
 
-  // Dimensions
   useEffect(() => {
     const updateDimensions = () => {
       if (constellationRef.current) {
@@ -112,114 +62,125 @@ const Skills: React.FC = () => {
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  // Intersection observer + scroll animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) setIsVisible(true);
       },
-      { threshold: 0.1 }
+      { threshold: 0.12 }
     );
     if (containerRef.current) observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, []);
 
-  // GSAP Scroll Animation
   useEffect(() => {
     if (!containerRef.current || !centerRef.current || dimensions.width === 0) return;
 
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const ctx = gsap.context(() => {
-      // Center - scale up from 0
+      if (reduceMotion) {
+        gsap.set([centerRef.current, '.category-node', '.skill-node', svgRef.current], {
+          opacity: 1,
+          scale: 1,
+        });
+        return;
+      }
+
+      // Center: scale from near-zero (never absolute 0)
       gsap.fromTo(
         centerRef.current,
-        { scale: 0, opacity: 0 },
+        { scale: 0.92, opacity: 0 },
         {
           scale: 1,
           opacity: 1,
-          duration: 0.8,
-          ease: 'back.out(1.5)',
+          duration: 0.85,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: containerRef.current,
-            start: 'top 80%',
+            start: 'top 78%',
             toggleActions: 'play none none reverse',
           },
         }
       );
 
-      // Heading - animate from large (like Projects) to smaller
+      // Heading: scale transform only (not font-size layout thrash)
       if (headingRef.current) {
         gsap.fromTo(
           headingRef.current,
-          { fontSize: '8rem' },
+          { scale: 3.2, opacity: 0.35 },
           {
-            fontSize: '1.5rem',
-            duration: 0.8,
-            ease: 'power2.out',
+            scale: 1,
+            opacity: 1,
+            duration: 0.95,
+            ease: 'power3.out',
             scrollTrigger: {
               trigger: containerRef.current,
-              start: 'top 80%',
+              start: 'top 78%',
               toggleActions: 'play none none reverse',
             },
           }
         );
       }
 
-      // Category nodes - fly in from outside
       const categoryNodes = containerRef.current?.querySelectorAll('.category-node');
-      if (categoryNodes) {
+      if (categoryNodes?.length) {
         gsap.fromTo(
           categoryNodes,
-          { scale: 0, opacity: 0 },
+          { scale: 0.92, opacity: 0, y: 16 },
           {
             scale: 1,
             opacity: 1,
-            duration: 0.5,
-            stagger: 0.1,
-            ease: 'back.out(1.2)',
+            y: 0,
+            duration: 0.55,
+            stagger: 0.08,
+            ease: 'power3.out',
             scrollTrigger: {
               trigger: containerRef.current,
-              start: 'top 70%',
+              start: 'top 68%',
               toggleActions: 'play none none reverse',
             },
           }
         );
       }
 
-      // Skill nodes - fade in with stagger
       const skillNodes = containerRef.current?.querySelectorAll('.skill-node');
-      if (skillNodes) {
+      if (skillNodes?.length) {
         gsap.fromTo(
           skillNodes,
-          { scale: 0, opacity: 0 },
+          { scale: 0.94, opacity: 0, y: 10 },
           {
             scale: 1,
             opacity: 1,
-            duration: 0.4,
-            stagger: 0.05,
+            y: 0,
+            duration: 0.45,
+            stagger: 0.04,
             ease: 'power2.out',
             scrollTrigger: {
               trigger: containerRef.current,
-              start: 'top 60%',
+              start: 'top 58%',
               toggleActions: 'play none none reverse',
             },
           }
         );
       }
 
-      // SVG lines - draw in
-      gsap.fromTo(
-        svgRef.current,
-        { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 1,
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: 'top 75%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
+      if (svgRef.current) {
+        gsap.fromTo(
+          svgRef.current,
+          { opacity: 0 },
+          {
+            opacity: 1,
+            duration: 1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top 72%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
     }, containerRef);
 
     return () => ctx.revert();
@@ -227,79 +188,114 @@ const Skills: React.FC = () => {
 
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
-  const categoryRadius = 180;
-  const skillBaseRadius = 110; // Distance from category to skill
+  const categoryRadius = dimensions.width < 500 ? 130 : Math.min(180, dimensions.width * 0.28);
+  const skillBaseRadius = dimensions.width < 500 ? 80 : Math.min(110, dimensions.width * 0.16);
 
-  // Category position
-  const getCategoryPosition = useCallback((angle: number) => {
-    const rad = (angle * Math.PI) / 180;
-    return {
-      x: centerX + Math.cos(rad) * categoryRadius,
-      y: centerY + Math.sin(rad) * categoryRadius,
-    };
-  }, [centerX, centerY]);
+  const getMobileAngle = useCallback((baseAngle: number) => {
+    if (dimensions.width >= 500) return baseAngle;
+    if (baseAngle === -90) return -60;
+    if (baseAngle === 0) return 30;
+    if (baseAngle === 90) return 120;
+    if (baseAngle === 180) return 210;
+    return baseAngle;
+  }, [dimensions.width]);
 
-  // Skill position - semi-circle around category facing OUTWARD (away from center)
-  const getSkillPosition = useCallback((categoryAngle: number, skillIndex: number, totalSkills: number) => {
-    const catPos = getCategoryPosition(categoryAngle);
+  const getCategoryPosition = useCallback(
+    (baseAngle: number) => {
+      const angle = getMobileAngle(baseAngle);
+      const rad = (angle * Math.PI) / 180;
+      const xScale = dimensions.width < 500 ? 0.75 : 1;
+      const yScale = dimensions.width < 500 ? 1.15 : 1;
+      return {
+        x: centerX + Math.cos(rad) * categoryRadius * xScale,
+        y: centerY + Math.sin(rad) * categoryRadius * yScale,
+      };
+    },
+    [centerX, centerY, categoryRadius, getMobileAngle, dimensions.width]
+  );
 
-    // Distribute skills in a 180° arc facing AWAY from center
-    const arcSpread = 180; // Semi-circle
-    const startAngle = categoryAngle - arcSpread / 2;
-    const angleStep = totalSkills > 1 ? arcSpread / (totalSkills - 1) : 0;
-    const skillAngle = totalSkills === 1 ? categoryAngle : startAngle + skillIndex * angleStep;
+  const getSkillPosition = useCallback(
+    (baseCategoryAngle: number, skillIndex: number, totalSkills: number) => {
+      const catPos = getCategoryPosition(baseCategoryAngle);
+      const categoryAngle = getMobileAngle(baseCategoryAngle);
+      const arcSpread = dimensions.width < 500 ? 120 : 180;
+      const startAngle = categoryAngle - arcSpread / 2;
+      const angleStep = totalSkills > 1 ? arcSpread / (totalSkills - 1) : 0;
+      const skillAngle = totalSkills === 1 ? categoryAngle : startAngle + skillIndex * angleStep;
+      const rad = (skillAngle * Math.PI) / 180;
+      const xScale = dimensions.width < 500 ? 0.75 : 1;
+      const yScale = dimensions.width < 500 ? 1.15 : 1;
+      return {
+        x: catPos.x + Math.cos(rad) * skillBaseRadius * xScale,
+        y: catPos.y + Math.sin(rad) * skillBaseRadius * yScale,
+      };
+    },
+    [getCategoryPosition, getMobileAngle, skillBaseRadius, dimensions.width]
+  );
 
-    const rad = (skillAngle * Math.PI) / 180;
-    return {
-      x: catPos.x + Math.cos(rad) * skillBaseRadius,
-      y: catPos.y + Math.sin(rad) * skillBaseRadius,
-    };
-  }, [getCategoryPosition]);
-
-  // Pulse center
   const pulseCenter = useCallback(() => {
     setCenterPulse(true);
-    setTimeout(() => setCenterPulse(false), 200);
+    window.setTimeout(() => setCenterPulse(false), 180);
   }, []);
 
-  // Create random signal packets
+  // Signal packets — DOM pool, no React re-render per frame
   useEffect(() => {
     if (!isVisible || dimensions.width === 0) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
 
     const createPacket = () => {
       const catIndex = Math.floor(Math.random() * SKILL_CATEGORIES.length);
       const category = SKILL_CATEGORIES[catIndex];
       const skillIndex = Math.floor(Math.random() * category.skills.length);
-
       packetsRef.current.push({
         id: packetIdRef.current++,
         categoryIndex: catIndex,
-        skillIndex: skillIndex,
+        skillIndex,
         progress: 0,
         phase: 'skill-to-category',
       });
     };
 
-    const intervals: NodeJS.Timeout[] = [];
+    const timeouts: number[] = [];
+    const intervals: number[] = [];
     SKILL_CATEGORIES.forEach((_, catIndex) => {
-      const delay = catIndex * 800 + Math.random() * 1000;
-      setTimeout(() => {
+      const delay = catIndex * 700 + Math.random() * 900;
+      const t = window.setTimeout(() => {
         createPacket();
-        const interval = setInterval(createPacket, 2500 + Math.random() * 2000);
+        const interval = window.setInterval(createPacket, 2600 + Math.random() * 1800);
         intervals.push(interval);
       }, delay);
+      timeouts.push(t);
     });
 
-    return () => intervals.forEach(clearInterval);
+    return () => {
+      timeouts.forEach(clearTimeout);
+      intervals.forEach(clearInterval);
+    };
   }, [isVisible, dimensions.width]);
 
-  // Animation loop
   useEffect(() => {
-    if (!isVisible) return;
+    if (!isVisible || !packetsLayerRef.current) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    const layer = packetsLayerRef.current;
+    const ensureCircle = (index: number) => {
+      if (!circlePoolRef.current[index]) {
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        c.setAttribute('r', '3');
+        c.setAttribute('fill', '#ebe6dc');
+        c.style.filter = 'drop-shadow(0 0 4px rgba(235, 230, 220, 0.45))';
+        layer.appendChild(c);
+        circlePoolRef.current[index] = c;
+      }
+      return circlePoolRef.current[index];
+    };
 
     const animate = () => {
       const packets = packetsRef.current;
-      const speed = 0.015;
+      const speed = 0.012;
 
       for (let i = packets.length - 1; i >= 0; i--) {
         const packet = packets[i];
@@ -314,7 +310,39 @@ const Skills: React.FC = () => {
         }
       }
 
-      forceUpdate({});
+      // Position circles
+      packets.forEach((packet, i) => {
+        const category = SKILL_CATEGORIES[packet.categoryIndex];
+        const catPos = getCategoryPosition(category.angle);
+        const skillPos = getSkillPosition(
+          category.angle,
+          packet.skillIndex,
+          category.skills.length
+        );
+
+        let x: number;
+        let y: number;
+        // Smoothstep for softer travel
+        const t = packet.progress * packet.progress * (3 - 2 * packet.progress);
+        if (packet.phase === 'skill-to-category') {
+          x = skillPos.x + (catPos.x - skillPos.x) * t;
+          y = skillPos.y + (catPos.y - skillPos.y) * t;
+        } else {
+          x = catPos.x + (centerX - catPos.x) * t;
+          y = catPos.y + (centerY - catPos.y) * t;
+        }
+
+        const circle = ensureCircle(i);
+        circle.setAttribute('cx', String(x));
+        circle.setAttribute('cy', String(y));
+        circle.style.opacity = '1';
+      });
+
+      // Hide unused pool circles
+      for (let i = packets.length; i < circlePoolRef.current.length; i++) {
+        circlePoolRef.current[i].style.opacity = '0';
+      }
+
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
@@ -322,42 +350,21 @@ const Skills: React.FC = () => {
     return () => {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
-  }, [isVisible, pulseCenter]);
-
-  // Packet position
-  const getPacketPosition = (packet: SignalPacket) => {
-    const category = SKILL_CATEGORIES[packet.categoryIndex];
-    const catPos = getCategoryPosition(category.angle);
-    const skillPos = getSkillPosition(category.angle, packet.skillIndex, category.skills.length);
-
-    if (packet.phase === 'skill-to-category') {
-      return {
-        x: skillPos.x + (catPos.x - skillPos.x) * packet.progress,
-        y: skillPos.y + (catPos.y - skillPos.y) * packet.progress,
-      };
-    } else {
-      return {
-        x: catPos.x + (centerX - catPos.x) * packet.progress,
-        y: catPos.y + (centerY - catPos.y) * packet.progress,
-      };
-    }
-  };
+  }, [isVisible, centerX, centerY, getCategoryPosition, getSkillPosition, pulseCenter]);
 
   return (
     <section
       ref={containerRef}
-      className="relative py-20 overflow-hidden"
-      style={{ backgroundColor: 'var(--background-dark)' }}
+      className="relative overflow-hidden py-16 md:py-32"
+      style={{ backgroundColor: 'transparent' }}
+      aria-label="Toolchain"
     >
-      <SkillsStars count={150} />
-
-      <div className="relative mx-auto max-w-5xl px-4">
-        <div ref={constellationRef} className="relative h-[600px]">
-
-          {/* Center - TOOLCHAIN */}
+      <div className="relative z-10 mx-auto max-w-5xl px-4">
+        <div ref={constellationRef} className="relative h-[min(60vh,640px)] min-h-[380px] md:h-[min(72vh,640px)] md:min-h-[480px]">
+          {/* Center hub */}
           <div
             ref={centerRef}
-            className="absolute z-30 flex items-center justify-center"
+            className="absolute z-30 flex items-center justify-center opacity-0"
             style={{
               left: centerX,
               top: centerY,
@@ -365,137 +372,127 @@ const Skills: React.FC = () => {
             }}
           >
             <div
-              className={`absolute rounded-full transition-all duration-200 ${centerPulse ? 'opacity-80 scale-110' : 'opacity-30 scale-100'}`}
+              className={`absolute rounded-full transition-[opacity,transform] duration-200 ease-out ${
+                centerPulse ? 'scale-110 opacity-80' : 'scale-100 opacity-30'
+              }`}
               style={{
-                width: '220px',
-                height: '220px',
-                background: 'radial-gradient(circle, rgba(83, 210, 45, 0.3) 0%, transparent 70%)',
-                filter: 'blur(20px)',
+                width: dimensions.width < 500 ? '110px' : '210px',
+                height: dimensions.width < 500 ? '110px' : '210px',
+                background: 'radial-gradient(circle, rgba(235, 230, 220, 0.16) 0%, transparent 70%)',
+                filter: 'blur(18px)',
               }}
             />
             <div
-              className={`relative flex items-center justify-center rounded-full border transition-all duration-200 ${centerPulse ? 'border-primary/80 shadow-[0_0_60px_rgba(83,210,45,0.6)]' : 'border-primary/30 shadow-[0_0_30px_rgba(83,210,45,0.2)]'}`}
+              className={`relative flex h-[80px] w-[80px] md:h-[168px] md:w-[168px] items-center justify-center rounded-full border transition-[border-color,box-shadow] duration-200 ${
+                centerPulse
+                  ? 'border-cream/60 shadow-[0_0_40px_rgba(235,230,220,0.16)]'
+                  : 'border-cream/20 shadow-[0_0_24px_rgba(235,230,220,0.08)]'
+              }`}
               style={{
-                width: '180px',
-                height: '180px',
-                background: 'radial-gradient(circle, rgba(83, 210, 45, 0.2) 0%, rgba(5, 5, 8, 0.95) 70%)',
+                background:
+                  'radial-gradient(circle, rgba(235, 230, 220, 0.08) 0%, rgba(12, 12, 11, 0.92) 70%)',
               }}
             >
               <span
                 ref={headingRef}
-                className="font-black text-white tracking-wider uppercase"
-                style={{
-                  textShadow: '0 0 20px rgba(255, 255, 255, 0.3)',
-                  fontSize: '8rem', // Start large like Projects, animate to small
-                }}
+                className="origin-center font-serif text-[13px] md:text-base italic leading-[1.2] text-cream"
               >
-                TOOLCHAIN
+                Toolchain
               </span>
             </div>
           </div>
 
-          {/* Connection lines SVG */}
           <svg
             ref={svgRef}
-            className={`absolute inset-0 w-full h-full pointer-events-none transition-opacity duration-700 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+            className="pointer-events-none absolute inset-0 h-full w-full opacity-0"
+            aria-hidden="true"
           >
-            {dimensions.width > 0 && SKILL_CATEGORIES.map((category) => {
-              const catPos = getCategoryPosition(category.angle);
-
-              return (
-                <g key={category.name}>
-                  {/* Category to Center line */}
-                  <line
-                    x1={catPos.x}
-                    y1={catPos.y}
-                    x2={centerX}
-                    y2={centerY}
-                    stroke="rgba(83, 210, 45, 0.15)"
-                    strokeWidth={1}
-                  />
-
-                  {/* Skills to Category lines */}
-                  {category.skills.map((_, skillIndex) => {
-                    const skillPos = getSkillPosition(category.angle, skillIndex, category.skills.length);
-                    return (
-                      <line
-                        key={skillIndex}
-                        x1={skillPos.x}
-                        y1={skillPos.y}
-                        x2={catPos.x}
-                        y2={catPos.y}
-                        stroke="rgba(100, 100, 100, 0.2)"
-                        strokeWidth={1}
-                      />
-                    );
-                  })}
-                </g>
-              );
-            })}
-
-            {/* Signal packets */}
-            {packetsRef.current.map((packet) => {
-              const pos = getPacketPosition(packet);
-              return (
-                <circle
-                  key={packet.id}
-                  cx={pos.x}
-                  cy={pos.y}
-                  r={3}
-                  fill="#53d22d"
-                  style={{
-                    filter: 'drop-shadow(0 0 4px rgba(83, 210, 45, 0.8))',
-                  }}
-                />
-              );
-            })}
+            {dimensions.width > 0 &&
+              SKILL_CATEGORIES.map((category) => {
+                const catPos = getCategoryPosition(category.angle);
+                return (
+                  <g key={category.name}>
+                    <line
+                      x1={catPos.x}
+                      y1={catPos.y}
+                      x2={centerX}
+                      y2={centerY}
+                      stroke="rgba(235, 230, 220, 0.16)"
+                      strokeWidth={1}
+                    />
+                    {category.skills.map((_, skillIndex) => {
+                      const skillPos = getSkillPosition(
+                        category.angle,
+                        skillIndex,
+                        category.skills.length
+                      );
+                      return (
+                        <line
+                          key={skillIndex}
+                          x1={skillPos.x}
+                          y1={skillPos.y}
+                          x2={catPos.x}
+                          y2={catPos.y}
+                          stroke="rgba(154, 148, 136, 0.28)"
+                          strokeWidth={1}
+                        />
+                      );
+                    })}
+                  </g>
+                );
+              })}
+            <g ref={packetsLayerRef} />
           </svg>
 
-          {/* Category nodes */}
-          {dimensions.width > 0 && SKILL_CATEGORIES.map((category, catIndex) => {
-            const catPos = getCategoryPosition(category.angle);
-
-            return (
-              <div
-                key={category.name}
-                className="category-node absolute z-20"
-                style={{
-                  left: catPos.x,
-                  top: catPos.y,
-                  transform: 'translate(-50%, -50%)',
-                  transitionDelay: `${catIndex * 100 + 300}ms`,
-                }}
-              >
-                <div className="px-4 py-2 rounded-full bg-surface-dark/80 border border-primary/30 backdrop-blur-sm shadow-[0_0_15px_rgba(83,210,45,0.1)]">
-                  <span className="text-sm font-semibold text-primary/90 whitespace-nowrap uppercase">{category.name}</span>
-                </div>
-              </div>
-            );
-          })}
-
-          {/* Skill nodes */}
-          {dimensions.width > 0 && SKILL_CATEGORIES.map((category, catIndex) => (
-            category.skills.map((skill, skillIndex) => {
-              const skillPos = getSkillPosition(category.angle, skillIndex, category.skills.length);
-
+          {dimensions.width > 0 &&
+            SKILL_CATEGORIES.map((category) => {
+              const catPos = getCategoryPosition(category.angle);
               return (
                 <div
-                  key={skill}
-                  className="skill-node absolute z-10"
+                  key={category.name}
+                  className="category-node absolute z-20 opacity-0"
                   style={{
-                    left: skillPos.x,
-                    top: skillPos.y,
+                    left: catPos.x,
+                    top: catPos.y,
                     transform: 'translate(-50%, -50%)',
-                    transitionDelay: `${catIndex * 100 + skillIndex * 60 + 500}ms`,
                   }}
                 >
-                  <div className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-                    <span className="text-sm font-medium text-gray-300 whitespace-nowrap">{skill}</span>
+                  <div className="rounded-full border border-cream/15 bg-ink/70 px-3 py-1 md:px-4 md:py-2 backdrop-blur-md">
+                    <span className="whitespace-nowrap font-serif text-[11px] md:text-sm italic leading-[1.2] text-cream">
+                      {category.name}
+                    </span>
                   </div>
                 </div>
               );
-            })
-          ))}
+            })}
+
+          {dimensions.width > 0 &&
+            SKILL_CATEGORIES.map((category) =>
+              category.skills.map((skill, skillIndex) => {
+                const skillPos = getSkillPosition(
+                  category.angle,
+                  skillIndex,
+                  category.skills.length
+                );
+                return (
+                  <div
+                    key={skill}
+                    className="skill-node absolute z-10 opacity-0"
+                    style={{
+                      left: skillPos.x,
+                      top: skillPos.y,
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                  >
+                    <div className="rounded-full border border-cream/10 bg-cream/[0.04] px-2 py-1 md:px-3 md:py-1.5 backdrop-blur-sm">
+                      <span className="whitespace-nowrap text-[10px] md:text-sm font-medium text-cream/80">
+                        {skill}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })
+            )}
         </div>
       </div>
     </section>

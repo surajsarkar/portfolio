@@ -1,0 +1,228 @@
+/* ============================================
+   Editorial cosmos — GPU-friendly defaults
+   ============================================ */
+
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-soft: cubic-bezier(0.2, 0, 0, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --duration-press: 140ms;
+  --duration-hover: 220ms;
+  --duration-ui: 280ms;
+  --duration-section: 700ms;
+
+  --z-cosmic: 0;
+  --z-content: 10;
+  --z-header: 50;
+  --z-grain: 60;
+
+  --cream: #ebe6dc;
+  --cream-muted: #9a9488;
+  --ink: #0c0c0b;
+  --primary: #7d9a68;
+}
+
+/* Font smoothing + text quality */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  overflow-x: hidden;
+  color: var(--cream);
+  background-color: var(--ink);
+}
+
+/* Balanced headings, fewer orphans */
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Focus rings — cream, visible */
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--cream) 80%, white);
+  outline-offset: 3px;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100%;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 9999px;
+  background: var(--cream);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: top var(--duration-ui) var(--ease-out);
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Film grain — fixed, never on scrolling containers */
+.cosmos-grain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+}
+
+/* Interactive press feedback utility */
+.pressable {
+  transition:
+    transform var(--duration-press) var(--ease-out),
+    opacity var(--duration-hover) var(--ease-soft),
+    border-color var(--duration-hover) var(--ease-soft),
+    background-color var(--duration-hover) var(--ease-soft),
+    color var(--duration-hover) var(--ease-soft),
+    box-shadow var(--duration-hover) var(--ease-soft);
+}
+
+.pressable:active {
+  transform: scale(0.96);
+}
+
+/* Quiet nav glass — warm, no neon */
+.nav-glass {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(235, 230, 220, 0.08) 0%,
+      rgba(235, 230, 220, 0.03) 50%,
+      rgba(12, 12, 11, 0.35) 100%
+    );
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(235, 230, 220, 0.1);
+  box-shadow:
+    0 8px 28px rgba(12, 12, 11, 0.4),
+    inset 0 1px 0 rgba(235, 230, 220, 0.1);
+}
+
+/* Soft ambient vignette for sections */
+.cosmos-vignette::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 40%,
+    transparent 40%,
+    rgba(12, 12, 11, 0.55) 100%
+  );
+}
+
+/* Hero entrance helpers (GSAP also drives these) */
+.hero-enter {
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: transform, opacity;
+}
+
+.work-image {
+  outline: 1px solid rgba(255, 255, 255, 0.1);
+  outline-offset: -1px;
+}
+
+.work-index-current {
+  color: var(--cream);
+}
+
+.work-copy {
+  background: rgba(12, 12, 11, 0.88);
+  border: 1px solid rgba(235, 230, 220, 0.1);
+  box-shadow: inset 0 1px 0 rgba(235, 230, 220, 0.06);
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .work-copy {
+    background: #161614;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.work-image img,
+.work-image .work-media {
+  transition:
+    transform 700ms var(--ease-drawer),
+    filter 500ms var(--ease-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-image img,
+  .work-image .work-media {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 767px) {
+  /* Reduce grain texture size for mobile GPU */
+  .cosmos-grain {
+    background-size: 120px 120px;
+    opacity: 0.03;
+  }
+
+  /* Smaller vignette on mobile */
+  .cosmos-vignette::after {
+    background: radial-gradient(
+      ellipse 90% 80% at 50% 45%,
+      transparent 35%,
+      rgba(12, 12, 11, 0.5) 100%
+    );
+  }
+
+  /* Ensure minimum tap target sizes */
+  .pressable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Tighten nav glass blur for mobile perf */
+  .nav-glass {
+    backdrop-filter: blur(12px) saturate(120%);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+  }
+
+  .work-copy {
+    backdrop-filter: blur(10px) saturate(110%);
+    -webkit-backdrop-filter: blur(10px) saturate(110%);
+  }
+}

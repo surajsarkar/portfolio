@@ -13,40 +13,46 @@ export const ACTIVE_THEME: ThemeName = 'space-black';
 // ========================================
 
 export const themes = {
-    // Deep space black with cool blue undertones
+    // Warm off-black with cream type and a quiet sage accent
     'space-black': {
-        primary: '#53d22d',
-        backgroundLight: '#f6f8f6',
-        backgroundDark: '#050508',
-        surfaceDark: '#0a0a0f',
-        borderDark: '#1a1a25',
-        skillsBg: '#08080d',
-        scrollbarTrack: 'rgba(10, 10, 15, 0.5)',
-        scrollbarThumb: 'rgba(26, 26, 37, 0.8)',
+        primary: '#7d9a68',
+        cream: '#ebe6dc',
+        creamMuted: '#9a9488',
+        backgroundLight: '#f4f1ea',
+        backgroundDark: '#0c0c0b',
+        surfaceDark: '#141412',
+        borderDark: '#2a2924',
+        skillsBg: '#0c0c0b',
+        scrollbarTrack: 'rgba(12, 12, 11, 0.5)',
+        scrollbarThumb: 'rgba(42, 41, 36, 0.85)',
     },
 
-    // Original green-tinted dark theme
+    // Green-tinted dark, same cream type
     'forest-dark': {
-        primary: '#53d22d',
-        backgroundLight: '#f6f8f6',
-        backgroundDark: '#131712',
-        surfaceDark: '#1c211b',
-        borderDark: '#2d372a',
-        skillsBg: '#161b15',
-        scrollbarTrack: 'rgba(28, 33, 27, 0.5)',
-        scrollbarThumb: 'rgba(45, 55, 42, 0.8)',
+        primary: '#7d9a68',
+        cream: '#ebe6dc',
+        creamMuted: '#9a9488',
+        backgroundLight: '#f4f1ea',
+        backgroundDark: '#121410',
+        surfaceDark: '#1a1c18',
+        borderDark: '#2c3028',
+        skillsBg: '#121410',
+        scrollbarTrack: 'rgba(18, 20, 16, 0.5)',
+        scrollbarThumb: 'rgba(44, 48, 40, 0.85)',
     },
 
-    // Deep midnight blue theme
+    // Cooler night, same cream type
     'midnight-blue': {
-        primary: '#3b82f6',
+        primary: '#7d9a68',
+        cream: '#ebe6dc',
+        creamMuted: '#9a9488',
         backgroundLight: '#f0f4ff',
-        backgroundDark: '#0a0a12',
-        surfaceDark: '#0f0f1a',
-        borderDark: '#1e1e3a',
-        skillsBg: '#0c0c18',
-        scrollbarTrack: 'rgba(10, 10, 18, 0.5)',
-        scrollbarThumb: 'rgba(30, 30, 58, 0.8)',
+        backgroundDark: '#0b0c10',
+        surfaceDark: '#12141a',
+        borderDark: '#262830',
+        skillsBg: '#0b0c10',
+        scrollbarTrack: 'rgba(11, 12, 16, 0.5)',
+        scrollbarThumb: 'rgba(38, 40, 48, 0.85)',
     },
 } as const;
 
@@ -56,6 +62,8 @@ export const theme = themes[ACTIVE_THEME];
 // Export individual colors for convenience
 export const {
     primary,
+    cream,
+    creamMuted,
     backgroundLight,
     backgroundDark,
     surfaceDark,
