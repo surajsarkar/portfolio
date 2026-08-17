@@ -548,7 +548,8 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
       spin: number;
       baseScale: number;
       delay: number;
-      kind: 'satellite' | 'ship';
+      gap: number;
+      kind: 'satellite';
     };
 
     const crafts: CraftState[] = [];
@@ -738,110 +739,51 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
       return g;
     };
 
-    const buildShip = (): THREE.Group => {
-      const kit = makeMatKit();
-      const g = new THREE.Group();
-
-      // Fuselage
-      const bodyGeo = new THREE.CapsuleGeometry(0.22, 0.85, 4, 10);
-      craftGeometries.push(bodyGeo);
-      const body = new THREE.Mesh(bodyGeo, kit.hull);
-      body.rotation.z = Math.PI / 2;
-      g.add(body);
-
-      // Nose cone
-      const noseGeo = new THREE.ConeGeometry(0.2, 0.45, 10);
-      craftGeometries.push(noseGeo);
-      const nose = new THREE.Mesh(noseGeo, kit.metal);
-      nose.rotation.z = -Math.PI / 2;
-      nose.position.x = 0.72;
-      g.add(nose);
-
-      // Cockpit canopy
-      const canopyGeo = new THREE.SphereGeometry(0.14, 10, 8, 0, Math.PI * 2, 0, Math.PI * 0.55);
-      craftGeometries.push(canopyGeo);
-      const canopy = new THREE.Mesh(canopyGeo, kit.canopyMat);
-      canopy.position.set(0.15, 0.16, 0);
-      canopy.rotation.z = Math.PI / 2;
-      g.add(canopy);
-
-      // Wings
-      const wingGeo = new THREE.BoxGeometry(0.35, 0.04, 1.1);
-      craftGeometries.push(wingGeo);
-      const wing = new THREE.Mesh(wingGeo, kit.metalDark);
-      wing.position.set(-0.1, 0, 0);
-      g.add(wing);
-
-      // Engine nacelles
-      [-1, 1].forEach((side) => {
-        const nacelleGeo = new THREE.CylinderGeometry(0.08, 0.1, 0.35, 8);
-        craftGeometries.push(nacelleGeo);
-        const nacelle = new THREE.Mesh(nacelleGeo, kit.metal);
-        nacelle.rotation.z = Math.PI / 2;
-        nacelle.position.set(-0.45, 0, side * 0.28);
-        g.add(nacelle);
-
-        const glowGeo = new THREE.SphereGeometry(0.07, 8, 8);
-        craftGeometries.push(glowGeo);
-        const glow = new THREE.Mesh(glowGeo, kit.thruster);
-        glow.position.set(-0.65, 0, side * 0.28);
-        g.add(glow);
-      });
-
-      // Accent stripe
-      const stripeGeo = new THREE.BoxGeometry(0.6, 0.04, 0.06);
-      craftGeometries.push(stripeGeo);
-      const stripe = new THREE.Mesh(stripeGeo, kit.accentMat);
-      stripe.position.set(0.1, 0.12, 0);
-      g.add(stripe);
-
-      g.scale.setScalar(0.48);
-      return g;
-    };
-
-    const randomPath = (kind: 'satellite' | 'ship', camZ: number) => {
-      // Place craft ahead of the camera so you fly past them in depth
-      const z = camZ - (18 + Math.random() * 50);
-      const xStart = (Math.random() - 0.5) * 22;
-      const xEnd = xStart + (Math.random() - 0.5) * 10;
-      if (kind === 'satellite') {
-        return {
-          start: new THREE.Vector3(xStart, 6 + Math.random() * 6, z),
-          end: new THREE.Vector3(xEnd, -4 - Math.random() * 6, z - 8 - Math.random() * 12),
-        };
+    const randomPath = (camZ: number) => {
+      const z = camZ - (20 + Math.random() * 40);
+      const edge = Math.floor(Math.random() * 3); // 0=left-to-right, 1=right-to-left, 2=top-to-bottom-side
+      let start: THREE.Vector3, end: THREE.Vector3;
+      switch (edge) {
+        case 0: // left to right
+          start = new THREE.Vector3(-18 - Math.random() * 4, 3 + Math.random() * 6, z);
+          end = new THREE.Vector3(18 + Math.random() * 4, -2 + Math.random() * 5, z - 5 - Math.random() * 10);
+          break;
+        case 1: // right to left
+          start = new THREE.Vector3(18 + Math.random() * 4, 3 + Math.random() * 6, z);
+          end = new THREE.Vector3(-18 - Math.random() * 4, -2 + Math.random() * 5, z - 5 - Math.random() * 10);
+          break;
+        default: // top to bottom-side
+          start = new THREE.Vector3((Math.random() - 0.5) * 12, 14 + Math.random() * 4, z);
+          end = new THREE.Vector3((Math.random() > 0.5 ? 1 : -1) * (16 + Math.random() * 4), -8 - Math.random() * 4, z - 5 - Math.random() * 10);
+          break;
       }
-      const side = Math.random() > 0.5 ? 1 : -1;
-      return {
-        start: new THREE.Vector3(side * 16, 2 + Math.random() * 5, z),
-        end: new THREE.Vector3(-side * 10, -1 + Math.random() * 4, z - 20 - Math.random() * 15),
-      };
+      return { start, end };
     };
 
-    const spawnCraft = (kind: 'satellite' | 'ship', initialDelay: number) => {
-      const group = kind === 'satellite' ? buildSatellite() : buildShip();
+    const spawnSatellite = (initialDelay: number) => {
+      const group = buildSatellite();
       group.visible = false;
       world.add(group);
-      const path = randomPath(kind, CAM_START_Z);
+      const path = randomPath(CAM_START_Z);
       crafts.push({
         group,
         materials: [],
         geometries: [],
         phase: 0,
-        duration: kind === 'satellite' ? 55 + Math.random() * 35 : 40 + Math.random() * 25,
+        duration: 50 + Math.random() * 30,
         start: path.start,
         end: path.end,
         spin: (Math.random() - 0.5) * 0.25,
-        baseScale: kind === 'satellite' ? 0.55 : 0.48,
+        baseScale: 0.55,
         delay: initialDelay,
-        kind,
+        gap: 15 + Math.random() * 30,
+        kind: 'satellite',
       });
     };
 
-    // One satellite always, plus a ship; staggered like the original 8s delay
+    // Single satellite — rare surprise for space travellers
     if (!reduceMotion) {
-      spawnCraft('satellite', 2.5);
-      spawnCraft('ship', 18);
-      spawnCraft('satellite', 45);
+      spawnSatellite(8 + Math.random() * 12);
     } else {
       const sat = buildSatellite();
       sat.position.set(8, 4, CAM_START_Z - 25);
@@ -859,6 +801,7 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
         spin: 0,
         baseScale: 0.45,
         delay: 0,
+        gap: 9999,
         kind: 'satellite',
       });
     }
@@ -1077,52 +1020,45 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
         camera.position.z = camZ;
         camera.lookAt(mx * 0.8, my * 0.5, camZ - 50);
 
-        // Craft drift + fade cycles — paths re-seed ahead of camera
+        // Satellite drift — single satellite, edge-to-edge, one at a time
         crafts.forEach((craft) => {
           if (t < craft.delay) {
             craft.group.visible = false;
             return;
           }
           const localT = t - craft.delay;
-          const cycle = localT % (craft.duration + 12);
+          const cycle = localT % (craft.duration + craft.gap);
           if (cycle > craft.duration) {
             craft.group.visible = false;
             if (cycle - craft.duration < dt * 2) {
-              const path = randomPath(craft.kind, camZ);
+              const path = randomPath(camZ);
               craft.start.copy(path.start);
               craft.end.copy(path.end);
-              craft.duration =
-                craft.kind === 'satellite' ? 55 + Math.random() * 35 : 40 + Math.random() * 25;
+              craft.duration = 50 + Math.random() * 30;
+              craft.gap = 15 + Math.random() * 30;
             }
             return;
           }
 
           const p = cycle / craft.duration;
-          let alpha = 1;
-          if (p < 0.08) alpha = p / 0.08;
-          else if (p > 0.88) alpha = (1 - p) / 0.12;
-          alpha = Math.max(0, Math.min(1, alpha));
+
+          // No fade — satellite is fully visible from edge to edge
+          const alpha = 1;
 
           // Hide if already behind the camera (flown past)
           const approxZ = THREE.MathUtils.lerp(craft.start.z, craft.end.z, p);
-          if (approxZ > camZ + 4) alpha = 0;
+          const visible = approxZ <= camZ + 4;
 
-          craft.group.visible = alpha > 0.02;
+          craft.group.visible = visible;
           craft.group.position.lerpVectors(craft.start, craft.end, p);
           craft.group.position.y += Math.sin(p * Math.PI) * 1.0;
 
-          if (craft.kind === 'satellite') {
-            craft.group.rotation.y = t * 0.15 + craft.spin;
-            craft.group.rotation.z = 0.15 + Math.sin(t * 0.2) * 0.08;
-            craft.group.rotation.x = 0.4 + Math.sin(t * 0.12) * 0.05;
-          } else {
-            const dir = craft.end.clone().sub(craft.start).normalize();
-            craft.group.lookAt(craft.group.position.clone().add(dir));
-            craft.group.rotateY(Math.PI / 2);
-            craft.group.rotation.z = Math.sin(t * 0.4) * 0.06;
-          }
+          // Satellite rotation
+          craft.group.rotation.y = t * 0.15 + craft.spin;
+          craft.group.rotation.z = 0.15 + Math.sin(t * 0.2) * 0.08;
+          craft.group.rotation.x = 0.4 + Math.sin(t * 0.12) * 0.05;
 
-          craft.group.scale.setScalar(craft.baseScale * (0.96 + alpha * 0.04));
+          craft.group.scale.setScalar(craft.baseScale);
           craft.group.traverse((obj) => {
             const mesh = obj as THREE.Mesh;
             if (mesh.isMesh && mesh.material) {
@@ -1132,9 +1068,6 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
                 if ('opacity' in mat) {
                   mat.transparent = true;
                   mat.opacity = alpha * (mat.userData.baseOpacity ?? 1);
-                  if (mat.emissiveIntensity !== undefined && mat.userData.baseEmissive == null) {
-                    mat.userData.baseEmissive = mat.emissiveIntensity;
-                  }
                   if (mat.userData.baseEmissive != null) {
                     mat.emissiveIntensity = mat.userData.baseEmissive * alpha;
                   }
