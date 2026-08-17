@@ -376,10 +376,10 @@ const HorizonLayer: React.FC = () => {
                         </div>
                     </div>
 
-                    <span className="block font-serif text-[clamp(2.75rem,10vw,7.5rem)] font-normal leading-[0.88] tracking-[-0.04em] text-cream/20">
+                    <span className="block font-serif text-[clamp(3.5rem,14vw,9.5rem)] font-normal leading-[0.88] tracking-[-0.04em] text-cream/20">
                         Suraj
                     </span>
-                    <span className="block font-serif text-[clamp(2.75rem,10vw,7.5rem)] font-normal leading-[0.88] tracking-[-0.04em] text-cream/20">
+                    <span className="block font-serif text-[clamp(3.5rem,14vw,9.5rem)] font-normal leading-[0.88] tracking-[-0.04em] text-cream/20">
                         Sarkar
                     </span>
                 </div>

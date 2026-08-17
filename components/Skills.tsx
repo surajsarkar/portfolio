@@ -188,34 +188,49 @@ const Skills: React.FC = () => {
 
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
-  const categoryRadius = dimensions.width < 500 ? 120 : Math.min(180, dimensions.width * 0.28);
-  const skillBaseRadius = dimensions.width < 500 ? 75 : Math.min(110, dimensions.width * 0.16);
+  const categoryRadius = dimensions.width < 500 ? 130 : Math.min(180, dimensions.width * 0.28);
+  const skillBaseRadius = dimensions.width < 500 ? 80 : Math.min(110, dimensions.width * 0.16);
+
+  const getMobileAngle = useCallback((baseAngle: number) => {
+    if (dimensions.width >= 500) return baseAngle;
+    if (baseAngle === -90) return -60;
+    if (baseAngle === 0) return 30;
+    if (baseAngle === 90) return 120;
+    if (baseAngle === 180) return 210;
+    return baseAngle;
+  }, [dimensions.width]);
 
   const getCategoryPosition = useCallback(
-    (angle: number) => {
+    (baseAngle: number) => {
+      const angle = getMobileAngle(baseAngle);
       const rad = (angle * Math.PI) / 180;
+      const xScale = dimensions.width < 500 ? 0.75 : 1;
+      const yScale = dimensions.width < 500 ? 1.15 : 1;
       return {
-        x: centerX + Math.cos(rad) * categoryRadius,
-        y: centerY + Math.sin(rad) * categoryRadius,
+        x: centerX + Math.cos(rad) * categoryRadius * xScale,
+        y: centerY + Math.sin(rad) * categoryRadius * yScale,
       };
     },
-    [centerX, centerY, categoryRadius]
+    [centerX, centerY, categoryRadius, getMobileAngle, dimensions.width]
   );
 
   const getSkillPosition = useCallback(
-    (categoryAngle: number, skillIndex: number, totalSkills: number) => {
-      const catPos = getCategoryPosition(categoryAngle);
-      const arcSpread = 180;
+    (baseCategoryAngle: number, skillIndex: number, totalSkills: number) => {
+      const catPos = getCategoryPosition(baseCategoryAngle);
+      const categoryAngle = getMobileAngle(baseCategoryAngle);
+      const arcSpread = dimensions.width < 500 ? 120 : 180;
       const startAngle = categoryAngle - arcSpread / 2;
       const angleStep = totalSkills > 1 ? arcSpread / (totalSkills - 1) : 0;
       const skillAngle = totalSkills === 1 ? categoryAngle : startAngle + skillIndex * angleStep;
       const rad = (skillAngle * Math.PI) / 180;
+      const xScale = dimensions.width < 500 ? 0.75 : 1;
+      const yScale = dimensions.width < 500 ? 1.15 : 1;
       return {
-        x: catPos.x + Math.cos(rad) * skillBaseRadius,
-        y: catPos.y + Math.sin(rad) * skillBaseRadius,
+        x: catPos.x + Math.cos(rad) * skillBaseRadius * xScale,
+        y: catPos.y + Math.sin(rad) * skillBaseRadius * yScale,
       };
     },
-    [getCategoryPosition, skillBaseRadius]
+    [getCategoryPosition, getMobileAngle, skillBaseRadius, dimensions.width]
   );
 
   const pulseCenter = useCallback(() => {
