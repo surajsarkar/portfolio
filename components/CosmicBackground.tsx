@@ -549,6 +549,7 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
       baseScale: number;
       delay: number;
       gap: number;
+      done: boolean;
       kind: 'satellite';
     };
 
@@ -777,6 +778,7 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
         baseScale: 0.55,
         delay: initialDelay,
         gap: 15 + Math.random() * 30,
+        done: false,
         kind: 'satellite',
       });
     };
@@ -802,6 +804,7 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
         baseScale: 0.45,
         delay: 0,
         gap: 9999,
+        done: false,
         kind: 'satellite',
       });
     }
@@ -1020,36 +1023,28 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
         camera.position.z = camZ;
         camera.lookAt(mx * 0.8, my * 0.5, camZ - 50);
 
-        // Satellite drift — single satellite, edge-to-edge, one at a time
+        // Satellite drift — one-shot edge-to-edge, never repeats
         crafts.forEach((craft) => {
+          // Already completed its journey — stay hidden forever
+          if (craft.done) {
+            craft.group.visible = false;
+            return;
+          }
           if (t < craft.delay) {
             craft.group.visible = false;
             return;
           }
           const localT = t - craft.delay;
-          const cycle = localT % (craft.duration + craft.gap);
-          if (cycle > craft.duration) {
+          const p = localT / craft.duration;
+
+          // Finished traversal — mark done permanently
+          if (p >= 1) {
             craft.group.visible = false;
-            if (cycle - craft.duration < dt * 2) {
-              const path = randomPath(camZ);
-              craft.start.copy(path.start);
-              craft.end.copy(path.end);
-              craft.duration = 50 + Math.random() * 30;
-              craft.gap = 15 + Math.random() * 30;
-            }
+            craft.done = true;
             return;
           }
 
-          const p = cycle / craft.duration;
-
-          // No fade — satellite is fully visible from edge to edge
-          const alpha = 1;
-
-          // Hide if already behind the camera (flown past)
-          const approxZ = THREE.MathUtils.lerp(craft.start.z, craft.end.z, p);
-          const visible = approxZ <= camZ + 4;
-
-          craft.group.visible = visible;
+          craft.group.visible = true;
           craft.group.position.lerpVectors(craft.start, craft.end, p);
           craft.group.position.y += Math.sin(p * Math.PI) * 1.0;
 
@@ -1067,9 +1062,9 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
                 const mat = m as THREE.MeshStandardMaterial;
                 if ('opacity' in mat) {
                   mat.transparent = true;
-                  mat.opacity = alpha * (mat.userData.baseOpacity ?? 1);
+                  mat.opacity = mat.userData.baseOpacity ?? 1;
                   if (mat.userData.baseEmissive != null) {
-                    mat.emissiveIntensity = mat.userData.baseEmissive * alpha;
+                    mat.emissiveIntensity = mat.userData.baseEmissive;
                   }
                 }
               });
