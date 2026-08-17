@@ -386,7 +386,7 @@ const HorizonLayer: React.FC = () => {
             </div>
 
             {/* Planet limb: from the bottom of the screen up to just under the name */}
-            <div className="absolute bottom-0 left-0 h-[15vh] min-h-[120px] w-full">
+            <div className="absolute bottom-0 left-0 h-[15vh] min-h-[120px] lg:h-[18vh] lg:min-h-[150px] w-full">
                 <svg
                     className="absolute inset-0 block h-full w-full"
                     viewBox="0 0 1440 400"
@@ -396,12 +396,12 @@ const HorizonLayer: React.FC = () => {
                     aria-hidden="true"
                 >
                     <path
-                        d="M0,176 Q720,4 1440,176 L1440,400 L0,400 Z"
+                        d="M0,220 Q720,-80 1440,220 L1440,400 L0,400 Z"
                         fill="#0c0c0b"
                     />
                 </svg>
                 <div className="social-links absolute bottom-6 left-0 z-20 flex w-full flex-col items-center gap-3">
-                    <span className="font-serif italic text-base leading-[1.2] text-cream/55 pb-1">
+                    <span className="font-serif italic text-sm leading-[1.2] tracking-[0.15em] text-cream/55 pb-1 uppercase">
                         The expanded universe
                     </span>
                     <div className="flex justify-center gap-4 pointer-events-auto">
