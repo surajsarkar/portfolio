@@ -323,7 +323,7 @@ const HorizonLayer: React.FC = () => {
                                 className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[100%]"
                                 aria-hidden="true"
                             />
-                            <span className="flex items-center gap-3 font-serif text-base italic leading-[1.2] text-cream">
+                            <span className="flex items-center gap-3 font-serif text-base italic leading-[1.2] text-cream whitespace-nowrap">
                                 Say hello
                                 <svg
                                     className="h-4 w-4 opacity-70 transition-transform duration-200 ease-out group-hover:translate-x-1"
@@ -386,7 +386,7 @@ const HorizonLayer: React.FC = () => {
             </div>
 
             {/* Planet limb: from the bottom of the screen up to just under the name */}
-            <div className="absolute bottom-0 left-0 h-[15vh] min-h-[120px] lg:h-[18vh] lg:min-h-[150px] w-full">
+            <div className="absolute bottom-0 left-0 h-[15vh] min-h-[150px] lg:h-[18vh] lg:min-h-[180px] w-full">
                 <svg
                     className="absolute inset-0 block h-full w-full"
                     viewBox="0 0 1440 400"
@@ -400,8 +400,8 @@ const HorizonLayer: React.FC = () => {
                         fill="#0c0c0b"
                     />
                 </svg>
-                <div className="social-links absolute bottom-6 left-0 z-20 flex w-full flex-col items-center gap-3">
-                    <span className="font-serif italic text-sm leading-[1.2] tracking-[0.15em] text-cream/55 pb-1 uppercase">
+                <div className="social-links absolute bottom-8 left-0 z-20 flex w-full flex-col items-center gap-3">
+                    <span className="font-serif italic text-[10px] md:text-sm leading-[1.2] tracking-[0.15em] text-cream/55 pb-1 uppercase">
                         The expanded universe
                     </span>
                     <div className="flex justify-center gap-4 pointer-events-auto">

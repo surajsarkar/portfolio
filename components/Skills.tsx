@@ -188,8 +188,8 @@ const Skills: React.FC = () => {
 
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
-  const categoryRadius = Math.min(dimensions.width < 500 ? 130 : 180, dimensions.width * 0.28);
-  const skillBaseRadius = Math.min(dimensions.width < 500 ? 80 : 110, dimensions.width * 0.16);
+  const categoryRadius = dimensions.width < 500 ? 120 : Math.min(180, dimensions.width * 0.28);
+  const skillBaseRadius = dimensions.width < 500 ? 75 : Math.min(110, dimensions.width * 0.16);
 
   const getCategoryPosition = useCallback(
     (angle: number) => {
@@ -361,14 +361,14 @@ const Skills: React.FC = () => {
                 centerPulse ? 'scale-110 opacity-80' : 'scale-100 opacity-30'
               }`}
               style={{
-                width: dimensions.width < 500 ? '150px' : '210px',
-                height: dimensions.width < 500 ? '150px' : '210px',
+                width: dimensions.width < 500 ? '110px' : '210px',
+                height: dimensions.width < 500 ? '110px' : '210px',
                 background: 'radial-gradient(circle, rgba(235, 230, 220, 0.16) 0%, transparent 70%)',
                 filter: 'blur(18px)',
               }}
             />
             <div
-              className={`relative flex h-[120px] w-[120px] md:h-[168px] md:w-[168px] items-center justify-center rounded-full border transition-[border-color,box-shadow] duration-200 ${
+              className={`relative flex h-[80px] w-[80px] md:h-[168px] md:w-[168px] items-center justify-center rounded-full border transition-[border-color,box-shadow] duration-200 ${
                 centerPulse
                   ? 'border-cream/60 shadow-[0_0_40px_rgba(235,230,220,0.16)]'
                   : 'border-cream/20 shadow-[0_0_24px_rgba(235,230,220,0.08)]'
@@ -380,7 +380,7 @@ const Skills: React.FC = () => {
             >
               <span
                 ref={headingRef}
-                className="origin-center font-serif text-base italic leading-[1.2] text-cream md:text-lg"
+                className="origin-center font-serif text-[13px] md:text-base italic leading-[1.2] text-cream"
               >
                 Toolchain
               </span>
@@ -442,8 +442,8 @@ const Skills: React.FC = () => {
                     transform: 'translate(-50%, -50%)',
                   }}
                 >
-                  <div className="rounded-full border border-cream/15 bg-ink/70 px-4 py-2 backdrop-blur-md">
-                    <span className="whitespace-nowrap font-serif text-sm italic leading-[1.2] text-cream">
+                  <div className="rounded-full border border-cream/15 bg-ink/70 px-3 py-1 md:px-4 md:py-2 backdrop-blur-md">
+                    <span className="whitespace-nowrap font-serif text-[11px] md:text-sm italic leading-[1.2] text-cream">
                       {category.name}
                     </span>
                   </div>
@@ -469,8 +469,8 @@ const Skills: React.FC = () => {
                       transform: 'translate(-50%, -50%)',
                     }}
                   >
-                    <div className="rounded-full border border-cream/10 bg-cream/[0.04] px-3 py-1.5 backdrop-blur-sm">
-                      <span className="whitespace-nowrap text-sm font-medium text-cream/80">
+                    <div className="rounded-full border border-cream/10 bg-cream/[0.04] px-2 py-1 md:px-3 md:py-1.5 backdrop-blur-sm">
+                      <span className="whitespace-nowrap text-[10px] md:text-sm font-medium text-cream/80">
                         {skill}
                       </span>
                     </div>
