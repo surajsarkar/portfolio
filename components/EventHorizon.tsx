@@ -313,7 +313,7 @@ const HorizonLayer: React.FC = () => {
                     <div className="absolute bottom-full left-0 right-0 mb-6 flex justify-center pointer-events-auto">
                         <a
                             href={`mailto:${CONTACT_EMAIL}`}
-                            className="pressable group relative overflow-hidden rounded-full border border-cream/20 bg-cream/5 px-6 py-3 backdrop-blur-md hover:bg-cream/10"
+                            className="pressable group relative overflow-hidden rounded-full border border-cream/20 bg-cream/5 px-6 py-3 min-h-[44px] backdrop-blur-md hover:bg-cream/10"
                             style={{
                                 transition:
                                     'background-color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)',
@@ -409,7 +409,7 @@ const HorizonLayer: React.FC = () => {
                             href="https://github.com/surajsarkar"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream"
+                            className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream min-h-[44px] min-w-[44px]"
                             style={{ transition: 'color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)' }}
                             aria-label="GitHub"
                         >
@@ -421,7 +421,7 @@ const HorizonLayer: React.FC = () => {
                             href="https://linkedin.com/in/surajsarkar"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream"
+                            className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream min-h-[44px] min-w-[44px]"
                             style={{ transition: 'color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)' }}
                             aria-label="LinkedIn"
                         >
@@ -433,7 +433,7 @@ const HorizonLayer: React.FC = () => {
                             href="https://medium.com/@surajsarkar"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream"
+                            className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream min-h-[44px] min-w-[44px]"
                             style={{ transition: 'color 220ms var(--ease-soft), border-color 220ms var(--ease-soft), transform 140ms var(--ease-out)' }}
                             aria-label="Medium"
                         >
@@ -460,11 +460,11 @@ const NearContent: React.FC<{
 }> = ({ isStarHovered, onStarHover, onContact, onReboot }) => {
     return (
         <div
-            className="near-layer relative z-10 flex min-h-[100dvh] flex-col items-center justify-start pt-[14vh]"
+            className="near-layer relative z-10 flex min-h-[100dvh] flex-col items-center justify-start pt-[12vh] md:pt-[14vh]"
         >
             <div className="mb-8 px-4 text-center">
                 <h2
-                    className="heading-line-2 mx-auto max-w-2xl font-serif text-[clamp(1.6rem,3.4vw,2.6rem)] font-normal leading-[1.25] tracking-[-0.02em] text-cream"
+                    className="heading-line-2 mx-auto max-w-2xl font-serif text-[clamp(1.35rem,3.4vw,2.6rem)] font-normal leading-[1.25] tracking-[-0.02em] text-cream"
                 >
                     If you need a hand building reliable backend systems or automating the boring stuff, feel free to say hello.
                 </h2>
@@ -783,7 +783,7 @@ const EventHorizon: React.FC = () => {
     return (
         <section
             ref={sectionRef}
-            className="relative min-h-[110dvh] overflow-hidden"
+            className="relative min-h-[100dvh] overflow-hidden"
             style={{ backgroundColor: 'transparent' }}
             id="contact"
             aria-label="Contact"

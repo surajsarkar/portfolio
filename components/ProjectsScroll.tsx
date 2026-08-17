@@ -140,7 +140,7 @@ const WorkCase: React.FC<{ project: Project; index: number }> = ({ project, inde
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="pressable inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-cream/20 px-4 py-2 text-sm text-cream hover:bg-cream hover:text-ink"
+              className="pressable inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-cream/20 px-4 py-2.5 text-sm text-cream hover:bg-cream hover:text-ink min-h-[44px]"
             >
               {link.label}
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -240,12 +240,12 @@ const ProjectsScroll: React.FC = () => {
     <section
       ref={sectionRef}
       id="projects"
-      className="relative px-6 pb-32 pt-20 md:px-12 md:pb-44 md:pt-28"
+      className="relative px-5 pb-24 pt-16 md:px-12 md:pb-44 md:pt-28"
       aria-label="Projects"
     >
       <div className="mx-auto max-w-[1400px]">
         <header ref={titleRef} className="mb-14 md:mb-20">
-          <h2 className="font-serif text-[clamp(4.5rem,14vw,10rem)] font-normal leading-[0.86] tracking-[-0.04em] text-cream">
+          <h2 className="font-serif text-[clamp(3.5rem,14vw,10rem)] font-normal leading-[0.86] tracking-[-0.04em] text-cream">
             Work
           </h2>
           <p className="mt-4 font-serif text-xl italic leading-[1.2] text-cream-muted pb-1 md:text-2xl">
@@ -288,7 +288,7 @@ const ProjectsScroll: React.FC = () => {
             </ol>
           </nav>
 
-          <div className="flex flex-col gap-24 md:gap-32">
+          <div className="flex flex-col gap-20 md:gap-32">
             {projects.map((project, index) => (
               <WorkCase key={project.id} project={project} index={index} />
             ))}

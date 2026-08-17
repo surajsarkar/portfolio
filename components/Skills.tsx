@@ -188,8 +188,8 @@ const Skills: React.FC = () => {
 
   const centerX = dimensions.width / 2;
   const centerY = dimensions.height / 2;
-  const categoryRadius = Math.min(180, dimensions.width * 0.28);
-  const skillBaseRadius = Math.min(110, dimensions.width * 0.16);
+  const categoryRadius = Math.min(dimensions.width < 500 ? 130 : 180, dimensions.width * 0.28);
+  const skillBaseRadius = Math.min(dimensions.width < 500 ? 80 : 110, dimensions.width * 0.16);
 
   const getCategoryPosition = useCallback(
     (angle: number) => {
@@ -340,12 +340,12 @@ const Skills: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      className="relative overflow-hidden py-24 md:py-32"
+      className="relative overflow-hidden py-16 md:py-32"
       style={{ backgroundColor: 'transparent' }}
       aria-label="Toolchain"
     >
       <div className="relative z-10 mx-auto max-w-5xl px-4">
-        <div ref={constellationRef} className="relative h-[min(72vh,640px)] min-h-[480px]">
+        <div ref={constellationRef} className="relative h-[min(60vh,640px)] min-h-[380px] md:h-[min(72vh,640px)] md:min-h-[480px]">
           {/* Center hub */}
           <div
             ref={centerRef}
@@ -361,14 +361,14 @@ const Skills: React.FC = () => {
                 centerPulse ? 'scale-110 opacity-80' : 'scale-100 opacity-30'
               }`}
               style={{
-                width: '210px',
-                height: '210px',
+                width: dimensions.width < 500 ? '150px' : '210px',
+                height: dimensions.width < 500 ? '150px' : '210px',
                 background: 'radial-gradient(circle, rgba(235, 230, 220, 0.16) 0%, transparent 70%)',
                 filter: 'blur(18px)',
               }}
             />
             <div
-              className={`relative flex h-[168px] w-[168px] items-center justify-center rounded-full border transition-[border-color,box-shadow] duration-200 ${
+              className={`relative flex h-[120px] w-[120px] md:h-[168px] md:w-[168px] items-center justify-center rounded-full border transition-[border-color,box-shadow] duration-200 ${
                 centerPulse
                   ? 'border-cream/60 shadow-[0_0_40px_rgba(235,230,220,0.16)]'
                   : 'border-cream/20 shadow-[0_0_24px_rgba(235,230,220,0.08)]'

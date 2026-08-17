@@ -25,7 +25,7 @@ const Header: React.FC = () => {
   };
 
   const linkClass =
-    'pressable rounded-full px-3 py-2 text-sm font-medium tracking-wide text-cream/70 hover:text-cream';
+    'pressable rounded-full px-4 py-2.5 text-sm font-medium tracking-wide text-cream/70 hover:text-cream min-h-[44px] flex items-center';
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 flex justify-center px-4 pt-5 md:pt-6">

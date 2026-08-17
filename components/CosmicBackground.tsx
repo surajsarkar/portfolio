@@ -55,8 +55,9 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
     const prefersLowPower =
       (navigator as Navigator & { deviceMemory?: number }).deviceMemory !== undefined &&
       ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8) <= 4;
+    const isMobile = window.innerWidth < 768;
 
-    const starMultiplier = prefersLowPower ? 0.75 : 1;
+    const starMultiplier = isMobile ? 0.45 : prefersLowPower ? 0.75 : 1;
     // Milky Way layer counts
     const farCount = Math.floor(7000 * density * starMultiplier);
     const midCount = Math.floor(4000 * density * starMultiplier);
@@ -85,7 +86,7 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
       alpha: true,
       powerPreference: 'high-performance',
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, prefersLowPower ? 1.25 : 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : prefersLowPower ? 1.25 : 2));
     renderer.setClearColor(0x000000, 0);
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.width = '100%';
@@ -783,8 +784,8 @@ const CosmicBackground: React.FC<CosmicBackgroundProps> = ({
       });
     };
 
-    // Single satellite — rare surprise for space travellers
-    if (!reduceMotion) {
+    // Single satellite — rare surprise for space travellers (skip on mobile for perf)
+    if (!reduceMotion && !isMobile) {
       spawnSatellite(8 + Math.random() * 12);
     } else {
       const sat = buildSatellite();
