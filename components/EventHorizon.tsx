@@ -418,7 +418,7 @@ const HorizonLayer: React.FC = () => {
                             </svg>
                         </a>
                         <a
-                            href="https://linkedin.com/in/surajsarkar"
+                            href="https://www.linkedin.com/in/surajsarkar0/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream min-h-[44px] min-w-[44px]"
@@ -430,7 +430,7 @@ const HorizonLayer: React.FC = () => {
                             </svg>
                         </a>
                         <a
-                            href="https://medium.com/@surajsarkar"
+                            href="https://surajsarkar0.medium.com/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="pressable flex h-11 w-11 items-center justify-center rounded-full border border-cream/20 text-cream/40 hover:border-cream/50 hover:text-cream min-h-[44px] min-w-[44px]"
